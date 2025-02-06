@@ -23,18 +23,9 @@ void initializeMap() {
         }
     }
 
-    // Path areas (represented by 1)
-    grid[5][0] = 1;
-    grid[5][1] = 1;
-    grid[5][2] = 1;
-    grid[5][3] = 1;
-    grid[5][4] = 1;
-    grid[4][4] = 1;
-    grid[4][5] = 1;
-    grid[4][6] = 1;
-    grid[4][7] = 1;
-    grid[4][8] = 1;
-    grid[4][9] = 1;
+    // Randomly generate a path from the left to the right side of the screen
+    int startRow = rand() % ROWS; // Random starting row on the left side
+    grid[startRow][0] = 1; // Mark the start as part of the path
 
     // Towers (represented by 2)
     grid[4][3] = 2;
