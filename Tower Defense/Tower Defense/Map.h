@@ -1,22 +1,10 @@
 #pragma once
 
-/*
+#ifndef MAP_H
+#define MAP_H
 
-	Class that generates the map for the Tower Defense game
+void initializeMap();
+void displayMap();
 
-*/
-
-class Map
-{
-	private:	
-
-	public:
-		// Constructors, Destructors
-		Map();
-		virtual ~Map();
-
-		// Functions
-		void update();
-		void render();
-};
+#endif
 
