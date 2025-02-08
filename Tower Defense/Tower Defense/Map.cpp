@@ -1,112 +1,121 @@
-#include "Map.h"
-
-#include <stdio.h>
+﻿#include "Map.h"
+#include "Game.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Network.hpp>
+#include <iostream>
 
-#include <SFML/Graphics.hpp>
+int grid[ROWS][COLS]; // Define the grid here, not in map.h
 
-const int ROWS = 20;
-const int COLS = 20;
-int grid[ROWS][COLS];
-
-// Function to initialize the map with a predefined layout
 void initializeMap() {
-    // Set all cells to 0 (path)
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
-            grid[i][j] = 0;
+            grid[i][j] = 0; // Default to grass (scenery)
         }
     }
-
-    // Randomly generate a path from the left to the right side of the screen
-    //int startRow = rand() % ROWS; // Random starting row on the left side
-
-    // hard-coded custom path
-
-    for (int i = 0; i < 4; i++)
-        grid[10][i] = 1;
-
-    for (int i = 9; i > 6; i--)
-        grid[i][3] = 1;
-
-    for (int i = 4; i < 7; i++)
-        grid[7][i] = 1;
-
-    for (int i = 8; i < 12; i++)
-        grid[i][6] = 1;
-
-    for (int i = 7; i < 12; i++)
-        grid[11][i] = 1;
-
-    grid[10][11] = 1;
-    grid[9][11] = 1;
-
-    for (int i = 12; i < 20; i++)
-        grid[9][i] = 1;
-
-
-
-    // Towers (represented by 2)
-    /*grid[4][3] = 2;
-    grid[3][6] = 2;
-    grid[5][8] = 2;*/
 }
 
-// Function to display the grid in an SFML window
+void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellSize) {
+    int col = mousePos.x / cellSize;
+    int row = mousePos.y / cellSize;
+
+    if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
+        if (button == sf::Mouse::Left) {
+            grid[row][col] = (grid[row][col] + 1) % 3; // Toggle: Grass → Path → Tower
+        }
+        else if (button == sf::Mouse::Right) {
+            grid[row][col] = 0; // Reset to grass
+        }
+    }
+}
+
+// Placeholder function for the game screen
+void startGame() {
+    sf::RenderWindow gameWindow(sf::VideoMode(600, 600), "Tower Defense Game");
+
+    while (gameWindow.isOpen()) {
+        sf::Event event;
+        while (gameWindow.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                gameWindow.close();
+            }
+        }
+
+        displayGame(gameWindow);  // Pass window reference
+    }
+}
+
+
 void displayMap() {
-    int windowLength = 600;
-    int windowWidth = 600;
+    int windowSize = 600;
+    sf::RenderWindow window(sf::VideoMode(windowSize, windowSize + 50), "Tower Defense Map Creation");
+    int cellSize = windowSize / ROWS;
 
-    // Create an SFML window
-    sf::RenderWindow window(sf::VideoMode(600, 600), "Tower Defense");
+    sf::Font font;
+    if (!font.loadFromFile("arial.ttf")) {
+        std::cerr << "Failed to load font!" << std::endl;
+    }
 
-    // Define the size of each grid cell
-    const int cellSize = windowLength / ROWS;
+    sf::RectangleShape button(sf::Vector2f(200, 40));
+    button.setPosition((windowSize - 200) / 2, windowSize + 5);
+    button.setFillColor(sf::Color(100, 100, 255));
 
-    // Define colors for different grid values
-    sf::Color grassColor(80, 109, 25, 255);  // Green for grass 
-    sf::Color pathColor(162, 120, 78, 255);     // Light brown for path
-    sf::Color towerColor(255, 0, 0);   // Red for tower colors
+    sf::Text buttonText("Start Game", font, 20);
+    buttonText.setPosition((windowSize - 150) / 2, windowSize + 10);
+    buttonText.setFillColor(sf::Color::White);
 
-    // Main game loop
+    bool startGameFlag = false;
+
     while (window.isOpen()) {
         sf::Event event;
-
-        // user closes the window
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
-        }
+            else if (event.type == sf::Event::MouseButtonPressed) {
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
-        window.clear(sf::Color::Black); // Clear the screen with black color
-
-        // Loop through the grid and draw each cell
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLS; j++) {
-                sf::RectangleShape cell(sf::Vector2f(cellSize, cellSize));
-                cell.setPosition(j * cellSize, i * cellSize); // Position based on grid
-
-                // Set the color based on grid value
-                if (grid[i][j] == 0) {
-                    cell.setFillColor(grassColor);
+                if (mousePos.y < windowSize) {
+                    handleMouseClick(mousePos, event.mouseButton.button, cellSize);
                 }
-                else if (grid[i][j] == 1) {
-                    cell.setFillColor(pathColor);
-                }
-                else if (grid[i][j] == 2) {
-                    cell.setFillColor(towerColor);
-                }
+                else if (mousePos.x >= button.getPosition().x &&
+                    mousePos.x <= button.getPosition().x + button.getSize().x &&
+                    mousePos.y >= button.getPosition().y &&
+                    mousePos.y <= button.getPosition().y + button.getSize().y) {
 
-                window.draw(cell); // Draw the cell
+                    startGameFlag = true; // Set flag instead of closing window
+                }
             }
         }
 
-        window.display(); // Display the map
+        if (startGameFlag) {
+            window.close(); // Close map editor
+            return;         // Exit function and let main() handle starting game
+        }
+
+        window.clear();
+
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                sf::RectangleShape cell(sf::Vector2f(cellSize, cellSize));
+                cell.setPosition(j * cellSize, i * cellSize);
+
+
+                // set cell color based on type (grass, path, tower)
+                if (grid[i][j] == 0) cell.setFillColor(sf::Color(80, 109, 25));         // grass
+                else if (grid[i][j] == 1) cell.setFillColor(sf::Color(162, 120, 78));   // path
+                else if (grid[i][j] == 2) cell.setFillColor(sf::Color::Red);            // tower
+
+                cell.setOutlineColor(sf::Color::Black);
+                cell.setOutlineThickness(1);
+                window.draw(cell);
+            }
+        }
+
+        window.draw(button);
+        window.draw(buttonText);
+        window.display();
     }
 }
+

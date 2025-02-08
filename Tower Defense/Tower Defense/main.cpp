@@ -15,6 +15,7 @@ int main() {
     // Initialize and display the map
     initializeMap();
     displayMap();
+    startGame();
 
     return 0;
 }
