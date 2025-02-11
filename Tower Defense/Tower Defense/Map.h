@@ -13,6 +13,8 @@ extern int grid[ROWS][COLS];  // Declare grid here but define in map.cpp
 void initializeMap();
 void displayMap();
 
+bool isValidMap();
+
 void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellSize);
 void startGame();
 

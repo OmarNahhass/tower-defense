@@ -13,7 +13,9 @@ int main() {
     // Initialize and display the map
     initializeMap();
     displayMap();
-    startGame();
+
+    if (isValidMap())
+        startGame();
 
     return 0;
 }

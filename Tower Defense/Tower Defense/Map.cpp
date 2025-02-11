@@ -6,6 +6,8 @@
 #include <SFML/Window.hpp>
 #include <iostream>
 
+#include <queue>
+
 int grid[ROWS][COLS]; // Define the grid here, not in map.h
 
 void initializeMap() {
@@ -14,6 +16,93 @@ void initializeMap() {
             grid[i][j] = 0; // Default to grass (scenery)
         }
     }
+}
+
+
+bool isValidMap() {
+    // initialize the coordinates of the entry and exit points
+    std::pair<int, int> entry = { -1, -1 };
+    std::pair<int, int> exit = { -1, -1 };
+
+    // Find entry and exit points (must be on edges)
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            if (grid[i][j] == 1) {
+                // Check if it's on an edge
+                if (i == 0 || i == ROWS - 1 || j == 0 || j == COLS - 1) {
+                    if (entry.first == -1) {
+                        entry = { i, j };  // First edge path cell is the entry
+                    }
+                    else if (exit.first == -1) {
+                        exit = { i, j };   // Second edge path cell is the exit
+                    }
+                    else {
+                        std::cout << "Invalid map: More than one entry or exit.\n";
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    // entry and/or exit is not on the map
+    if (entry.first == -1 || exit.first == -1) {
+        std::cout << "Invalid map: Missing entry or exit.\n";
+        return false;
+    }
+
+    // BFS to check if there's a single connected path
+    std::queue<std::pair<int, int>> queue;
+    bool visited[ROWS][COLS] = { false };
+
+    // start from entry cell
+    queue.push(entry);
+
+    // 2D boolean to check if each cell on the map was visited
+    visited[entry.first][entry.second] = true;
+
+    int pathCells = 1;  // Count path cells visited
+    int totalPathCells = 0;  // Total path cells in grid
+
+    // move left, right, up ,down
+    int directions[4][2] = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
+
+    for (int i = 0; i < ROWS; i++)
+        for (int j = 0; j < COLS; j++)
+            if (grid[i][j] == 1) totalPathCells++;
+
+    while (!queue.empty()) {
+        std::pair<int, int> current = queue.front();
+        queue.pop();
+
+        int currentPositionX = current.first, currentPositionY = current.second;
+
+
+        // Exit found
+        if (currentPositionX == exit.first && currentPositionY == exit.second) {
+            return true; 
+        }
+
+        // check all adjacent cells from the current cell
+        for (int i = 0; i < 4; i++) {
+
+            // move another direction
+            int newPositionX = currentPositionX + directions[i][0], newPositionY = currentPositionY + directions[i][1];
+
+            // check if the next cell is 
+            // 1- inside the map
+            // 2- a path 
+            // 3- not visited
+            // if the 3 conditions are met, mark the cell as visited and set it to current cell
+            if (newPositionX >= 0 && newPositionX < ROWS && newPositionY >= 0 && newPositionY < COLS && grid[newPositionX][newPositionY] == 1 && !visited[newPositionX][newPositionY]) {
+                visited[newPositionX][newPositionY] = true;
+                queue.push({ newPositionX, newPositionY });
+            }
+        }
+    }
+
+    std::cout << "Invalid map: Entry and exit are not connected.\n";
+    return false;
 }
 
 void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellSize) {
