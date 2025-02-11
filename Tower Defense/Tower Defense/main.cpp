@@ -10,12 +10,14 @@
 
 
 int main() {
-    // Initialize and display the map
+    // Initialize and display the map creation screen
     initializeMap();
     displayMap();
 
-    if (isValidMap())
-        startGame();
+    while (!isValidMap())
+        displayMap();
+
+    startGame();
 
     return 0;
 }

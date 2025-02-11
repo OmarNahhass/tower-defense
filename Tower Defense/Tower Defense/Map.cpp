@@ -105,6 +105,7 @@ bool isValidMap() {
     return false;
 }
 
+// handle the type of cell (grass, path, tower) set by the player
 void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellSize) {
     int col = mousePos.x / cellSize;
     int row = mousePos.y / cellSize;
@@ -146,6 +147,8 @@ void displayMap() {
         std::cerr << "Failed to load font!" << std::endl;
     }
 
+
+    // Start Game button
     sf::RectangleShape button(sf::Vector2f(200, 40));
     button.setPosition((windowSize - 200) / 2, windowSize + 5);
     button.setFillColor(sf::Color(100, 100, 255));
@@ -158,6 +161,8 @@ void displayMap() {
 
     while (window.isOpen()) {
         sf::Event event;
+
+        // handle cell type setter
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
@@ -185,6 +190,8 @@ void displayMap() {
 
         window.clear();
 
+
+        // handle color setter for each cell
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
                 sf::RectangleShape cell(sf::Vector2f(cellSize, cellSize));
