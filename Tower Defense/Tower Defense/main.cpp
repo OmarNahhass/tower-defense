@@ -14,10 +14,11 @@ int main() {
     initializeMap();
     displayMap();
 
-    while (!isValidMap())
-        displayMap();
+    /*while (!isValidMap())
+        displayMap();*/
 
-    startGame();
+    if (isValidMap())
+        startGame();
 
     return 0;
 }
