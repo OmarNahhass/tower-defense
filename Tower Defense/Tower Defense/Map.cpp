@@ -10,6 +10,8 @@
 
 int grid[ROWS][COLS]; // Define the grid here, not in map.h
 
+sf::Texture grassTextureMap, pathTextureMap, towerTextureMap;
+
 void initializeMap() {
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
@@ -148,6 +150,15 @@ void displayMap() {
     }
 
 
+    // load images for grass, path and tower
+    if (!towerTextureMap.loadFromFile("tower.png") || 
+        !grassTextureMap.loadFromFile("grass_3.png") ||
+        !pathTextureMap.loadFromFile("path.png")) {
+        std::cerr << "Failed to load tower.png!" << std::endl;
+    }
+
+
+
     // Start Game button
     sf::RectangleShape button(sf::Vector2f(200, 40));
     button.setPosition((windowSize - 200) / 2, windowSize + 5);
@@ -191,23 +202,59 @@ void displayMap() {
         window.clear();
 
 
-        // handle color setter for each cell
+        // set images for each cooresponding cell
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
-                sf::RectangleShape cell(sf::Vector2f(cellSize, cellSize));
-                cell.setPosition(j * cellSize, i * cellSize);
 
+                sf::Sprite sprite;
+                sprite.setPosition(j * cellSize, i * cellSize);
 
-                // set cell color based on type (grass, path, tower)
-                if (grid[i][j] == 0) cell.setFillColor(sf::Color(80, 109, 25));         // grass
-                else if (grid[i][j] == 1) cell.setFillColor(sf::Color(162, 120, 78));   // path
-                else if (grid[i][j] == 2) cell.setFillColor(sf::Color::Red);            // tower
+                // Create an outline border
+                sf::RectangleShape border(sf::Vector2f(cellSize, cellSize));
+                border.setPosition(j * cellSize, i * cellSize);
+                border.setFillColor(sf::Color::Transparent);  // Transparent inside
+                border.setOutlineColor(sf::Color::Black);     // Black outline
+                border.setOutlineThickness(1);                // Outline thickness
 
-                cell.setOutlineColor(sf::Color::Black);
-                cell.setOutlineThickness(1);
-                window.draw(cell);
+                if (grid[i][j] == 0) {
+                    sprite.setTexture(grassTextureMap);
+                   
+                    // Scale the sprite to fit exactly in the cell
+                    sprite.setScale(
+                        static_cast<float>(cellSize) / grassTextureMap.getSize().x,
+                        static_cast<float>(cellSize) / grassTextureMap.getSize().y
+                    );
+
+                    window.draw(border);  // Draw the border first
+                    window.draw(sprite);  // Draw the sprite on top
+                }
+                else if (grid[i][j] == 1) {
+                    sprite.setTexture(pathTextureMap);
+
+                    // Scale the sprite to fit exactly in the cell
+                    sprite.setScale(
+                        static_cast<float>(cellSize) / pathTextureMap.getSize().x,
+                        static_cast<float>(cellSize) / pathTextureMap.getSize().y
+                    );
+
+                    window.draw(border);  // Draw the border first
+                    window.draw(sprite);  // Draw the sprite on top
+                }
+                else if (grid[i][j] == 2) {
+                    sprite.setTexture(towerTextureMap);
+
+                    // Scale the sprite to fit exactly in the cell
+                    sprite.setScale(
+                        static_cast<float>(cellSize) / towerTextureMap.getSize().x,
+                        static_cast<float>(cellSize) / towerTextureMap.getSize().y
+                    );
+
+                    window.draw(border);  // Draw the border first
+                    window.draw(sprite);  // Draw the sprite on top
+                }
             }
         }
+
 
         window.draw(button);
         window.draw(buttonText);
