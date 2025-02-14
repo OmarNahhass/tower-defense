@@ -114,7 +114,7 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
 
     if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
         if (button == sf::Mouse::Left) {
-            grid[row][col] = (grid[row][col] + 1) % 3; // Toggle: Grass → Path → Tower
+            grid[row][col] = (grid[row][col] + 1) % 3; // Toggle: Grass ->  Path -> Tower
         }
         else if (button == sf::Mouse::Right) {
             grid[row][col] = 0; // Reset to grass
@@ -124,7 +124,7 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
 
 // Placeholder function for the game screen
 void startGame() {
-    sf::RenderWindow gameWindow(sf::VideoMode(600, 600), "Tower Defense Game");
+    sf::RenderWindow gameWindow(sf::VideoMode(WINDOWSIZE, WINDOWSIZE + 50), "Tower Defense Game");
 
     while (gameWindow.isOpen()) {
         sf::Event event;
@@ -140,40 +140,40 @@ void startGame() {
 
 
 void displayMap() {
-    int windowSize = 600;
-    sf::RenderWindow window(sf::VideoMode(windowSize, windowSize + 50), "Tower Defense Map Creation");
-    int cellSize = windowSize / ROWS;
+    sf::RenderWindow window(sf::VideoMode(WINDOWSIZE, WINDOWSIZE + 50), "Tower Defense Map Creation");
+    int cellSize = WINDOWSIZE / ROWS;
 
+    // Load font
     sf::Font font;
     if (!font.loadFromFile("arial.ttf")) {
         std::cerr << "Failed to load font!" << std::endl;
     }
 
-
-    // load images for grass, path and tower
-    if (!towerTextureMap.loadFromFile("tower.png") || 
+    // Load images for grass, path, and tower
+    if (!towerTextureMap.loadFromFile("tower.png") ||
         !grassTextureMap.loadFromFile("grass_3.png") ||
         !pathTextureMap.loadFromFile("path.png")) {
         std::cerr << "Failed to load tower.png!" << std::endl;
     }
 
-
-
     // Start Game button
     sf::RectangleShape button(sf::Vector2f(200, 40));
-    button.setPosition((windowSize - 200) / 2, windowSize + 5);
+    button.setPosition((WINDOWSIZE - 200) / 2, WINDOWSIZE + 5);
     button.setFillColor(sf::Color(100, 100, 255));
 
     sf::Text buttonText("Start Game", font, 20);
-    buttonText.setPosition((windowSize - 150) / 2, windowSize + 10);
+    buttonText.setPosition((WINDOWSIZE - 150) / 2, WINDOWSIZE + 10);
     buttonText.setFillColor(sf::Color::White);
 
-    bool startGameFlag = false;
+    // Error message for invalid maps
+    sf::Text errorMessage("Invalid map! Ensure entry/exit & path connectivity.", font, 18);
+    errorMessage.setPosition(10, WINDOWSIZE + 50);
+    errorMessage.setFillColor(sf::Color::Red);
+    bool showError = false;  // Flag to track if error message should be displayed
 
     while (window.isOpen()) {
         sf::Event event;
 
-        // handle cell type setter
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
@@ -181,84 +181,71 @@ void displayMap() {
             else if (event.type == sf::Event::MouseButtonPressed) {
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
-                if (mousePos.y < windowSize) {
+                // Check if user clicks on the grid
+                if (mousePos.y < WINDOWSIZE) {
                     handleMouseClick(mousePos, event.mouseButton.button, cellSize);
+                    showError = false;  // Hide error message when user modifies the map
                 }
+                // Check if user clicks the Start Game button
                 else if (mousePos.x >= button.getPosition().x &&
                     mousePos.x <= button.getPosition().x + button.getSize().x &&
                     mousePos.y >= button.getPosition().y &&
                     mousePos.y <= button.getPosition().y + button.getSize().y) {
 
-                    startGameFlag = true; // Set flag instead of closing window
+                    if (isValidMap()) {
+                        window.close();  // Close map editor
+                        startGame();     // Start the game
+                        return;          // Exit function
+                    }
+                    else {
+                        showError = true;  // Display error message
+                    }
                 }
             }
-        }
-
-        if (startGameFlag) {
-            window.close(); // Close map editor
-            return;         // Exit function and let main() handle starting game
         }
 
         window.clear();
 
-
-        // set images for each cooresponding cell
+        // Draw grid
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
-
                 sf::Sprite sprite;
                 sprite.setPosition(j * cellSize, i * cellSize);
 
-                // Create an outline border
+
+                // create a border around each cell
                 sf::RectangleShape border(sf::Vector2f(cellSize, cellSize));
                 border.setPosition(j * cellSize, i * cellSize);
-                border.setFillColor(sf::Color::Transparent);  // Transparent inside
-                border.setOutlineColor(sf::Color::Black);     // Black outline
-                border.setOutlineThickness(1);                // Outline thickness
+                border.setFillColor(sf::Color::Transparent);
+                border.setOutlineColor(sf::Color::Black);
+                border.setOutlineThickness(1);
 
-                if (grid[i][j] == 0) {
-                    sprite.setTexture(grassTextureMap);
-                   
-                    // Scale the sprite to fit exactly in the cell
-                    sprite.setScale(
-                        static_cast<float>(cellSize) / grassTextureMap.getSize().x,
-                        static_cast<float>(cellSize) / grassTextureMap.getSize().y
-                    );
 
-                    window.draw(border);  // Draw the border first
-                    window.draw(sprite);  // Draw the sprite on top
-                }
-                else if (grid[i][j] == 1) {
-                    sprite.setTexture(pathTextureMap);
+                // display corresponding image
+                if (grid[i][j] == 0) sprite.setTexture(grassTextureMap);        // grass
+                else if (grid[i][j] == 1) sprite.setTexture(pathTextureMap);    // path
+                else if (grid[i][j] == 2) sprite.setTexture(towerTextureMap);   // tower
 
-                    // Scale the sprite to fit exactly in the cell
-                    sprite.setScale(
-                        static_cast<float>(cellSize) / pathTextureMap.getSize().x,
-                        static_cast<float>(cellSize) / pathTextureMap.getSize().y
-                    );
+                // fit entire image inside the cell
+                sprite.setScale(static_cast<float>(cellSize) / sprite.getTexture()->getSize().x,
+                    static_cast<float>(cellSize) / sprite.getTexture()->getSize().y);
 
-                    window.draw(border);  // Draw the border first
-                    window.draw(sprite);  // Draw the sprite on top
-                }
-                else if (grid[i][j] == 2) {
-                    sprite.setTexture(towerTextureMap);
-
-                    // Scale the sprite to fit exactly in the cell
-                    sprite.setScale(
-                        static_cast<float>(cellSize) / towerTextureMap.getSize().x,
-                        static_cast<float>(cellSize) / towerTextureMap.getSize().y
-                    );
-
-                    window.draw(border);  // Draw the border first
-                    window.draw(sprite);  // Draw the sprite on top
-                }
+                window.draw(border);
+                window.draw(sprite);
             }
         }
 
-
+        // Draw button
         window.draw(button);
         window.draw(buttonText);
+
+        // Show error message if map is invalid
+        if (showError) {
+            window.draw(errorMessage);
+        }
+
         window.display();
     }
 }
+
 

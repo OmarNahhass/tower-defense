@@ -15,12 +15,7 @@ sf::Texture grassTextureGame, pathTextureGame, towerTextureGame;
 
 // using the custom map that the user defined earlier in map.cpp, display the final map in-game
 void displayGame(sf::RenderWindow& window) {
-    int windowLength = 600;
-    int cellSize = windowLength / ROWS;
-
-    sf::Color grassColor(80, 109, 25);
-    sf::Color pathColor(162, 120, 78);
-    sf::Color towerColor(255, 0, 0);
+    int cellSize = WINDOWSIZE / ROWS;
 
     sf::Texture texture;
     if (!towerTextureGame.loadFromFile("tower.png") ||
