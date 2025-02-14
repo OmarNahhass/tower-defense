@@ -198,10 +198,10 @@ void displayMap() {
                     if (isValidMap()) {
                         window.close();  // Close map editor
                         startGame();     // Start the game
-                        return;          // Exit function
+                        return;          
                     }
                     else {
-                        showError = true;  // Display error message
+                        showError = true;      // Display error message
                         errorTimer.restart();  // Restart error timer
                     }
                 }
