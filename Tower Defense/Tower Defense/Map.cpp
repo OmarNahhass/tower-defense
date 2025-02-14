@@ -166,10 +166,13 @@ void displayMap() {
     buttonText.setFillColor(sf::Color::White);
 
     // Error message for invalid maps
-    sf::Text errorMessage("Invalid map! Ensure entry/exit & path connectivity.", font, 18);
-    errorMessage.setPosition(10, WINDOWSIZE + 50);
+    sf::Text errorMessage("Invalid map. Ensure that the entry and exit are properly connected", font, 25);
+    errorMessage.setPosition(20, WINDOWSIZE/2);
     errorMessage.setFillColor(sf::Color::Red);
+
+
     bool showError = false;  // Flag to track if error message should be displayed
+    sf::Clock errorTimer;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -199,9 +202,15 @@ void displayMap() {
                     }
                     else {
                         showError = true;  // Display error message
+                        errorTimer.restart();  // Restart error timer
                     }
                 }
             }
+        }
+
+        // Hide error message after 3 seconds
+        if (showError && errorTimer.getElapsedTime().asSeconds() > 3.0f) {
+            showError = false;
         }
 
         window.clear();
