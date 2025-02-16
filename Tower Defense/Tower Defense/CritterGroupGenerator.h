@@ -1,9 +1,15 @@
-#pragma once
+#ifndef CRITTERGROUPGENERATOR_H
+#define CRITTERGROUPGENERATOR_H
+
 #include <list>
 #include "Critter.h"
-class CritterGroupGenerator
-{
+#include <SFML/Graphics.hpp>
+
+class CritterGroupGenerator {
 public:
-	static std::list<Critter> generateWaveCritters(int waveNumber);
+	static std::list<Critter> generateWaveCritters(int waveNumber, sf::Texture& texture);
 };
+
+#endif
+
 

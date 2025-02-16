@@ -12,6 +12,13 @@ int grid[ROWS][COLS]; // Define the grid here, not in map.h
 
 sf::Texture grassTextureMap, pathTextureMap, towerTextureMap;
 
+
+#include <vector>
+#include <SFML/System/Vector2.hpp>
+
+std::vector<sf::Vector2i> pathCells;
+
+
 void initializeMap() {
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
@@ -178,9 +185,12 @@ void displayMap() {
         sf::Event event;
 
         while (window.pollEvent(event)) {
+            
+            // closing the window
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
+            // Clicking the "Start Game" button
             else if (event.type == sf::Event::MouseButtonPressed) {
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
@@ -197,6 +207,7 @@ void displayMap() {
 
                     if (isValidMap()) {
                         window.close();  // Close map editor
+                        extractPath();
                         startGame();     // Start the game
                         return;          
                     }
@@ -254,6 +265,27 @@ void displayMap() {
         }
 
         window.display();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+// get the coordinates of the path (designed for the critters movement)
+void extractPath() {
+    pathCells.clear();
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            if (grid[i][j] == 1) {
+                pathCells.push_back(sf::Vector2i(j, i)); // Store column (x), row (y)
+            }
+        }
     }
 }
 

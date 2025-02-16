@@ -8,7 +8,7 @@ class DirectDamageTower : public Tower
 {
 public:
     DirectDamageTower();
-    void shoot(Critter &target) override;
+    void shoot(Critter& target) override;
 };
 
 // Derived AoETower class
@@ -16,7 +16,7 @@ class AoETower : public Tower
 {
 public:
     AoETower();
-    void shoot(Critter &target) override;
+    void shoot(Critter& target) override;
 };
 
 // Derived SlowingTower class
@@ -24,7 +24,7 @@ class SlowingTower : public Tower
 {
 public:
     SlowingTower();
-    void shoot(Critter &target) override;
+    void shoot(Critter& target) override;
 };
 
 #endif
