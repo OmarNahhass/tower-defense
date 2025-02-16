@@ -18,7 +18,7 @@ public:
 
     Critter(int lvl, sf::Texture& texture);
     bool takeDamage(int damage);
-    void move(float deltaTime, const std::vector<sf::Vector2i>& path); // Movement logic
+    void move(float deltaTime); // Movement logic
 };
 
 #endif

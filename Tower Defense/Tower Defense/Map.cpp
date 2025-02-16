@@ -8,7 +8,7 @@
 
 #include <queue>
 
-int grid[ROWS][COLS]; // Define the grid here, not in map.h
+int grid[COLS][ROWS]; // Define the grid here, not in map.h
 
 sf::Texture grassTextureMap, pathTextureMap, towerTextureMap;
 
@@ -20,8 +20,8 @@ std::vector<sf::Vector2i> pathCells;
 
 
 void initializeMap() {
-    for (int i = 0; i < ROWS; i++) {
-        for (int j = 0; j < COLS; j++) {
+    for (int i = 0; i < COLS; i++) {
+        for (int j = 0; j < ROWS; j++) {
             grid[i][j] = 0; // Default to grass (scenery)
         }
     }
@@ -34,11 +34,11 @@ bool isValidMap() {
     std::pair<int, int> exit = { -1, -1 };
 
     // Find entry and exit points (must be on edges)
-    for (int i = 0; i < ROWS; i++) {
-        for (int j = 0; j < COLS; j++) {
+    for (int i = 0; i < COLS; i++) {
+        for (int j = 0; j < ROWS; j++) {
             if (grid[i][j] == 1) {
                 // Check if it's on an edge
-                if (i == 0 || i == ROWS - 1 || j == 0 || j == COLS - 1) {
+                if (i == 0 || i == COLS - 1 || j == 0 || j == ROWS - 1) {
                     if (entry.first == -1) {
                         entry = { i, j };  // First edge path cell is the entry
                     }
@@ -62,7 +62,7 @@ bool isValidMap() {
 
     // BFS to check if there's a single connected path
     std::queue<std::pair<int, int>> queue;
-    bool visited[ROWS][COLS] = { false };
+    bool visited[COLS][ROWS] = { false };
 
     // start from entry cell
     queue.push(entry);
@@ -76,8 +76,8 @@ bool isValidMap() {
     // move left, right, up ,down
     int directions[4][2] = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
 
-    for (int i = 0; i < ROWS; i++)
-        for (int j = 0; j < COLS; j++)
+    for (int i = 0; i < COLS; i++)
+        for (int j = 0; j < ROWS; j++)
             if (grid[i][j] == 1) totalPathCells++;
 
     while (!queue.empty()) {
@@ -103,7 +103,7 @@ bool isValidMap() {
             // 2- a path 
             // 3- not visited
             // if the 3 conditions are met, mark the cell as visited and set it to current cell
-            if (newPositionX >= 0 && newPositionX < ROWS && newPositionY >= 0 && newPositionY < COLS && grid[newPositionX][newPositionY] == 1 && !visited[newPositionX][newPositionY]) {
+            if (newPositionX >= 0 && newPositionX < COLS && newPositionY >= 0 && newPositionY < ROWS && grid[newPositionX][newPositionY] == 1 && !visited[newPositionX][newPositionY]) {
                 visited[newPositionX][newPositionY] = true;
                 queue.push({ newPositionX, newPositionY });
             }
@@ -227,8 +227,8 @@ void displayMap() {
         window.clear();
 
         // Draw grid
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLS; j++) {
+        for (int i = 0; i < COLS; i++) {
+            for (int j = 0; j < ROWS; j++) {
                 sf::Sprite sprite;
                 sprite.setPosition(j * cellSize, i * cellSize);
 
@@ -277,16 +277,56 @@ void displayMap() {
 
 
 
-// get the coordinates of the path (designed for the critters movement)
+// perform BFS to extract the coordinates of the path (from entry to exit)
 void extractPath() {
     pathCells.clear();
-    for (int i = 0; i < ROWS; i++) {
-        for (int j = 0; j < COLS; j++) {
+
+    // Locate entry point
+    std::pair<int, int> entry = { -1, -1 };
+
+    for (int i = 0; i < COLS; i++) {
+        for (int j = 0; j < ROWS; j++) {
             if (grid[i][j] == 1) {
-                pathCells.push_back(sf::Vector2i(j, i)); // Store column (x), row (y)
+                if (i == 0 || i == COLS - 1 || j == 0 || j == ROWS - 1) {
+                    entry = { i, j };
+                    break;
+                }
+            }
+        }
+        if (entry.first != -1) break;
+    }
+
+    if (entry.first == -1) {
+        std::cout << "No valid entry point found.\n";
+        return;
+    }
+
+    std::queue<std::pair<int, int>> queue;
+    bool visited[COLS][ROWS] = { false };
+    queue.push(entry);
+    visited[entry.first][entry.second] = true;
+
+    // Move left, right, up, down
+    int directions[4][2] = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
+
+    while (!queue.empty()) {
+        std::pair<int, int> current = queue.front();
+        queue.pop();
+
+        int x = current.first, y = current.second;
+        pathCells.push_back(sf::Vector2i(y, x)); // Store (column, row)
+
+        for (int i = 0; i < 4; i++) {
+            int newX = x + directions[i][0], newY = y + directions[i][1];
+
+            if (newX >= 0 && newX < COLS && newY >= 0 && newY < ROWS &&
+                grid[newX][newY] == 1 && !visited[newX][newY]) {
+                visited[newX][newY] = true;
+                queue.push({ newX, newY });
             }
         }
     }
 }
+
 
 

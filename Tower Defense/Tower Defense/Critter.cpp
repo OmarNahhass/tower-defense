@@ -38,32 +38,31 @@ bool Critter::takeDamage(int damage) {
     }
 }
 
-void Critter::move(float deltaTime, const std::vector<sf::Vector2i>& path) {
-    if (pathIndex >= path.size() - 1) {
-        reachedExit = true;
+void Critter::move(float deltaTime) {
+    if (this->pathIndex >= pathCells.size() - 1) {
+        this->reachedExit = true;
         return;
     }
-
-    sf::Vector2f currentPos(path[pathIndex].x * 32, path[pathIndex].y * 32);
-    sf::Vector2f nextPos(path[pathIndex + 1].x * 32, path[pathIndex + 1].y * 32);
+    float cellSize = static_cast<float>(WINDOWSIZE) / ROWS;
+    sf::Vector2f currentPos(pathCells[this->pathIndex].x * cellSize, pathCells[this->pathIndex].y * cellSize);
+    sf::Vector2f nextPos(pathCells[this->pathIndex + 1].x * cellSize, pathCells[this->pathIndex + 1].y * cellSize);
 
     sf::Vector2f direction = nextPos - currentPos;
-    float distance = sqrt(direction.x * direction.x + direction.y * direction.y);
-    sf::Vector2f velocity = (direction / distance) * static_cast<float>(speed);
+    float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
+    if (distance > 0.0f) {
+        sf::Vector2f velocity = (direction / distance) * static_cast<float>(speed) * deltaTime;
+        sprite.move(velocity);
+        moveProgress += speed * deltaTime;
 
-    moveProgress += speed * deltaTime;
-
-    if (moveProgress >= distance) {
-        pathIndex++;
-        moveProgress = 0;
+        if (moveProgress >= distance) {
+            this->pathIndex++;
+            moveProgress = 0.0f;
+        }
     }
-
-    sprite.setPosition(
-        currentPos.x + direction.x * (moveProgress / distance),
-        currentPos.y + direction.y * (moveProgress / distance)
-    );
 }
+
+
 
 
 

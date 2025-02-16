@@ -16,19 +16,18 @@
 
 sf::Texture grassTextureGame, pathTextureGame, towerTextureGame, critterTexture;
 
-
 std::vector<Critter> critters; // List of active critters
-
-
-
 
 void spawnCritter() {
     critters.emplace_back(1, critterTexture); // Spawn a Level 1 critter
+    for (const auto& cell : pathCells) {
+        std::cout << "Path cell: (" << cell.x << ", " << cell.y << ")\n";
+    }
 }
 
 void updateCritters(float deltaTime) {
     for (auto& critter : critters) {
-        critter.move(deltaTime, pathCells);
+        critter.move(deltaTime); // No need to pass pathCells anymore
     }
 }
 
@@ -38,14 +37,13 @@ void drawCritters(sf::RenderWindow& window) {
     }
 }
 
-
 // using the custom map that the user defined earlier in map.cpp, display the final map in-game
 void displayGame(sf::RenderWindow& window) {
     int cellSize = WINDOWSIZE / ROWS;
 
     if (!towerTextureGame.loadFromFile("tower.png") ||
         !grassTextureGame.loadFromFile("grass_3.png") ||
-        !pathTextureGame.loadFromFile("path.png") || 
+        !pathTextureGame.loadFromFile("path.png") ||
         !critterTexture.loadFromFile("critter.jpg")) {
 
         std::cerr << "Failed to load texture!" << std::endl;
@@ -54,6 +52,7 @@ void displayGame(sf::RenderWindow& window) {
     window.clear(sf::Color::Black);
 
     sf::Clock clock;
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -103,5 +102,3 @@ void displayGame(sf::RenderWindow& window) {
         window.display();
     }
 }
-
-
