@@ -12,6 +12,8 @@ public:
     int hitPoints, reward, strength, speed, level;
     bool reachedExit;
 
+    sf::Vector2f getPosition() const;
+
     sf::Sprite sprite;  // Visual representation
     int pathIndex;      // Tracks movement along the path
     float moveProgress; // Fraction of movement between two points

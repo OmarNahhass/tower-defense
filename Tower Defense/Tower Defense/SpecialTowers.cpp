@@ -4,12 +4,20 @@
 
 #include <iostream>
 
-DirectDamageTower::DirectDamageTower() : Tower(100, 50, 3, 20, 2) {}
+// DirectDamageTower constructor
+DirectDamageTower::DirectDamageTower(int x, int y, sf::Texture& texture)
+    : Tower(x, y, 150, 75, 6, 30, 1, texture) { // Updated to match the new Tower constructor
+}
 
-// DirectDamageTower shoot method
-void DirectDamageTower::shoot(Critter& target)
-{
-    target.takeDamage(power); // Direct damage
+void DirectDamageTower::shoot(std::vector<Critter>& target, std::vector<sf::VertexArray>& lasers, float currentTime) {
+    std::cout << "Direct Damage Tower shooting at critter!\n";
+
+
+    for (auto& critter : target) {
+        critter.takeDamage(power);
+    }
+
+    //target.takeDamage(power);
 }
 
 // AoETower constructor - critter implementationS

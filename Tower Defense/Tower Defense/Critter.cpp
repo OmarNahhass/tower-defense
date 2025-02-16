@@ -22,6 +22,10 @@ Critter::Critter(int lvl, sf::Texture& texture) {
     sprite.setPosition(pathCells[0].x * cellSize, pathCells[0].y * cellSize); // Start at path's beginning
 }
 
+sf::Vector2f Critter::getPosition() const {
+    return sprite.getPosition();
+}
+
 
 /*
 * Method returns true if the critter is killed
