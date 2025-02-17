@@ -28,27 +28,43 @@ Tower::Tower(int x, int y, int cost, int refundValue, int range, int power, int 
 Tower::~Tower() {}
 
 // Shoot method implementation w/ cooldown
-void Tower::shoot(std::vector<Critter>& target, std::vector<sf::VertexArray>& lasers, float currentTime) {
-    for (auto& critter : target) {
-        float distance = std::hypot(critter.getPosition().x - position.x * 64,
-            critter.getPosition().y - position.y * 64);
+void Tower::shoot(std::vector<Critter>& critters, float currentTime) {
+    if (currentTime - lastShotTime < 1.0f / rateOfFire) return; // Enforce firing rate
 
-        if (distance <= range && (currentTime - lastShotTime >= 1.0f / rateOfFire)) {
-            critter.takeDamage(power);
+    int CELL_SIZE = WINDOWSIZE / ROWS;
+
+    for (auto& critter : critters) {
+        // Convert critter position from pixels to grid coordinates
+        int critterGridX = critter.getPosition().x / CELL_SIZE;
+        int critterGridY = critter.getPosition().y / CELL_SIZE;
+
+        // Calculate Euclidean distance in grid units
+        float dx = critterGridX - position.x;
+        float dy = critterGridY - position.y;
+        float distance = std::sqrt(dx * dx + dy * dy);
+
+        std::cerr << "Tower at (" << position.x << ", " << position.y
+            << ") checking critter at (" << critterGridX << ", " << critterGridY
+            << ") | Distance: " << distance << " | Range: " << range << std::endl;
+
+        if (distance <= range) {  
+            std::cerr << "SHOOT!" << std::endl;
             lastShotTime = currentTime;
-
-            // Create a laser beam
-            sf::VertexArray laser(sf::Lines, 2);
-            laser[0].position = sf::Vector2f(position.x * 64 + 32, position.y * 64 + 32);
-            laser[0].color = sf::Color::Red;
-            laser[1].position = critter.getPosition();
-            laser[1].color = sf::Color::Yellow;
-
-            lasers.push_back(laser);
-            break; // Shoot only one critter per frame
+            critter.takeDamage(power, currentTime);  // Store hit time
+            break;
+        }
+        else {
+            std::cerr << "NOT SHOOTING!" << std::endl;
         }
     }
+
+    // Remove dead critters after loop
+    critters.erase(std::remove_if(critters.begin(), critters.end(),
+        [](const Critter& c) { return c.hitPoints <= 0; }),
+        critters.end());
 }
+
+
 
 
 // Upgrade method implementation

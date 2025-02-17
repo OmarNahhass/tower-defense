@@ -37,7 +37,7 @@ void spawnTowers() {
     towers.clear(); // Clear old towers before spawning new ones
 
     for (const auto& pos : towerPositions) {
-        towers.emplace_back(pos.x, pos.y, 100, 50, 200, 20, 2, towerTextureGame);
+        towers.emplace_back(pos.x, pos.y, 100, 50, 5, 2, 1, towerTextureGame);
     }
 }
 
@@ -53,7 +53,7 @@ void updateTowers(float currentTime) {
     lasers.clear(); // Reset laser effects each frame
 
     for (auto& tower : towers) {
-        tower.shoot(critters, lasers, currentTime);
+        tower.shoot(critters, currentTime);
     }
 }
 
@@ -72,11 +72,26 @@ void drawLasers(sf::RenderWindow& window) {
 }
 
 // Draw critters
-void drawCritters(sf::RenderWindow& window) {
+void drawCritters(sf::RenderWindow& window, const std::vector<Critter>& critters, float currentTime) {
     for (const auto& critter : critters) {
-        window.draw(critter.sprite);
+        const sf::Sprite& sprite = critter.getSprite();  // Use a reference to avoid copying
+        window.draw(sprite);
+
+        if (critter.isHit(currentTime)) {  // Draw red border if recently hit
+            sf::RectangleShape border(sf::Vector2f(sprite.getGlobalBounds().width, sprite.getGlobalBounds().height));
+
+            // Align border correctly
+            border.setPosition(sprite.getGlobalBounds().left, sprite.getGlobalBounds().top);
+            border.setOutlineThickness(3);
+            border.setOutlineColor(sf::Color::Red);
+            border.setFillColor(sf::Color::Transparent);
+
+            window.draw(border);
+        }
     }
 }
+
+
 
 // Display the game
 void displayGame(sf::RenderWindow& window) {
@@ -92,7 +107,7 @@ void displayGame(sf::RenderWindow& window) {
     spawnTowers();         // Spawn towers at stored positions
 
     window.clear(sf::Color::Black);
-    sf::Clock clock;
+    sf::Clock clock, gameClock;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -102,7 +117,7 @@ void displayGame(sf::RenderWindow& window) {
         }
 
         float deltaTime = clock.restart().asSeconds();
-        float currentTime = clock.getElapsedTime().asSeconds();
+        float currentTime = gameClock.getElapsedTime().asSeconds();
 
         window.clear(sf::Color::Black);
 
@@ -148,7 +163,7 @@ void displayGame(sf::RenderWindow& window) {
         updateCritters(deltaTime);
         updateTowers(currentTime);
 
-        drawCritters(window);
+        drawCritters(window, critters, currentTime);
         drawTowers(window);
         drawLasers(window);
 

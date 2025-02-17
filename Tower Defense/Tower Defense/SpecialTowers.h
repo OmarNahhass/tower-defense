@@ -8,7 +8,7 @@ class DirectDamageTower : public Tower
 {
 public:
     DirectDamageTower(int x, int y, sf::Texture& texture);
-    void shoot(std::vector<Critter>& target, std::vector<sf::VertexArray>& lasers, float currentTime) override;
+    void shoot(std::vector<Critter>& target, float currentTime) override;
 };
 
 // Derived AoETower class
@@ -16,7 +16,7 @@ class AoETower : public Tower
 {
 public:
     AoETower();
-    void shoot(std::vector<Critter>& target, std::vector<sf::VertexArray>& lasers, float currentTime) override;
+    void shoot(std::vector<Critter>& target, float currentTime) override;
 };
 
 // Derived SlowingTower class
@@ -24,7 +24,7 @@ class SlowingTower : public Tower
 {
 public:
     SlowingTower();
-    void shoot(std::vector<Critter>& target, std::vector<sf::VertexArray>& lasers, float currentTime) override;
+    void shoot(std::vector<Critter>& target, float currentTime) override;
 };
 
 #endif

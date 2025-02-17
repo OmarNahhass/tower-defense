@@ -27,7 +27,7 @@ public:
     Tower(int x, int y, int cost, int refundValue, int range, int power, int rateOfFire, sf::Texture& texture);
     virtual ~Tower(); // Virtual destructor
 
-    virtual void shoot(std::vector<Critter>& target, std::vector<sf::VertexArray>& lasers, float currentTime);
+    virtual void shoot(std::vector<Critter>& target, float currentTime);
     void upgrade();
     int sell();
 };

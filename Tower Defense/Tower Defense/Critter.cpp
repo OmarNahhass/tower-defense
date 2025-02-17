@@ -2,6 +2,7 @@
 #include "Map.h"  // Needed for pathCells
 #include <iostream>
 
+
 Critter::Critter(int lvl, sf::Texture& texture) {
     hitPoints = lvl * 10;
     reward = lvl * 5;
@@ -11,6 +12,10 @@ Critter::Critter(int lvl, sf::Texture& texture) {
     reachedExit = false;
     pathIndex = 0;
     moveProgress = 0.0f;
+
+
+    hitTime = 0;  // Initialize hit time
+    hitDuration = 2.0f;  // Red border stays for 2s
 
     sprite.setTexture(texture);
 
@@ -30,8 +35,10 @@ sf::Vector2f Critter::getPosition() const {
 /*
 * Method returns true if the critter is killed
 */
-bool Critter::takeDamage(int damage) {
+bool Critter::takeDamage(int damage, float currentTime) {
     hitPoints -= damage;
+    hitTime = currentTime;
+
     if (hitPoints <= 0) {
         std::cout << "Critter killed! Player earns " << reward << " coins.\n";
         return true;
@@ -40,6 +47,11 @@ bool Critter::takeDamage(int damage) {
         std::cout << "Critter took " << damage << " damage, remaining health: " << hitPoints << "\n";
         return false;
     }
+}
+
+// Check if critter is still in "hit" state (for red border effect)
+bool Critter::isHit(float currentTime) const {
+    return (currentTime - hitTime) <= hitDuration;
 }
 
 void Critter::move(float deltaTime) {
