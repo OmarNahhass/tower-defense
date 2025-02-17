@@ -4,11 +4,14 @@
 #include <cmath>
 
 
-Tower::Tower(int x, int y, int cost, int refundValue, int range, int power, int rateOfFire, sf::Texture& texture)
+Tower::Tower(int x, int y, int cost, int refundValue, int range, int power, float rateOfFire, sf::Texture& texture)
     : position(x, y), cost(cost), refundValue(refundValue), range(range),
     power(power), rateOfFire(rateOfFire), level(1), lastShotTime(0) {
 
     sprite.setTexture(texture);
+
+    std::cerr << "Tower constructed | Object Address: " << this << std::endl;
+
 
     // Calculate cell size based on the grid
     int cellSize = WINDOWSIZE / ROWS;
@@ -29,7 +32,7 @@ Tower::~Tower() {}
 
 // Shoot method implementation w/ cooldown
 void Tower::shoot(std::vector<Critter>& critters, float currentTime) {
-    if (currentTime - lastShotTime < 1.0f / rateOfFire) return; // Enforce firing rate
+    if (currentTime - lastShotTime < (1.0f / rateOfFire)) return; // Enforce firing rate
 
     int CELL_SIZE = WINDOWSIZE / ROWS;
 

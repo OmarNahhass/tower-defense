@@ -11,7 +11,7 @@ DirectDamageTower::DirectDamageTower(int x, int y, sf::Texture& texture)
 }
 
 void DirectDamageTower::shoot(std::vector<Critter>& critters, float currentTime) {
-    if (currentTime - lastShotTime < 1.0f / rateOfFire) return;  // Enforce firing rate
+    if (currentTime - lastShotTime < (1.0f / rateOfFire)) return;  // Enforce firing rate
 
     for (auto& critter : critters) {
         // Convert critter position from pixels to grid coordinates
@@ -23,6 +23,7 @@ void DirectDamageTower::shoot(std::vector<Critter>& critters, float currentTime)
         float distance = std::sqrt(dx * dx + dy * dy);
 
         if (distance <= range) {  // Check if within tower range
+            std::cout << "Direct Damage Tower hitting critter!\n";
             std::cout << "Direct Damage Tower hitting critter!\n";
             critter.takeDamage(power, currentTime);
             critter.setHitTime(currentTime);  // Mark as recently hit for red border effect

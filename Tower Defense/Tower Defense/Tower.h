@@ -24,7 +24,7 @@ public:
     sf::Sprite sprite; // Tower sprite
 
 
-    Tower(int x, int y, int cost, int refundValue, int range, int power, int rateOfFire, sf::Texture& texture);
+    Tower(int x, int y, int cost, int refundValue, int range, int power, float rateOfFire, sf::Texture& texture);
     virtual ~Tower(); // Virtual destructor
 
     virtual void shoot(std::vector<Critter>& target, float currentTime);

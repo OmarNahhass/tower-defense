@@ -15,7 +15,7 @@ Critter::Critter(int lvl, sf::Texture& texture) {
 
 
     hitTime = 0;  // Initialize hit time
-    hitDuration = 2.0f;  // Red border stays for 2s
+    hitDuration = 1.0f;  // Red border stays for 2s
 
     sprite.setTexture(texture);
 
