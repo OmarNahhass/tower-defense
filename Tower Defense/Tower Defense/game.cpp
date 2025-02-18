@@ -8,16 +8,16 @@
 #include <vector>
 #include "CritterGroupGenerator.h"
 
+// images for grass, path, towers, and critters
 sf::Texture grassTextureGame, pathTextureGame, towerTextureGame, critterTexture;
 
 std::vector<Critter> critters;  // List of critters
 std::vector<Tower> towers;      // List of towers
-std::vector<sf::VertexArray> lasers; // Active lasers
 
 std::vector<sf::Vector2i> towerPositions;
 
 
-std::vector<Critter> activeCritters;  // Change from vector to list for easy removal
+std::vector<Critter> activeCritters; 
 int currentWave = 1;                // Track the current wave
 bool waitingForNextWave = false;    // Indicates if we are waiting to start a new wave
 float waveDelayTimer = 0.0f;        // Timer for delay between waves
@@ -37,10 +37,10 @@ void spawnCritter() {
 void storeTowerPositions() {
     towerPositions.clear(); // Reset before scanning
 
-    for (int j = 0; j < COLS; j++) {  // Column first
-        for (int i = 0; i < ROWS; i++) {  // Then row
-            if (grid[i][j] == 2) { // Tower cell
-                towerPositions.emplace_back(j, i); // Store (x, y) correctly
+    for (int j = 0; j < COLS; j++) {  // 
+        for (int i = 0; i < ROWS; i++) {  
+            if (grid[i][j] == 2) { // 
+                towerPositions.emplace_back(j, i); // Store cell coordinates correctly
             }
         }
     }
@@ -75,13 +75,13 @@ void updateTowers(float currentTime) {
 // Draw critters
 void drawCritters(sf::RenderWindow& window, const std::vector<Critter>& critters, float currentTime) {
     for (const auto& critter : critters) {
-        const sf::Sprite& sprite = critter.getSprite();  // Use a reference to avoid copying
+        const sf::Sprite& sprite = critter.getSprite();
         window.draw(sprite);
 
         if (critter.isHit(currentTime)) {  // Draw red border if recently hit
             sf::RectangleShape border(sf::Vector2f(sprite.getGlobalBounds().width, sprite.getGlobalBounds().height));
 
-            // Align border correctly
+            // Red border for when a critter gets hit
             border.setPosition(sprite.getGlobalBounds().left, sprite.getGlobalBounds().top);
             border.setOutlineThickness(3);
             border.setOutlineColor(sf::Color::Red);
@@ -94,7 +94,7 @@ void drawCritters(sf::RenderWindow& window, const std::vector<Critter>& critters
 
 
 void spawnWave() {
-    std::cerr << "Spawning wave " << currentWave << std::endl;
+    std::cerr << "Starting wave " << currentWave << std::endl;
 
     activeCritters.clear();   // Clear old critters
     spawnQueue.clear();       // Reset spawn queue
@@ -117,7 +117,7 @@ void updateWave(float deltaTime, float currentTime) {
         waveDelayTimer = 0.0f;
     }
 
-    // Wait for 10 seconds before spawning the next wave
+    // Wait for 10 seconds before starting the next wave
     if (waitingForNextWave) {
         waveDelayTimer += deltaTime;
         int timeRemaining = 10 - static_cast<int>(waveDelayTimer); // Convert to integer seconds
@@ -134,7 +134,7 @@ void updateWave(float deltaTime, float currentTime) {
     // Spawn critters every 5 seconds
     critterSpawnTimer += deltaTime;
     if (!spawnQueue.empty() && critterSpawnTimer >= 5.0f) {
-        activeCritters.push_back(spawnQueue.front());  // Add one critter to active list
+        activeCritters.push_back(spawnQueue.front());  // Add one critter to activeCritters list
         spawnQueue.erase(spawnQueue.begin());         // Remove it from the queue
         critterSpawnTimer = 0.0f;  // Reset timer
     }
@@ -157,10 +157,10 @@ void updateCritters(float deltaTime, float currentTime) {
 }
 
 
-// Game loop modification
+// Main Game Loop
 void displayGame(sf::RenderWindow& window) {
 
-    // load a font to display messages
+    // load font
     sf::Font font;
     if (!font.loadFromFile("arial.ttf")) {
         std::cerr << "Failed to load font!" << std::endl;
@@ -179,7 +179,7 @@ void displayGame(sf::RenderWindow& window) {
         return; // Stop execution if textures fail to load
     }
 
-    storeTowerPositions(); // Get tower positions first!
+    storeTowerPositions(); // Get tower positions 
     spawnTowers();         // Now spawn towers
     spawnWave(); // Start first wave
 
@@ -223,6 +223,7 @@ void displayGame(sf::RenderWindow& window) {
             }
         }
 
+        // display information about the wave
         sf::Text waveMessage;
         waveMessage.setFont(font);
         waveMessage.setCharacterSize(24);

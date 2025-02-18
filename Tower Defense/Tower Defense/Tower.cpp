@@ -4,13 +4,11 @@
 #include <cmath>
 
 
-Tower::Tower(int x, int y, int cost, int refundValue, int range, int power, float rateOfFire, sf::Texture& texture)
+Tower::Tower(int x, int y, int cost, int refundValue, int range, int powerAmount, float rateOfFire, sf::Texture& texture)
     : position(x, y), cost(cost), refundValue(refundValue), range(range),
-    power(power), rateOfFire(rateOfFire), level(1), lastShotTime(0) {
+    power(powerAmount), rateOfFire(rateOfFire), level(1), lastShotTime(0) {
 
     sprite.setTexture(texture);
-
-    std::cerr << "Tower constructed | Object Address: " << this << std::endl;
 
 
     // Calculate cell size based on the grid
@@ -47,18 +45,18 @@ void Tower::shoot(std::vector<Critter>& critters, float currentTime) {
         float dy = critterGridY - position.y;
         float distance = std::sqrt(dx * dx + dy * dy);
 
-        std::cerr << "Tower at (" << position.x << ", " << position.y
+        /*std::cerr << "Tower at (" << position.x << ", " << position.y
             << ") checking critter at (" << critterGridX << ", " << critterGridY
-            << ") | Distance: " << distance << " | Range: " << range << std::endl;
+            << ") | Distance: " << distance << " | Range: " << range << std::endl;*/
 
         if (distance <= range) {  
-            std::cerr << "SHOOT!" << std::endl;
+            //std::cerr << "SHOOT!" << std::endl;
             lastShotTime = currentTime;
             critter.takeDamage(power, currentTime);  // Store hit time
             break;
         }
         else {
-            std::cerr << "NOT SHOOTING!" << std::endl;
+            //std::cerr << "NOT SHOOTING!" << std::endl;
         }
     }
 
