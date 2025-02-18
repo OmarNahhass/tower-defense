@@ -120,11 +120,16 @@ void updateWave(float deltaTime, float currentTime) {
     // Wait for 10 seconds before spawning the next wave
     if (waitingForNextWave) {
         waveDelayTimer += deltaTime;
+        int timeRemaining = 10 - static_cast<int>(waveDelayTimer); // Convert to integer seconds
+
+        std::cerr << "Wave ended. Next wave in " << timeRemaining << " seconds." << std::endl;
+
         if (waveDelayTimer >= 10.0f) {  // 10-second delay
             currentWave++;
             spawnWave();
         }
     }
+
 
     // Spawn critters every 5 seconds
     critterSpawnTimer += deltaTime;
@@ -154,6 +159,16 @@ void updateCritters(float deltaTime, float currentTime) {
 
 // Game loop modification
 void displayGame(sf::RenderWindow& window) {
+
+    // load a font to display messages
+    sf::Font font;
+    if (!font.loadFromFile("arial.ttf")) {
+        std::cerr << "Failed to load font!" << std::endl;
+        return;
+    }
+
+
+
     // Load textures and initialize the first wave
     if (!towerTextureGame.loadFromFile("tower.png") ||
         !grassTextureGame.loadFromFile("grass_3.png") ||
@@ -207,6 +222,20 @@ void displayGame(sf::RenderWindow& window) {
                 window.draw(sprite);
             }
         }
+
+        sf::Text waveMessage;
+        waveMessage.setFont(font);
+        waveMessage.setCharacterSize(24);
+        waveMessage.setFillColor(sf::Color::White);
+        waveMessage.setPosition(20, 20); // Adjust position on screen
+
+        if (waitingForNextWave) {
+            int timeRemaining = 10 - static_cast<int>(waveDelayTimer);
+            waveMessage.setString("Wave ended. Next wave in " + std::to_string(timeRemaining) + " seconds");
+            window.draw(waveMessage);
+        }
+
+
 
         // Update game logic
         updateWave(deltaTime, currentTime);
