@@ -1,12 +1,11 @@
 #include "CritterGroupGenerator.h"
 
-std::list<Critter> CritterGroupGenerator::generateWaveCritters(int waveNumber, sf::Texture& texture) {
-    std::list<Critter> crittersWave;
-    int minLevel = waveNumber;
+std::vector<Critter> CritterGroupGenerator::generateWaveCritters(int waveNumber, sf::Texture& texture) {
+    std::vector<Critter> crittersWave;
+    crittersWave.reserve(10); // Reserve space to avoid reallocations
 
-    for (int i = 0; i < waveNumber + 3; i++) {
-        int critterLevel = minLevel + (i % 3); // Varied levels
-        crittersWave.emplace_back(critterLevel, texture); // Pass texture to Critter
+    for (int i = 0; i < 10; i++) {
+        crittersWave.emplace_back(waveNumber, texture);
     }
 
     return crittersWave;

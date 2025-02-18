@@ -37,6 +37,7 @@ void Tower::shoot(std::vector<Critter>& critters, float currentTime) {
     int CELL_SIZE = WINDOWSIZE / ROWS;
 
     for (auto& critter : critters) {
+     
         // Convert critter position from pixels to grid coordinates
         int critterGridX = critter.getPosition().x / CELL_SIZE;
         int critterGridY = critter.getPosition().y / CELL_SIZE;

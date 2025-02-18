@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+#include "CritterGroupGenerator.h"
 
 sf::Texture grassTextureGame, pathTextureGame, towerTextureGame, critterTexture;
 
@@ -16,8 +17,21 @@ std::vector<sf::VertexArray> lasers; // Active lasers
 std::vector<sf::Vector2i> towerPositions;
 
 
+std::vector<Critter> activeCritters;  // Change from vector to list for easy removal
+int currentWave = 1;                // Track the current wave
+bool waitingForNextWave = false;    // Indicates if we are waiting to start a new wave
+float waveDelayTimer = 0.0f;        // Timer for delay between waves
+
+std::vector<Critter> spawnQueue;  // Queue of critters waiting to be spawned
+float critterSpawnTimer = 0.0f;   // Timer to control spawning intervals
+int crittersSpawned = 0;          // Track number of critters spawned in current wave
+
+
+
+
 void spawnCritter() {
-    critters.emplace_back(1, critterTexture);
+    critters.emplace_back(currentWave, critterTexture);
+    std::cerr << "Spawned a critter! Current size: " << critters.size() << std::endl;
 }
 
 void storeTowerPositions() {
@@ -33,6 +47,7 @@ void storeTowerPositions() {
 }
 
 
+// spawn towners at their corresponding location on the map
 void spawnTowers() {
     towers.clear(); // Clear old towers before spawning new ones
 
@@ -42,21 +57,6 @@ void spawnTowers() {
 }
 
 
-void updateCritters(float deltaTime) {
-    for (auto& critter : critters) {
-        critter.move(deltaTime);
-    }
-}
-
-// Update towers to shoot at critters
-void updateTowers(float currentTime) {
-    lasers.clear(); // Reset laser effects each frame
-
-    for (auto& tower : towers) {
-        tower.shoot(critters, currentTime);
-    }
-}
-
 // Draw towers
 void drawTowers(sf::RenderWindow& window) {
     for (const auto& tower : towers) {
@@ -64,12 +64,13 @@ void drawTowers(sf::RenderWindow& window) {
     }
 }
 
-// Draw lasers
-void drawLasers(sf::RenderWindow& window) {
-    for (const auto& laser : lasers) {
-        window.draw(laser);
+// Update towers to shoot at critters
+void updateTowers(float currentTime) {
+    for (auto& tower : towers) {
+        tower.shoot(activeCritters, currentTime);
     }
 }
+
 
 // Draw critters
 void drawCritters(sf::RenderWindow& window, const std::vector<Critter>& critters, float currentTime) {
@@ -92,21 +93,81 @@ void drawCritters(sf::RenderWindow& window, const std::vector<Critter>& critters
 }
 
 
+void spawnWave() {
+    std::cerr << "Spawning wave " << currentWave << std::endl;
 
-// Display the game
+    activeCritters.clear();   // Clear old critters
+    spawnQueue.clear();       // Reset spawn queue
+
+    // Generate 10 critters and store them in the spawn queue
+    spawnQueue = CritterGroupGenerator::generateWaveCritters(currentWave, critterTexture);
+
+    crittersSpawned = 0;       // Reset spawn count
+    critterSpawnTimer = 0.0f;  // Reset spawn timer
+    waitingForNextWave = false;
+}
+
+
+
+void updateWave(float deltaTime, float currentTime) {
+    // Check if the wave is completed
+    if (spawnQueue.empty() && activeCritters.empty() && !waitingForNextWave) {
+        std::cerr << "Wave " << currentWave << " cleared! Starting countdown for next wave...\n";
+        waitingForNextWave = true;
+        waveDelayTimer = 0.0f;
+    }
+
+    // Wait for 10 seconds before spawning the next wave
+    if (waitingForNextWave) {
+        waveDelayTimer += deltaTime;
+        if (waveDelayTimer >= 10.0f) {  // 10-second delay
+            currentWave++;
+            spawnWave();
+        }
+    }
+
+    // Spawn critters every 5 seconds
+    critterSpawnTimer += deltaTime;
+    if (!spawnQueue.empty() && critterSpawnTimer >= 5.0f) {
+        activeCritters.push_back(spawnQueue.front());  // Add one critter to active list
+        spawnQueue.erase(spawnQueue.begin());         // Remove it from the queue
+        critterSpawnTimer = 0.0f;  // Reset timer
+    }
+}
+
+
+
+// Update critters movement and remove dead ones
+void updateCritters(float deltaTime, float currentTime) {
+    for (auto critter = activeCritters.begin(); critter != activeCritters.end();) {
+        critter->move(deltaTime);
+
+        if (critter->takeDamage(0, currentTime)) { // Remove if dead
+            critter = activeCritters.erase(critter);
+        }
+        else {
+            ++critter;
+        }
+    }
+}
+
+
+// Game loop modification
 void displayGame(sf::RenderWindow& window) {
+    // Load textures and initialize the first wave
     if (!towerTextureGame.loadFromFile("tower.png") ||
         !grassTextureGame.loadFromFile("grass_3.png") ||
         !pathTextureGame.loadFromFile("path.png") ||
         !critterTexture.loadFromFile("critter.jpg")) {
 
         std::cerr << "Failed to load texture!" << std::endl;
+        return; // Stop execution if textures fail to load
     }
 
-    storeTowerPositions(); // Store all tower positions before spawning
-    spawnTowers();         // Spawn towers at stored positions
+    storeTowerPositions(); // Get tower positions first!
+    spawnTowers();         // Now spawn towers
+    spawnWave(); // Start first wave
 
-    window.clear(sf::Color::Black);
     sf::Clock clock, gameClock;
 
     while (window.isOpen()) {
@@ -119,19 +180,16 @@ void displayGame(sf::RenderWindow& window) {
         float deltaTime = clock.restart().asSeconds();
         float currentTime = gameClock.getElapsedTime().asSeconds();
 
+        // Clear screen at the beginning of the loop
         window.clear(sf::Color::Black);
-
 
         // Draw the grid
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
                 sf::Sprite sprite;
-
-                // Corrected positioning (column = x, row = y)
                 int cellSize = WINDOWSIZE / ROWS;
                 sprite.setPosition(j * cellSize, i * cellSize);
 
-                // Assign the correct texture
                 if (grid[i][j] == 0) {
                     sprite.setTexture(grassTextureGame);
                 }
@@ -139,7 +197,6 @@ void displayGame(sf::RenderWindow& window) {
                     sprite.setTexture(pathTextureGame);
                 }
 
-                // Ensure texture is set before calling getSize()
                 if (sprite.getTexture() != nullptr) {
                     sprite.setScale(
                         static_cast<float>(cellSize) / sprite.getTexture()->getSize().x,
@@ -151,23 +208,18 @@ void displayGame(sf::RenderWindow& window) {
             }
         }
 
-
-        // Spawn critters every 5 seconds
-        static float spawnTimer = 0.0f;
-        spawnTimer += deltaTime;
-        if (spawnTimer >= 5.0f) {
-            spawnTimer = 0.0f;
-            spawnCritter();
-        }
-
-        updateCritters(deltaTime);
+        // Update game logic
+        updateWave(deltaTime, currentTime);
+        updateCritters(deltaTime, currentTime);
         updateTowers(currentTime);
 
-        drawCritters(window, critters, currentTime);
+        // Draw game objects
+        drawCritters(window, activeCritters, currentTime); 
         drawTowers(window);
-        drawLasers(window);
 
-        window.display();
+        window.display(); 
     }
 }
+
+
 

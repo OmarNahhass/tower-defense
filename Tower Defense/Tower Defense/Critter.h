@@ -13,6 +13,10 @@ private:
     float lastHitTime = -2.0f;
 
 public:
+    // lvl = wave number
+    Critter(int lvl, sf::Texture& texture);
+
+
     int hitPoints, reward, strength, speed, level;
     bool reachedExit;
 
@@ -27,7 +31,7 @@ public:
     int pathIndex;      // Tracks movement along the path
     float moveProgress; // Fraction of movement between two points
 
-    Critter(int lvl, sf::Texture& texture);
+
     bool takeDamage(int damage, float currentTime);
 
     void setHitTime(float time) { lastHitTime = time; }

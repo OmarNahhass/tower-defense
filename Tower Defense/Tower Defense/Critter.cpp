@@ -15,7 +15,7 @@ Critter::Critter(int lvl, sf::Texture& texture) {
 
 
     hitTime = 0;  // Initialize hit time
-    hitDuration = 1.0f;  // Red border stays for 2s
+    hitDuration = 1.0f;  // Red border stays for 1s
 
     sprite.setTexture(texture);
 
@@ -36,18 +36,21 @@ sf::Vector2f Critter::getPosition() const {
 * Method returns true if the critter is killed
 */
 bool Critter::takeDamage(int damage, float currentTime) {
-    hitPoints -= damage;
-    hitTime = currentTime;
+    if (damage > 0) {  // Only update when actually hit
+        hitPoints -= damage;
+        hitTime = currentTime;
+        std::cout << "Critter took damage " << "\n";
+    }
 
     if (hitPoints <= 0) {
         std::cout << "Critter killed! Player earns " << reward << " coins.\n";
         return true;
     }
-    else {
-        std::cout << "Critter took " << damage << " damage, remaining health: " << hitPoints << "\n";
-        return false;
-    }
+
+    std::cout << "Critter took " << damage << " damage, remaining health: " << hitPoints << "\n";
+    return false;
 }
+
 
 // Check if critter is still in "hit" state (for red border effect)
 bool Critter::isHit(float currentTime) const {

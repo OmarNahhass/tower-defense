@@ -7,7 +7,7 @@
 
 class CritterGroupGenerator {
 public:
-	static std::list<Critter> generateWaveCritters(int waveNumber, sf::Texture& texture);
+	static std::vector<Critter> generateWaveCritters(int waveNumber, sf::Texture& texture);
 };
 
 #endif
