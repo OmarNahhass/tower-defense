@@ -2,11 +2,13 @@
 #include "map.h"
 #include "Critter.h"
 #include "Tower.h"
+#include "CritterGroupGenerator.h"
+
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
-#include "CritterGroupGenerator.h"
+
 
 // images for grass, path, towers, and critters
 sf::Texture grassTextureGame, pathTextureGame, towerTextureGame, critterTexture;
@@ -18,7 +20,7 @@ std::vector<sf::Vector2i> towerPositions;
 
 
 std::vector<Critter> activeCritters; 
-int currentWave = 1;                // Track the current wave
+int currentWave = 1;
 bool waitingForNextWave = false;    // Indicates if we are waiting to start a new wave
 float waveDelayTimer = 0.0f;        // Timer for delay between waves
 
@@ -93,7 +95,7 @@ void drawCritters(sf::RenderWindow& window, const std::vector<Critter>& critters
 }
 
 
-void spawnWave() {
+void startWave() {
     std::cerr << "Starting wave " << currentWave << std::endl;
 
     activeCritters.clear();   // Clear old critters
@@ -124,9 +126,11 @@ void updateWave(float deltaTime, float currentTime) {
 
         std::cerr << "Wave ended. Next wave in " << timeRemaining << " seconds." << std::endl;
 
+
+        // start next wave
         if (waveDelayTimer >= 10.0f) {  // 10-second delay
             currentWave++;
-            spawnWave();
+            startWave();
         }
     }
 
@@ -181,7 +185,7 @@ void displayGame(sf::RenderWindow& window) {
 
     storeTowerPositions(); // Get tower positions 
     spawnTowers();         // Now spawn towers
-    spawnWave(); // Start first wave
+    startWave();           // Start first wave
 
     sf::Clock clock, gameClock;
 

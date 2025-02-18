@@ -92,7 +92,7 @@ bool isValidMap() {
             return true; 
         }
 
-        // check all adjacent cells from the current cell
+        // check all adjacent cells 
         for (int i = 0; i < 4; i++) {
 
             // move another direction
