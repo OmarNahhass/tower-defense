@@ -7,31 +7,63 @@
 
 // DirectDamageTower constructor
 DirectDamageTower::DirectDamageTower(int x, int y, sf::Texture& texture)
-    : Tower(x, y, 150, 75, 6, 30, 1, texture) { // Updated to match the new Tower constructor
+    : Tower(x, y, 100, 50, 5, 2, 1, texture) { // Updated to match the new Tower constructor
 }
 
 void DirectDamageTower::shoot(std::vector<Critter>& critters, float currentTime) {
-    if (currentTime - lastShotTime < (1.0f / rateOfFire)) return;  // Enforce firing rate
+    if (currentTime - lastShotTime < (1.0f / rateOfFire)) return; // Enforce firing rate
+
+    int CELL_SIZE = WINDOWSIZE / ROWS;
 
     for (auto& critter : critters) {
-        // Convert critter position from pixels to grid coordinates
-        int critterGridX = critter.getPosition().x / (WINDOWSIZE / ROWS);
-        int critterGridY = critter.getPosition().y / (WINDOWSIZE / COLS);
 
+        // Convert critter position from pixels to grid coordinates
+        int critterGridX = critter.getPosition().x / CELL_SIZE;
+        int critterGridY = critter.getPosition().y / CELL_SIZE;
+
+        // Calculate Euclidean distance in grid units
         float dx = critterGridX - position.x;
         float dy = critterGridY - position.y;
         float distance = std::sqrt(dx * dx + dy * dy);
 
-        if (distance <= range) {  // Check if within tower range
-            std::cout << "Direct Damage Tower hitting critter!\n";
-            std::cout << "Direct Damage Tower hitting critter!\n";
-            critter.takeDamage(power, currentTime);
-            critter.setHitTime(currentTime);  // Mark as recently hit for red border effect
+        /*std::cerr << "Tower at (" << position.x << ", " << position.y
+            << ") checking critter at (" << critterGridX << ", " << critterGridY
+            << ") | Distance: " << distance << " | Range: " << range << std::endl;*/
+
+        if (distance <= range) {
+            //std::cerr << "SHOOT!" << std::endl;
+            lastShotTime = currentTime;
+            critter.takeDamage(power, currentTime);  // Store hit time
+            break;
+        }
+        else {
+            //std::cerr << "NOT SHOOTING!" << std::endl;
         }
     }
 
-    lastShotTime = currentTime;  // Update shot timer
+    // Remove dead critters after loop
+    critters.erase(std::remove_if(critters.begin(), critters.end(),
+        [](const Critter& c) { return c.hitPoints <= 0; }),
+        critters.end());
 }
+
+
+
+SlowingTower::SlowingTower(int x, int y, sf::Texture& texture) 
+    : Tower(x, y, 200, 100, 4, 10, 1, texture) {
+}
+
+// SlowingTower shoot method
+void SlowingTower::shoot(std::vector<Critter>& critters, float currentTime)
+{
+    for (auto& critter : critters) {
+        critter.takeDamage(power, currentTime);
+        //critter.slowDown();
+    }
+}
+
+
+
 
 // AoETower constructor - critter implementationS
 // 
@@ -59,13 +91,4 @@ void DirectDamageTower::shoot(std::vector<Critter>& critters, float currentTime)
 //            nearbyCritter->takeDamage(power / 2); // Example: Deal half damage to nearby critters
 //        }
 //    }
-//}
-//
-//SlowingTower::SlowingTower() : Tower(200, 100, 4, 10, 1) {}
-//
-//// SlowingTower shoot method
-//void SlowingTower::shoot(Critter& target)
-//{
-//    target.takeDamage(power);
-//    target.slowDown();
 //}

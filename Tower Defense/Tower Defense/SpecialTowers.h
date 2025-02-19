@@ -15,7 +15,7 @@ public:
 class AoETower : public Tower
 {
 public:
-    AoETower();
+    AoETower(int x, int y, sf::Texture& texture);
     void shoot(std::vector<Critter>& target, float currentTime) override;
 };
 
@@ -23,7 +23,7 @@ public:
 class SlowingTower : public Tower
 {
 public:
-    SlowingTower();
+    SlowingTower(int x, int y, sf::Texture& texture);
     void shoot(std::vector<Critter>& target, float currentTime) override;
 };
 

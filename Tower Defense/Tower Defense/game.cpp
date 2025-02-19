@@ -3,6 +3,7 @@
 #include "Critter.h"
 #include "Tower.h"
 #include "CritterGroupGenerator.h"
+#include "SpecialTowers.h"
 
 
 #include <SFML/Graphics.hpp>
@@ -11,7 +12,7 @@
 
 
 // images for grass, path, towers, and critters
-sf::Texture grassTextureGame, pathTextureGame, towerTextureGame, critterTexture;
+sf::Texture grassTextureGame, pathTextureGame, damageTowerTextureGame, critterTexture;
 
 std::vector<Critter> critters;  // List of critters
 std::vector<Tower> towers;      // List of towers
@@ -54,7 +55,7 @@ void spawnTowers() {
     towers.clear(); // Clear old towers before spawning new ones
 
     for (const auto& pos : towerPositions) {
-        towers.emplace_back(pos.x, pos.y, 100, 50, 5, 2, 1, towerTextureGame);
+        towers.emplace_back(DirectDamageTower(pos.x, pos.y, damageTowerTextureGame));
     }
 }
 
@@ -174,7 +175,7 @@ void displayGame(sf::RenderWindow& window) {
 
 
     // Load textures and initialize the first wave
-    if (!towerTextureGame.loadFromFile("tower.png") ||
+    if (!damageTowerTextureGame.loadFromFile("tower.png") ||
         !grassTextureGame.loadFromFile("grass_3.png") ||
         !pathTextureGame.loadFromFile("path.png") ||
         !critterTexture.loadFromFile("critter.jpg")) {
