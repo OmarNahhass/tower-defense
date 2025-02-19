@@ -50,7 +50,7 @@ void DirectDamageTower::shoot(std::vector<Critter>& critters, float currentTime)
 
 
 SlowingTower::SlowingTower(int x, int y, sf::Texture& texture) 
-    : Tower(x, y, 200, 100, 4, 10, 1, texture) {
+    : Tower(x, y, 150, 125, 2, 0, 1, texture) {
 }
 
 // SlowingTower shoot method
