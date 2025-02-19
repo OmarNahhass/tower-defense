@@ -17,7 +17,7 @@ sf::Texture grassTextureGame, pathTextureGame, damageTowerTextureGame, critterTe
 std::vector<Critter> critters;  // List of critters
 std::vector<Tower> towers;      // List of towers
 
-std::vector<sf::Vector2i> towerPositions;
+std::vector<sf::Vector2i> directDamageTowerPositions;
 
 
 std::vector<Critter> activeCritters; 
@@ -38,12 +38,12 @@ void spawnCritter() {
 }
 
 void storeTowerPositions() {
-    towerPositions.clear(); // Reset before scanning
+    directDamageTowerPositions.clear(); // Reset before scanning
 
     for (int j = 0; j < COLS; j++) {  // 
         for (int i = 0; i < ROWS; i++) {  
             if (grid[i][j] == 2) { // 
-                towerPositions.emplace_back(j, i); // Store cell coordinates correctly
+                directDamageTowerPositions.emplace_back(j, i); // Store cell coordinates correctly
             }
         }
     }
@@ -54,7 +54,7 @@ void storeTowerPositions() {
 void spawnTowers() {
     towers.clear(); // Clear old towers before spawning new ones
 
-    for (const auto& pos : towerPositions) {
+    for (const auto& pos : directDamageTowerPositions) {
         towers.emplace_back(DirectDamageTower(pos.x, pos.y, damageTowerTextureGame));
     }
 }

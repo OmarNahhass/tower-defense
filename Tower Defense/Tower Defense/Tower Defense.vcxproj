@@ -138,6 +138,7 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="NextWave.cpp" />
     <ClCompile Include="SpecialTowers.cpp" />
     <ClCompile Include="Tower.cpp" />
   </ItemGroup>
@@ -146,6 +147,7 @@
     <ClInclude Include="CritterGroupGenerator.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="NextWave.h" />
     <ClInclude Include="SpecialTowers.h" />
     <ClInclude Include="Tower.h" />
   </ItemGroup>
