@@ -10,6 +10,8 @@
 
 int grid[COLS][ROWS]; // Define the grid here, not in map.h
 
+int numberOfTowers = 0;
+
 sf::Texture grassTextureMap, pathTextureMap, towerTextureMap;
 
 
@@ -60,6 +62,11 @@ bool isValidMap() {
         return false;
     }
 
+    if (numberOfTowers == 0) {
+        std::cout << "Invalid map: There should be at least 1 tower in the game.\n";
+        return false;
+    }
+
     // BFS to check if there's a single connected path
     std::queue<std::pair<int, int>> queue;
     bool visited[COLS][ROWS] = { false };
@@ -88,7 +95,7 @@ bool isValidMap() {
 
 
         // Exit found
-        if (currentPositionX == exit.first && currentPositionY == exit.second) {
+        if (currentPositionX == exit.first && currentPositionY == exit.second && numberOfTowers >= 1) {
             return true; 
         }
 
@@ -121,10 +128,24 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
 
     if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
         if (button == sf::Mouse::Left) {
-            grid[row][col] = (grid[row][col] + 1) % 3; // Toggle: Grass ->  Path -> Tower
+
+            if (grid[row][col] == 2) {                   // decrement counter if previous cell was a tower
+                numberOfTowers--;
+            }
+
+            grid[row][col] = (grid[row][col] + 1) % 3;   // Toggle: Grass ->  Path -> Tower
+
+            if (grid[row][col] == 2) {                   // increment tower counter 
+                numberOfTowers++;
+            }
         }
         else if (button == sf::Mouse::Right) {
-            grid[row][col] = 0; // Reset to grass
+            
+            if (grid[row][col] == 2) {                   // decrement tower counter if current cell is a tower
+                numberOfTowers--;
+            }
+
+            grid[row][col] = 0;                          // Reset to grass
         }
     }
 }
@@ -163,6 +184,10 @@ void displayMap() {
         std::cerr << "Failed to load tower.png!" << std::endl;
     }
 
+    sf::Text towerCountText("Towers: 0", font, 20);
+    towerCountText.setPosition(10, WINDOWSIZE + 10);
+    towerCountText.setFillColor(sf::Color::White);
+
     // Start Game button
     sf::RectangleShape button(sf::Vector2f(200, 40));
     button.setPosition((WINDOWSIZE - 200) / 2, WINDOWSIZE + 5);
@@ -173,8 +198,8 @@ void displayMap() {
     buttonText.setFillColor(sf::Color::White);
 
     // Error message for invalid maps
-    sf::Text errorMessage("Invalid map. Ensure that the entry and exit are properly connected", font, 25);
-    errorMessage.setPosition(20, WINDOWSIZE/2);
+    sf::Text errorMessage("Invalid Map Creation", font, 25);
+    errorMessage.setPosition(WINDOWSIZE/3, WINDOWSIZE/2);
     errorMessage.setFillColor(sf::Color::Red);
 
 
@@ -246,6 +271,8 @@ void displayMap() {
                 else if (grid[i][j] == 1) sprite.setTexture(pathTextureMap);    // path
                 else if (grid[i][j] == 2) sprite.setTexture(towerTextureMap);   // tower
 
+                      
+
                 // fit entire image inside the cell
                 sprite.setScale(static_cast<float>(cellSize) / sprite.getTexture()->getSize().x,
                     static_cast<float>(cellSize) / sprite.getTexture()->getSize().y);
@@ -263,6 +290,11 @@ void displayMap() {
         if (showError) {
             window.draw(errorMessage);
         }
+
+        // display counter for towers
+        towerCountText.setString("Towers: " + std::to_string(numberOfTowers));
+        window.draw(towerCountText);
+
 
         window.display();
     }
