@@ -197,6 +197,7 @@ void displayMap() {
     bool showError = false;
     sf::Clock errorTimer;
 
+
     while (window.isOpen()) {
         sf::Event event;
 
@@ -209,6 +210,19 @@ void displayMap() {
                 sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
                 window.setView(sf::View(visibleArea));
                 cellSize = event.size.width / ROWS;
+
+                // Resize and reposition button
+                button.setSize(sf::Vector2f(event.size.width / 2, event.size.height / 15));
+                button.setPosition(event.size.width * 2 / 3 + 20, 20);
+
+                unsigned int newFontSize = static_cast<unsigned int>(event.size.width / 25);
+                towerCountText.setCharacterSize(newFontSize);
+                towerCountText.setPosition(event.size.width * 1 / 3 + 20, button.getPosition().y + 10);
+
+                // Resize text
+                //unsigned int newFontSize = static_cast<unsigned int>(event.size.width / 25);
+                buttonText.setCharacterSize(newFontSize);
+                buttonText.setPosition(button.getPosition().x / 2, button.getPosition().y + 10);
             }
             // handle mouse clicks
             else if (event.type == sf::Event::MouseButtonPressed) {
