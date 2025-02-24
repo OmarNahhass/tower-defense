@@ -3,6 +3,39 @@
 #include <iostream>
 
 
+
+void displayGameOverScreen() {
+    sf::RenderWindow gameOverWindow(sf::VideoMode(400, 200), "Game Over");
+
+    sf::Font font;
+    if (!font.loadFromFile("arial.ttf")) {
+        std::cerr << "Failed to load font!" << std::endl;
+        return;
+    }
+
+    // Game Over text
+    sf::Text gameOverText("Game Over", font, 20);
+    gameOverText.setFillColor(sf::Color::White);
+    gameOverText.setPosition(50, 100);
+
+
+    // open new screen with Game Over text
+    while (gameOverWindow.isOpen()) {
+        sf::Event event;
+        while (gameOverWindow.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                gameOverWindow.close();
+                exit(0); // Close the game 
+            }
+        }
+
+        gameOverWindow.clear(sf::Color::Black);
+        gameOverWindow.draw(gameOverText);
+        gameOverWindow.display();
+    }
+}
+
+
 Critter::Critter(int lvl, sf::Texture& texture) {
     hitPoints = lvl * 10;
     reward = lvl * 5;
@@ -60,14 +93,18 @@ bool Critter::isHit(float currentTime) const {
 void Critter::move(float deltaTime) {
     if (this->pathIndex >= pathCells.size() - 1) {
         this->reachedExit = true;
+
+        displayGameOverScreen(); // Display Game Over screen
         return;
     }
+
     float cellSize = static_cast<float>(WINDOWSIZE) / ROWS;
     sf::Vector2f currentPos(pathCells[this->pathIndex].x * cellSize, pathCells[this->pathIndex].y * cellSize);
     sf::Vector2f nextPos(pathCells[this->pathIndex + 1].x * cellSize, pathCells[this->pathIndex + 1].y * cellSize);
 
     sf::Vector2f direction = nextPos - currentPos;
     float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
 
     if (distance > 0.0f) {
         sf::Vector2f velocity = (direction / distance) * static_cast<float>(speed) * deltaTime;
@@ -80,9 +117,3 @@ void Critter::move(float deltaTime) {
         }
     }
 }
-
-
-
-
-
-

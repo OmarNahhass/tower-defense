@@ -168,7 +168,7 @@ void startGame() {
 
 
 void displayMap() {
-    sf::RenderWindow window(sf::VideoMode(WINDOWSIZE, WINDOWSIZE + 50), "Tower Defense Map Creation");
+    sf::RenderWindow window(sf::VideoMode(WINDOWSIZE, WINDOWSIZE+60), "Tower Defense Map Creation");
     int cellSize = WINDOWSIZE / ROWS;
 
     // Load font
@@ -285,6 +285,12 @@ void displayMap() {
         // Draw button
         window.draw(button);
         window.draw(buttonText);
+
+        // Draw sidebar
+        //sf::RectangleShape sidebar(sf::Vector2f(400, 600)); // Wider sidebar
+        //sidebar.setPosition(600, 0);
+        //sidebar.setFillColor(sf::Color(50, 50, 50));
+        //window.draw(sidebar);
 
         // Show error message if map is invalid
         if (showError) {

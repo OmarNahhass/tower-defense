@@ -31,6 +31,7 @@ public:
     int pathIndex;      // Tracks movement along the path
     float moveProgress; // Fraction of movement between two points
 
+    void displayGameOverScren();
 
     bool takeDamage(int damage, float currentTime);
 
