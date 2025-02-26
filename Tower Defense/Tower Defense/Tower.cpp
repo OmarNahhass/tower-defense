@@ -45,25 +45,16 @@ void Tower::shoot(std::vector<Critter>& critters, float currentTime) {
         float dy = critterGridY - position.y;
         float distance = std::sqrt(dx * dx + dy * dy);
 
-        /*std::cerr << "Tower at (" << position.x << ", " << position.y
-            << ") checking critter at (" << critterGridX << ", " << critterGridY
-            << ") | Distance: " << distance << " | Range: " << range << std::endl;*/
 
         if (distance <= range) {  
-            //std::cerr << "SHOOT!" << std::endl;
             lastShotTime = currentTime;
             critter.takeDamage(power, currentTime);  // Store hit time
             break;
         }
-        else {
-            //std::cerr << "NOT SHOOTING!" << std::endl;
-        }
     }
 
     // Remove dead critters after loop
-    critters.erase(std::remove_if(critters.begin(), critters.end(),
-        [](const Critter& c) { return c.hitPoints <= 0; }),
-        critters.end());
+    critters.erase(std::remove_if(critters.begin(), critters.end(), [](const Critter& c) { return c.hitPoints <= 0; }), critters.end());
 }
 
 

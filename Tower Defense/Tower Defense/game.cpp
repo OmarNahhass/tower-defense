@@ -1,5 +1,5 @@
 #include "game.h"
-#include "map.h"
+#include "Map.h"
 #include "Critter.h"
 #include "Tower.h"
 #include "CritterGroupGenerator.h"
@@ -29,7 +29,10 @@ std::vector<Critter> spawnQueue;  // Queue of critters waiting to be spawned
 float critterSpawnTimer = 0.0f;   // Timer to control spawning intervals
 int crittersSpawned = 0;          // Track number of critters spawned in current wave
 
+int cellSize = WINDOWSIZE / ROWS;
 
+int numberOfCrittersPerWave = 10;
+int numberOfCrittersRemaining = numberOfCrittersPerWave;
 
 
 void spawnCritter() {
@@ -63,7 +66,14 @@ void spawnTowers() {
 // Draw towers
 void drawTowers(sf::RenderWindow& window) {
     for (const auto& tower : towers) {
-        window.draw(tower.sprite);
+        sf::Sprite towerSprite = tower.sprite;
+        towerSprite.setPosition(tower.position.x * cellSize, tower.position.y * cellSize);
+
+        towerSprite.setScale(
+            static_cast<float>(cellSize) / towerSprite.getTexture()->getSize().x,
+            static_cast<float>(cellSize) / towerSprite.getTexture()->getSize().y
+        );
+        window.draw(towerSprite);
     }
 }
 
@@ -78,19 +88,41 @@ void updateTowers(float currentTime) {
 // Draw critters
 void drawCritters(sf::RenderWindow& window, const std::vector<Critter>& critters, float currentTime) {
     for (const auto& critter : critters) {
-        const sf::Sprite& sprite = critter.getSprite();
-        window.draw(sprite);
+        sf::Sprite critterSprite = critter.sprite;
+
+        //critterSprite.setPosition(critter.position.x * cellSize, critter.position.y * cellSize);
+
+        critterSprite.setScale(
+            static_cast<float>(cellSize) / critterSprite.getTexture()->getSize().x,
+            static_cast<float>(cellSize) / critterSprite.getTexture()->getSize().y
+        );
+        
+        window.draw(critterSprite);
 
         if (critter.isHit(currentTime)) {  // Draw red border if recently hit
-            sf::RectangleShape border(sf::Vector2f(sprite.getGlobalBounds().width, sprite.getGlobalBounds().height));
+            sf::RectangleShape border(sf::Vector2f(critterSprite.getGlobalBounds().width, critterSprite.getGlobalBounds().height));
 
             // Red border for when a critter gets hit
-            border.setPosition(sprite.getGlobalBounds().left, sprite.getGlobalBounds().top);
+            border.setPosition(critterSprite.getGlobalBounds().left, critterSprite.getGlobalBounds().top);
             border.setOutlineThickness(3);
             border.setOutlineColor(sf::Color::Red);
             border.setFillColor(sf::Color::Transparent);
 
             window.draw(border);
+        }
+    }
+}
+
+// Update critters movement and remove dead ones
+void updateCritters(float deltaTime, float currentTime) {
+    for (auto critter = activeCritters.begin(); critter != activeCritters.end();) {
+        critter->move(deltaTime);
+      
+        if (critter->takeDamage(0, currentTime)) { // Remove if dead
+            critter = activeCritters.erase(critter);
+        }
+        else {
+            ++critter;
         }
     }
 }
@@ -147,21 +179,6 @@ void updateWave(float deltaTime, float currentTime) {
 
 
 
-// Update critters movement and remove dead ones
-void updateCritters(float deltaTime, float currentTime) {
-    for (auto critter = activeCritters.begin(); critter != activeCritters.end();) {
-        critter->move(deltaTime);
-
-        if (critter->takeDamage(0, currentTime)) { // Remove if dead
-            critter = activeCritters.erase(critter);
-        }
-        else {
-            ++critter;
-        }
-    }
-}
-
-
 // Main Game Loop
 void displayGame(sf::RenderWindow& window) {
 
@@ -183,19 +200,79 @@ void displayGame(sf::RenderWindow& window) {
         std::cerr << "Failed to load texture!" << std::endl;
         return; // Stop execution if textures fail to load
     }
+    
+
+
+    int mapWidth = (WINDOWSIZE * 2) / 3;
+    int infoPanelWidth = WINDOWSIZE / 3;
+
+
+    // display an info panel on the right
+    // the info panel contains several info (number of towers, money, etc.)
+    sf::RectangleShape infoPanel(sf::Vector2f(infoPanelWidth, WINDOWSIZE));
+    infoPanel.setFillColor(sf::Color(255, 255, 255));
+    infoPanel.setPosition(WINDOWSIZE, 0);
+
+
 
     storeTowerPositions(); // Get tower positions 
     spawnTowers();         // Now spawn towers
     startWave();           // Start first wave
 
+
+    /*
+    Info panel    
+    */
+    // critter counter
+    sf::Text critterCountText("Critters Remaining: " + numberOfCrittersRemaining, font, 15);
+    critterCountText.setFillColor(sf::Color::Black);
+    critterCountText.setPosition(WINDOWSIZE + 15, 30);
+
+
+    // display the player coins
+    sf::Text playerCoinsText("Coins: " + playerCoins, font, 15);
+    playerCoinsText.setFillColor(sf::Color::Black);
+    playerCoinsText.setPosition(WINDOWSIZE + 15, 70);
+
+
+
     sf::Clock clock, gameClock;
 
     while (window.isOpen()) {
         sf::Event event;
+        
+
+
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
+            {
                 window.close();
+            }
+            else if (event.type == sf::Event::Resized) {
+                // Adjust the viewport when the window is resized
+                sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+                window.setView(sf::View(visibleArea));
+                cellSize = (event.size.width * 2 / 3) / ROWS;
+           
+
+                // Resize and reposition info panel
+                mapWidth = (event.size.width * 2) / 3;
+                int infoPanelWidth = (event.size.width) / 3;
+
+                infoPanel.setSize(sf::Vector2f(infoPanelWidth, (cellSize * ROWS)));
+                infoPanel.setPosition(mapWidth, 0);
+
+                // Update all critters' positions based on new cellSize
+                for (auto& critter : activeCritters) {
+                    critter.sprite.setPosition(
+                        pathCells[critter.pathIndex].x * cellSize,
+                        pathCells[critter.pathIndex].y * cellSize
+                    );
+                }
+            }         
         }
+
+
 
         float deltaTime = clock.restart().asSeconds();
         float currentTime = gameClock.getElapsedTime().asSeconds();
@@ -207,7 +284,8 @@ void displayGame(sf::RenderWindow& window) {
         for (int i = 0; i < ROWS; i++) {
             for (int j = 0; j < COLS; j++) {
                 sf::Sprite sprite;
-                int cellSize = WINDOWSIZE / ROWS;
+
+              
                 sprite.setPosition(j * cellSize, i * cellSize);
 
                 if (grid[i][j] == 0) {
@@ -241,7 +319,7 @@ void displayGame(sf::RenderWindow& window) {
             window.draw(waveMessage);
         }
 
-
+        window.draw(infoPanel);
 
         // Update game logic
         updateWave(deltaTime, currentTime);
@@ -251,6 +329,15 @@ void displayGame(sf::RenderWindow& window) {
         // Draw game objects
         drawCritters(window, activeCritters, currentTime); 
         drawTowers(window);
+
+
+        // display the critter counter 
+        critterCountText.setString("Critters Remaining: " + std::to_string(numberOfCrittersRemaining));
+        window.draw(critterCountText);
+
+        // display player coins text
+        playerCoinsText.setString("Coins: " + std::to_string(playerCoins));
+        window.draw(playerCoinsText);
 
         window.display(); 
     }

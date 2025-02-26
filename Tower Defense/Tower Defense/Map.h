@@ -10,6 +10,8 @@ constexpr int COLS = 20;
 
 extern int numberOfTowers;
 
+extern int playerCoins;
+
 constexpr int WINDOWSIZE = 800;
 
 extern int grid[ROWS][COLS];  // Declare grid here but define in map.cpp

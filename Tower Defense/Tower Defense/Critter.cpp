@@ -1,5 +1,6 @@
 #include "Critter.h"
 #include "Map.h"  // Needed for pathCells
+#include "Game.h"
 #include <iostream>
 
 
@@ -38,7 +39,7 @@ void displayGameOverScreen() {
 
 Critter::Critter(int lvl, sf::Texture& texture) {
     hitPoints = lvl * 10;
-    reward = lvl * 5;
+    reward = lvl * 10;
     strength = lvl * 1;
     speed = lvl * 10; // Speed per second
     level = lvl;
@@ -78,6 +79,8 @@ bool Critter::takeDamage(int damage, float currentTime) {
 
     if (hitPoints <= 0) {
         std::cout << "Critter killed! Player earns " << reward << " coins.\n";
+        numberOfCrittersRemaining--;
+        playerCoins += reward;
         return true;
     }
 
@@ -98,7 +101,9 @@ void Critter::move(float deltaTime) {
         return;
     }
 
-    float cellSize = static_cast<float>(WINDOWSIZE) / ROWS;
+    
+    /*sprite.setScale(cellSize / sprite.getTexture()->getSize().x, cellSize / sprite.getTexture()->getSize().y);*/
+
     sf::Vector2f currentPos(pathCells[this->pathIndex].x * cellSize, pathCells[this->pathIndex].y * cellSize);
     sf::Vector2f nextPos(pathCells[this->pathIndex + 1].x * cellSize, pathCells[this->pathIndex + 1].y * cellSize);
 
