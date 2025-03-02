@@ -51,14 +51,6 @@ Critter::Critter(int lvl, sf::Texture& texture) {
     hitTime = 0;  // Initialize hit time
     hitDuration = 0.75f;  // Red border stays for 0.75s
 
-    sprite.setTexture(texture);
-
-    // Ensure the sprite size matches the grid cell size
-    float cellSize = static_cast<float>(WINDOWSIZE) / ROWS;
-    sprite.setScale(cellSize / sprite.getTexture()->getSize().x,
-        cellSize / sprite.getTexture()->getSize().y);
-
-    sprite.setPosition(pathCells[0].x * cellSize, pathCells[0].y * cellSize); // Start at path's beginning
 }
 
 sf::Vector2f Critter::getPosition() const {
@@ -113,12 +105,37 @@ void Critter::move(float deltaTime) {
 
     if (distance > 0.0f) {
         sf::Vector2f velocity = (direction / distance) * static_cast<float>(speed) * deltaTime;
-        sprite.move(velocity);
         moveProgress += speed * deltaTime;
 
         if (moveProgress >= distance) {
             this->pathIndex++;
             moveProgress = 0.0f;
         }
+        notifyMoved(velocity);
     }
 }
+
+void Critter::addObserver(CritterObserver* observer, sf::Texture& texture) {
+    observers.push_back(observer);
+    notifyAdded(texture);
+}
+
+void Critter::removeObserver(CritterObserver* observer) {
+    observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
+}
+
+void Critter::notifyMoved(sf::Vector2f velocity) {
+
+    for (auto* observer : observers) {
+        observer->onCritterMoved(*this, velocity);
+    }
+}
+
+void Critter::notifyAdded(sf::Texture& texture) {
+    for (auto* observer : observers) {
+        observer->onCritterAdded(*this, texture);
+    }
+}
+
+
+

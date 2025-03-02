@@ -4,6 +4,7 @@
 #include "Tower.h"
 #include "CritterGroupGenerator.h"
 #include "SpecialTowers.h"
+#include "CritterView.h"
 
 
 #include <SFML/Graphics.hpp>
@@ -34,9 +35,8 @@ int cellSize = WINDOWSIZE / ROWS;
 int numberOfCrittersPerWave = 10;
 int numberOfCrittersRemaining = numberOfCrittersPerWave;
 
-
 void spawnCritter() {
-    critters.emplace_back(currentWave, critterTexture);
+    critters.emplace_back(currentWave, critterTexture); // Construct directly in place
     std::cerr << "Spawned a critter! Current size: " << critters.size() << std::endl;
 }
 
@@ -84,35 +84,6 @@ void updateTowers(float currentTime) {
     }
 }
 
-
-// Draw critters
-void drawCritters(sf::RenderWindow& window, const std::vector<Critter>& critters, float currentTime) {
-    for (const auto& critter : critters) {
-        sf::Sprite critterSprite = critter.sprite;
-
-        //critterSprite.setPosition(critter.position.x * cellSize, critter.position.y * cellSize);
-
-        critterSprite.setScale(
-            static_cast<float>(cellSize) / critterSprite.getTexture()->getSize().x,
-            static_cast<float>(cellSize) / critterSprite.getTexture()->getSize().y
-        );
-        
-        window.draw(critterSprite);
-
-        if (critter.isHit(currentTime)) {  // Draw red border if recently hit
-            sf::RectangleShape border(sf::Vector2f(critterSprite.getGlobalBounds().width, critterSprite.getGlobalBounds().height));
-
-            // Red border for when a critter gets hit
-            border.setPosition(critterSprite.getGlobalBounds().left, critterSprite.getGlobalBounds().top);
-            border.setOutlineThickness(3);
-            border.setOutlineColor(sf::Color::Red);
-            border.setFillColor(sf::Color::Transparent);
-
-            window.draw(border);
-        }
-    }
-}
-
 // Update critters movement and remove dead ones
 void updateCritters(float deltaTime, float currentTime) {
     for (auto critter = activeCritters.begin(); critter != activeCritters.end();) {
@@ -128,14 +99,14 @@ void updateCritters(float deltaTime, float currentTime) {
 }
 
 
-void startWave() {
+void startWave(CritterView& critterView) {
     std::cerr << "Starting wave " << currentWave << std::endl;
 
     activeCritters.clear();   // Clear old critters
     spawnQueue.clear();       // Reset spawn queue
 
     // Generate 10 critters and store them in the spawn queue
-    spawnQueue = CritterGroupGenerator::generateWaveCritters(currentWave, critterTexture);
+    spawnQueue = CritterGroupGenerator::generateWaveCritters(currentWave, critterTexture, critterView);
 
     crittersSpawned = 0;       // Reset spawn count
     critterSpawnTimer = 0.0f;  // Reset spawn timer
@@ -144,7 +115,7 @@ void startWave() {
 
 
 
-void updateWave(float deltaTime, float currentTime) {
+void updateWave(float deltaTime, float currentTime, CritterView& critterView) {
     // Check if the wave is completed
     if (spawnQueue.empty() && activeCritters.empty() && !waitingForNextWave) {
         std::cerr << "Wave " << currentWave << " cleared! Starting countdown for next wave...\n";
@@ -163,7 +134,7 @@ void updateWave(float deltaTime, float currentTime) {
         // start next wave
         if (waveDelayTimer >= 10.0f) {  // 10-second delay
             currentWave++;
-            startWave();
+            startWave(critterView);
         }
     }
 
@@ -181,6 +152,8 @@ void updateWave(float deltaTime, float currentTime) {
 
 // Main Game Loop
 void displayGame(sf::RenderWindow& window) {
+
+    CritterView critterView(window);
 
     // load font
     sf::Font font;
@@ -217,7 +190,7 @@ void displayGame(sf::RenderWindow& window) {
 
     storeTowerPositions(); // Get tower positions 
     spawnTowers();         // Now spawn towers
-    startWave();           // Start first wave
+    startWave(critterView);           // Start first wave
 
 
     /*
@@ -276,6 +249,7 @@ void displayGame(sf::RenderWindow& window) {
 
         float deltaTime = clock.restart().asSeconds();
         float currentTime = gameClock.getElapsedTime().asSeconds();
+        critterView.currentTime = currentTime;
 
         // Clear screen at the beginning of the loop
         window.clear(sf::Color::Black);
@@ -322,14 +296,12 @@ void displayGame(sf::RenderWindow& window) {
         window.draw(infoPanel);
 
         // Update game logic
-        updateWave(deltaTime, currentTime);
+        updateWave(deltaTime, currentTime, critterView);
         updateCritters(deltaTime, currentTime);
         updateTowers(currentTime);
 
         // Draw game objects
-        drawCritters(window, activeCritters, currentTime); 
         drawTowers(window);
-
 
         // display the critter counter 
         critterCountText.setString("Critters Remaining: " + std::to_string(numberOfCrittersRemaining));
