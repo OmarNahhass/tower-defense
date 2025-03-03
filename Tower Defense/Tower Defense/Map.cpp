@@ -184,6 +184,9 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
     int newState = (grid[row][col] + 1) % 3;  // Cycle through states: grass → path → tower
     grid[row][col] = newState;
 
+    if (newState == 2)
+        numberOfTowers++;
+
     notifyObservers(col, row, newState);  // Notify all observers about the change
 }
 
@@ -404,8 +407,9 @@ void displayMap() {
         mapView.drawTowerCount(window);
 
         // display player coins text
-        playerCoinsText.setString("Coins: " + std::to_string(playerCoins));
-        window.draw(playerCoinsText);
+        /*playerCoinsText.setString("Coins: " + std::to_string(playerCoins));
+        window.draw(playerCoinsText);*/
+        mapView.drawCoinsCount(window);
 
 
 

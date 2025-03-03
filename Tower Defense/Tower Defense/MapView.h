@@ -13,6 +13,7 @@ public:
     float currentTime;
 
     int towerCount = 0;
+    int playerCoins = 100;
 
 
     MapView(sf::RenderWindow& window) : MapObserver(window) {
@@ -28,6 +29,7 @@ public:
     }
 
     void drawTowerCount(sf::RenderWindow& window);
+    void drawCoinsCount(sf::RenderWindow& window);
     void onCellChanged(int x, int y, int newState);
     void drawSingleCell(sf::RenderWindow& window, int x, int y, int newState, int cellSize);
 

@@ -7,7 +7,14 @@
 
 
 void MapView::onCellChanged(int x, int y, int newState) {
-    if (newState == 2) towerCount++;
+    if (newState == 2) {
+        towerCount++;
+        playerCoins -= 50;
+    }
+    else if (newState == 0) {
+        towerCount--;
+        playerCoins += 50;
+    }
     
     drawSingleCell(window, x, y, newState, 40);  // Only update this cell
     drawTowerCount(window);
@@ -59,6 +66,24 @@ void MapView::drawTowerCount(sf::RenderWindow& window) {
     towerText.setString("Towers: " + std::to_string(towerCount));
 
     window.draw(towerText);
+}
+
+void MapView::drawCoinsCount(sf::RenderWindow& window) {
+    sf::Font font;
+
+    if (!font.loadFromFile("arial.ttf")) {
+        std::cerr << "Error loading font\n";
+        return;
+    }
+
+    sf::Text coinsText;
+    coinsText.setFont(font);
+    coinsText.setCharacterSize(20);
+    coinsText.setFillColor(sf::Color::Black);
+    coinsText.setPosition(WINDOWSIZE + 15, 70);  // Adjust position as needed
+    coinsText.setString("Coins: " + std::to_string(playerCoins));
+
+    window.draw(coinsText);
 }
 
 
