@@ -18,6 +18,8 @@ void notifyObservers(int x, int y, int newState);
 
 void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellSize);
 void initializeMap();
+
+void drawFullMap(sf::RenderWindow& window, int cellSize);
 void displayMap();
 	
 

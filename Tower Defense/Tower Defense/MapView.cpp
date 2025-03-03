@@ -4,18 +4,61 @@
 #include <iostream>
 
 
+
+
 void MapView::onCellChanged(int x, int y, int newState) {
-    std::cout << "Cell (" << x << ", " << y << ") changed to state " << newState << "\n";
-    updateGraphics(x, y, newState);
+    if (newState == 2) towerCount++;
+    
+    drawSingleCell(window, x, y, newState, 40);  // Only update this cell
+    drawTowerCount(window);
+    window.display();
 }
 
-void MapView::updateGraphics(int x, int y, int newState) {
-    // Use SFML to update the cell's sprite based on newState
-    sf::Color color;
-    if (newState == 0) color = sf::Color::Green;  // Grass
-    else if (newState == 1) color = sf::Color::Yellow;  // Path
-    else if (newState == 2) color = sf::Color::Red;  // Tower
+void MapView::drawSingleCell(sf::RenderWindow& window, int x, int y, int newState, int cellSize) {
+
+    sf::Sprite sprite;
+    sprite.setPosition(x * cellSize, y * cellSize);
+
+    // Draw a thin border for each cell
+    sf::RectangleShape border(sf::Vector2f(cellSize, cellSize));
+    border.setPosition(x * cellSize, y * cellSize);
+    border.setFillColor(sf::Color::Transparent);
+    border.setOutlineColor(sf::Color::Black);
+    border.setOutlineThickness(1);
+
+    // Set texture based on cell state
+    if (newState == 0) sprite.setTexture(grassTextureMap);
+    else if (newState == 1) sprite.setTexture(pathTextureMap);
+    else if (newState == 2) sprite.setTexture(towerTextureMap);
+
+    sprite.setScale(static_cast<float>(cellSize) / sprite.getTexture()->getSize().x,
+        static_cast<float>(cellSize) / sprite.getTexture()->getSize().y);
 
 
-    //grid[x][y].setFillColor(color);
+    window.draw(border);
+    window.draw(sprite);
 }
+
+
+
+
+
+void MapView::drawTowerCount(sf::RenderWindow& window) {
+    sf::Font font;
+
+    if (!font.loadFromFile("arial.ttf")) {
+        std::cerr << "Error loading font\n";
+        return;
+    }
+
+    sf::Text towerText;
+    towerText.setFont(font);
+    towerText.setCharacterSize(20);
+    towerText.setFillColor(sf::Color::Black);
+    towerText.setPosition(WINDOWSIZE + 15, 20);  // Adjust position as needed
+    towerText.setString("Towers: " + std::to_string(towerCount));
+
+    window.draw(towerText);
+}
+
+

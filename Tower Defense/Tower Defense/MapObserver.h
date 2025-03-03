@@ -10,6 +10,7 @@ public:
     virtual ~MapObserver() = default;
     MapObserver(sf::RenderWindow& window) : window(window) {};
     virtual void onCellChanged(int x, int y, int newState) = 0;
+    //virtual void drawSingleCell(sf::RenderWindow& window, int x, int y, int newState, int cellSize);
 };
 
 #endif // MAPOBSERVER_H

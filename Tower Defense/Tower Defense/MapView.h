@@ -3,6 +3,7 @@
 #define MAP_VIEW_H
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include "MapObserver.h"
 #include <vector>
 #include "Map.h"
@@ -10,10 +11,29 @@
 class MapView : public MapObserver {
 public:
     float currentTime;
-    MapView(sf::RenderWindow& window) : MapObserver(window) {}
 
+    int towerCount = 0;
+
+
+    MapView(sf::RenderWindow& window) : MapObserver(window) {
+        if (!grassTextureMap.loadFromFile("grass.png")) {
+            std::cerr << "Error loading grass texture\n";
+        }
+        if (!pathTextureMap.loadFromFile("path.png")) {
+            std::cerr << "Error loading path texture\n";
+        }
+        if (!towerTextureMap.loadFromFile("tower.png")) {
+            std::cerr << "Error loading tower texture\n";
+        }
+    }
+
+    void drawTowerCount(sf::RenderWindow& window);
     void onCellChanged(int x, int y, int newState);
-    void updateGraphics(int x, int y, int newState);
+    void drawSingleCell(sf::RenderWindow& window, int x, int y, int newState, int cellSize);
+
+
+private:
+    sf::Texture grassTextureMap, pathTextureMap, towerTextureMap;
 };
 
 

@@ -13,8 +13,6 @@ int grid[COLS][ROWS]; // Define the grid here, not in map.h
 
 int numberOfTowers = 0;
 
-sf::Texture grassTextureMap, pathTextureMap, towerTextureMap;
-
 
 int mapWidth = (WINDOWSIZE * 2) / 3;
 int infoPanelWidth = WINDOWSIZE / 3;
@@ -25,6 +23,8 @@ int playerCoins = 100;
 
 #include <vector>
 #include <SFML/System/Vector2.hpp>
+
+sf::Texture grassTextureMap, pathTextureMap, towerTextureMap;
 
 std::vector<sf::Vector2i> pathCells, towerCells;
 
@@ -178,8 +178,6 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
     int col = mousePos.x / cellSize;
     int row = mousePos.y / cellSize;
 
-    std::cout << "Mouse click\n";
-
     if (!(col >= 0 && col < COLS && row >= 0 && row < ROWS))
         return;
 
@@ -205,11 +203,26 @@ void startGame() {
     }
 }
 
+void drawFullMap(sf::RenderWindow& window, int cellSize, MapView& mapView) {
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            mapView.drawSingleCell(window, j, i, grid[i][j], cellSize);  // Draw each cell
+        }
+    }
+}
+
+
 
 void displayMap() {
 
     sf::RenderWindow window(sf::VideoMode(WINDOWSIZE+infoPanelWidth, WINDOWSIZE + 60), "Tower Defense Map Creation", sf::Style::Resize | sf::Style::Close);
+
+    MapView mapView(window);
+    addObserver(&mapView);
+
     int cellSize = WINDOWSIZE / ROWS;
+
+
 
     // Load font
     sf::Font font;
@@ -345,32 +358,32 @@ void displayMap() {
 
 
         // Draw map
-        for (int i = 0; i < COLS; i++) {
-            for (int j = 0; j < ROWS; j++) {
-                sf::Sprite sprite;
-                sprite.setPosition(j * cellSize, i * cellSize);
+        //for (int i = 0; i < COLS; i++) {
+        //    for (int j = 0; j < ROWS; j++) {
+        //        sf::Sprite sprite;
+        //        sprite.setPosition(j * cellSize, i * cellSize);
 
 
 
-                // draw a thin border for each cell
-                sf::RectangleShape border(sf::Vector2f(cellSize, cellSize));
-                border.setPosition(j * cellSize, i * cellSize);
-                border.setFillColor(sf::Color::Transparent);
-                border.setOutlineColor(sf::Color::Black);
-                border.setOutlineThickness(1);
+        //        // draw a thin border for each cell
+        //        sf::RectangleShape border(sf::Vector2f(cellSize, cellSize));
+        //        border.setPosition(j * cellSize, i * cellSize);
+        //        border.setFillColor(sf::Color::Transparent);
+        //        border.setOutlineColor(sf::Color::Black);
+        //        border.setOutlineThickness(1);
 
-                // set images for each cell type
-                if (grid[i][j] == 0) sprite.setTexture(grassTextureMap);
-                else if (grid[i][j] == 1) sprite.setTexture(pathTextureMap);
-                else if (grid[i][j] == 2) sprite.setTexture(towerTextureMap);
+        //        // set images for each cell type
+        //        if (grid[i][j] == 0) sprite.setTexture(grassTextureMap);
+        //        else if (grid[i][j] == 1) sprite.setTexture(pathTextureMap);
+        //        else if (grid[i][j] == 2) sprite.setTexture(towerTextureMap);
 
-                sprite.setScale(static_cast<float>(cellSize) / sprite.getTexture()->getSize().x,
-                    static_cast<float>(cellSize) / sprite.getTexture()->getSize().y);
+        //        sprite.setScale(static_cast<float>(cellSize) / sprite.getTexture()->getSize().x,
+        //            static_cast<float>(cellSize) / sprite.getTexture()->getSize().y);
 
-                window.draw(border);
-                window.draw(sprite);
-            }
-        }
+        //        window.draw(border);
+        //        window.draw(sprite);
+        //    }
+        //}
 
         // Update button and text position after resize
         button.setPosition((window.getSize().x - 200) / 2, window.getSize().y - 50);
@@ -386,8 +399,9 @@ void displayMap() {
         window.draw(buttonText);
 
         // display tower counter text
-        towerCountText.setString("Towers: " + std::to_string(numberOfTowers));
-        window.draw(towerCountText);
+        /*towerCountText.setString("Towers: " + std::to_string(numberOfTowers));
+        window.draw(towerCountText);*/
+        mapView.drawTowerCount(window);
 
         // display player coins text
         playerCoinsText.setString("Coins: " + std::to_string(playerCoins));
@@ -396,7 +410,7 @@ void displayMap() {
 
 
         window.draw(damageTowerCostText);
-
+        drawFullMap(window, cellSize, mapView);  // Pass mapView
         window.display();
     }
 }
@@ -474,7 +488,6 @@ void removeObserver(MapObserver* observer) {
 
 void notifyObservers(int x, int y, int newState) {
     for (MapObserver* observer : observersMap) {
-        std::cout << "Cell (" << x << ", " << y << ") changed to state " << newState << "\n";
         observer->onCellChanged(x, y, newState);
     }
 }
