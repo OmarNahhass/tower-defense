@@ -11,11 +11,9 @@
 
 int main() {
     // Initialize and display the map creation screen
+    /*menuScreen();*/
     initializeMap();
     displayMap();
-
-    /*while (!isValidMap())
-        displayMap();*/
 
     if (isValidMap())
         startGame();
