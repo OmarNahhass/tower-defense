@@ -135,6 +135,8 @@
   <ItemGroup>
     <ClCompile Include="Critter.cpp" />
     <ClCompile Include="CritterGroupGenerator.cpp" />
+    <ClCompile Include="CritterObserver.cpp" />
+    <ClCompile Include="CritterView.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
@@ -145,6 +147,8 @@
   <ItemGroup>
     <ClInclude Include="Critter.h" />
     <ClInclude Include="CritterGroupGenerator.h" />
+    <ClInclude Include="CritterObserver.h" />
+    <ClInclude Include="CritterView.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="NextWave.h" />
