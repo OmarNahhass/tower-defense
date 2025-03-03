@@ -178,11 +178,13 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
     int col = mousePos.x / cellSize;
     int row = mousePos.y / cellSize;
 
+    std::cout << "Mouse click\n";
+
     if (!(col >= 0 && col < COLS && row >= 0 && row < ROWS))
         return;
 
-    int newState = (grid[col][row] + 1) % 3;  // Cycle through states: grass → path → tower
-    grid[col][row] = newState;
+    int newState = (grid[row][col] + 1) % 3;  // Cycle through states: grass → path → tower
+    grid[row][col] = newState;
 
     notifyObservers(col, row, newState);  // Notify all observers about the change
 }
@@ -472,6 +474,7 @@ void removeObserver(MapObserver* observer) {
 
 void notifyObservers(int x, int y, int newState) {
     for (MapObserver* observer : observersMap) {
+        std::cout << "Cell (" << x << ", " << y << ") changed to state " << newState << "\n";
         observer->onCellChanged(x, y, newState);
     }
 }
