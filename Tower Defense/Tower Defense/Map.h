@@ -5,6 +5,7 @@
 
 #include <SFML/Graphics.hpp>
 
+
 constexpr int ROWS = 20;
 constexpr int COLS = 20;
 
@@ -23,9 +24,7 @@ void displayMap();
 
 bool isValidMap();
 
-void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellSize);
 void startGame();
 
-void extractPath();
 
 #endif

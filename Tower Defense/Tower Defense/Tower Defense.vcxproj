@@ -140,6 +140,8 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="MapObserver.cpp" />
+    <ClCompile Include="MapView.cpp" />
     <ClCompile Include="NextWave.cpp" />
     <ClCompile Include="SpecialTowers.cpp" />
     <ClCompile Include="Tower.cpp" />
@@ -151,6 +153,8 @@
     <ClInclude Include="CritterView.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="MapObserver.h" />
+    <ClInclude Include="MapView.h" />
     <ClInclude Include="NextWave.h" />
     <ClInclude Include="SpecialTowers.h" />
     <ClInclude Include="Tower.h" />
