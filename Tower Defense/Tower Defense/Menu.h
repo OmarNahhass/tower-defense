@@ -12,6 +12,9 @@ extern int cellSize;
 extern int windowWidth; 
 extern int windowHeight;
 
+extern int maxMapWidth;
+extern int maxMapHeight;
+
 extern int mapWidth;
 extern int mapHeight;
 

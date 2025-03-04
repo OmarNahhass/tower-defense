@@ -221,15 +221,27 @@ void displayGame(sf::RenderWindow& window) {
                 // Adjust the viewport when the window is resized
                 sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
                 window.setView(sf::View(visibleArea));
-                cellSize = (event.size.width * 2 / 3) / ROWS;
-           
 
-                // Resize and reposition info panel
-                mapWidth = (event.size.width * 2) / 3;
-                int infoPanelWidth = (event.size.width) / 3;
+                maxMapWidth = (event.size.width * 3) / 4;
+                maxMapHeight = (event.size.height * 9) / 10;
 
+
+                cellSize = std::min(maxMapWidth / numberOfColumns, maxMapHeight / numberOfRows);
+
+                mapHeight = (event.size.height * 9) / 10;
+                mapWidth = cellSize * numberOfColumns;
+
+                // resize and reposition the info panel
+                infoPanelWidth = event.size.width - mapWidth;
+                infoPanelHeight = mapHeight;
                 infoPanel.setSize(sf::Vector2f(infoPanelWidth, infoPanelHeight));
                 infoPanel.setPosition(mapWidth, 0);
+
+                unsigned int newFontSize = static_cast<unsigned int>(event.size.height / 25);
+
+                // Resize and reposition the texts in the Info Panel
+                critterCountText.setPosition(mapWidth + 20, 30);
+                playerCoinsText.setPosition(mapWidth + 20, 80);
 
                 // Update all critters' positions based on new cellSize
                 for (auto& critter : activeCritters) {

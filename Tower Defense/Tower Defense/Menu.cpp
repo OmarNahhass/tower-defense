@@ -17,6 +17,9 @@ int resolutionIndex = 0;
 int windowWidth = 0;
 int windowHeight = 0;
 
+int maxMapWidth = 800;
+int maxMapHeight = 600;
+
 int mapWidth = 0;
 int mapHeight = 0;
 
@@ -106,8 +109,8 @@ void menuScreen() {
 
                     // specify the maximum width and height that the map can have
                     // the max width and height are calculated to leave enough room for the Info Panel and Start Game button
-                    int maxMapWidth = (resolutions[resolutionIndex].first * 3) / 4;      
-                    int maxMapHeight = (resolutions[resolutionIndex].second * 9) / 10;   
+                    maxMapWidth = (resolutions[resolutionIndex].first * 3) / 4;      
+                    maxMapHeight = (resolutions[resolutionIndex].second * 9) / 10;   
 
                     // the dimensions of the screen
                     windowWidth = resolutions[resolutionIndex].first;

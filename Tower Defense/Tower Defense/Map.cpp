@@ -225,7 +225,7 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
     MapView mapView(window);
     addObserver(&mapView);
 
-    int cellSize = mapHeight / numberOfRows;
+    //int cellSize = mapHeight / numberOfRows;
 
 
 
@@ -265,14 +265,20 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
     damageTowerCostText.setFillColor(sf::Color::Black);
     damageTowerCostText.setPosition(mapWidth + 15, windowHeight -200);
 
+
+
     // display the "Start Game" button
     int buttonHeight = windowHeight - mapHeight;
 
     sf::RectangleShape button(sf::Vector2f(windowWidth, buttonHeight));
     button.setFillColor(sf::Color(100, 100, 255));
+
     sf::Text buttonText("Start Game", font, 30);
     buttonText.setFillColor(sf::Color::White);
 
+    // Update button and text position after resize
+    button.setPosition(0, mapHeight);
+    buttonText.setPosition(windowWidth / 2 - 100, mapHeight + 20);
 
 
 
@@ -293,28 +299,36 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                 // Adjust the viewport when the window is resized
                 sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
                 window.setView(sf::View(visibleArea));
-                cellSize = (event.size.width * 2 / 3) / 20;
 
+                maxMapWidth = (event.size.width * 3) / 4;
+                maxMapHeight = (event.size.height * 9) / 10;
 
-                infoPanel.setSize(sf::Vector2f(infoPanelWidth, (cellSize* 20)));
+                
+                cellSize = std::min(maxMapWidth / numberOfColumns, maxMapHeight / numberOfRows);
+
+                mapHeight = (event.size.height * 9) / 10;
+                mapWidth = cellSize * numberOfColumns;
+
+                // resize and reposition the info panel
+                infoPanelWidth = event.size.width - mapWidth;
+                infoPanelHeight = mapHeight;
+                infoPanel.setSize(sf::Vector2f(infoPanelWidth, infoPanelHeight));
                 infoPanel.setPosition(mapWidth, 0);
 
                 // Resize and reposition button
-                button.setSize(sf::Vector2f(infoPanelWidth, event.size.height / 15));
-                button.setPosition(event.size.width * 2 / 3 + 20, 20);
+                button.setSize(sf::Vector2f(event.size.width, event.size.height - mapHeight));
+                button.setPosition(0, mapHeight);
 
-                unsigned int newFontSize = static_cast<unsigned int>(event.size.width / 25);
+                unsigned int newFontSize = static_cast<unsigned int>(event.size.height / 25);
                 
                 // Resize and Reposition button text
                 buttonText.setCharacterSize(newFontSize);
-                buttonText.setPosition(button.getPosition().x / 2, button.getPosition().y + 10);
+                buttonText.setPosition(event.size.width / 2 - 20, mapHeight+20);
 
-                // Resize and Reposition tower counter text
-                towerCountText.setPosition(event.size.width * 2 / 3 + 20, 30);
-
-                playerCoinsText.setPosition(event.size.width * 2 / 3 + 20, 80);
-
-                damageTowerCostText.setPosition(event.size.width * 2 / 3 + 20, windowHeight-200);
+                // Resize and reposition the texts in the Info Panel
+                towerCountText.setPosition(mapWidth+20, 30);
+                playerCoinsText.setPosition(mapWidth + 20, 80);
+                damageTowerCostText.setPosition(mapWidth + 20, windowHeight-200);
             }
             // handle mouse clicks
             else if (event.type == sf::Event::MouseButtonPressed) {
@@ -350,10 +364,6 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
 
         window.clear();
 
-
-        // Update button and text position after resize
-        button.setPosition(0, mapHeight);
-        buttonText.setPosition(windowWidth/2 - 100, mapHeight+20);
 
 
         // Draw info panel
