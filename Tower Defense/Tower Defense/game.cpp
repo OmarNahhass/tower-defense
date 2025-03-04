@@ -43,9 +43,9 @@ void spawnCritter() {
 void storeTowerPositions() {
     directDamageTowerPositions.clear(); // Reset before scanning
 
-    for (int j = 0; j < COLS; j++) {  // 
-        for (int i = 0; i < ROWS; i++) {  
-            if (grid[i][j] == 2) { // 
+    for (int j = 0; j < numberOfColumns; j++) {  // 
+        for (int i = 0; i < numberOfRows; i++) {  
+            if (mapGrid[i][j] == 2) { // 
                 directDamageTowerPositions.emplace_back(j, i); // Store cell coordinates correctly
             }
         }
@@ -173,18 +173,14 @@ void displayGame(sf::RenderWindow& window) {
         std::cerr << "Failed to load texture!" << std::endl;
         return; // Stop execution if textures fail to load
     }
-    
-
-
-    int mapWidth = (WINDOWSIZE * 2) / 3;
-    int infoPanelWidth = WINDOWSIZE / 3;
+   
 
 
     // display an info panel on the right
     // the info panel contains several info (number of towers, money, etc.)
-    sf::RectangleShape infoPanel(sf::Vector2f(infoPanelWidth, WINDOWSIZE));
+    sf::RectangleShape infoPanel(sf::Vector2f(infoPanelWidth, infoPanelHeight));
     infoPanel.setFillColor(sf::Color(255, 255, 255));
-    infoPanel.setPosition(WINDOWSIZE, 0);
+    infoPanel.setPosition(windowWidth, 0);
 
 
 
@@ -255,17 +251,17 @@ void displayGame(sf::RenderWindow& window) {
         window.clear(sf::Color::Black);
 
         // Draw the grid
-        for (int i = 0; i < ROWS; i++) {
-            for (int j = 0; j < COLS; j++) {
+        for (int i = 0; i < numberOfRows; i++) {
+            for (int j = 0; j < numberOfColumns; j++) {
                 sf::Sprite sprite;
 
               
                 sprite.setPosition(j * cellSize, i * cellSize);
 
-                if (grid[i][j] == 0) {
+                if (mapGrid[i][j] == 0) {
                     sprite.setTexture(grassTextureGame);
                 }
-                else if (grid[i][j] == 1) {
+                else if (mapGrid[i][j] == 1) {
                     sprite.setTexture(pathTextureGame);
                 }
 

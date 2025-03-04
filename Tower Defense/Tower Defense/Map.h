@@ -29,6 +29,7 @@ void extractPath();
 
 void startGame();
 
+extern int** mapGrid;
 
 constexpr int ROWS = 20;
 constexpr int COLS = 20;

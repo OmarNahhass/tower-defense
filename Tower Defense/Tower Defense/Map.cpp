@@ -11,9 +11,9 @@
 #include <queue>
 
 int grid[COLS][ROWS]; 
+int** mapGrid = nullptr;
 
 int numberOfTowers = 0;
-
 
 int playerCoins = 100;
 
@@ -30,9 +30,20 @@ std::vector<MapObserver*> observersMap;
 
 
 void initializeMap(int numberOfRows, int numberOfColumns) {
-    for (int i = 0; i < numberOfRows; i++) {
-        for (int j = 0; j < numberOfColumns; j++) {
-            grid[i][j] = 0; // Default to grass (scenery)
+    //for (int i = 0; i < numberOfRows; i++) {
+    //    for (int j = 0; j < numberOfColumns; j++) {
+    //        grid[i][j] = 0; // Default to grass (scenery)
+    //    }
+    //}
+
+    mapGrid = new int* [mapHeight];
+
+    for (int i = 0; i < mapHeight; ++i) {
+        mapGrid[i] = new int[mapWidth]; // Allocate each row
+
+        // Initialize all elements to 0
+        for (int j = 0; j < mapWidth; ++j) {
+            mapGrid[i][j] = 0;
         }
     }
 }
@@ -77,7 +88,7 @@ bool isValidMap() {
     // Find entry and exit points (must be on edges)
     for (int i = 0; i < COLS; i++) {
         for (int j = 0; j < ROWS; j++) {
-            if (grid[i][j] == 1) {
+            if (mapGrid[i][j] == 1) {
                 // Check if it's on an edge
                 if (i == 0 || i == COLS - 1 || j == 0 || j == ROWS - 1) {
                     if (entry.first == -1) {
@@ -127,7 +138,7 @@ bool isValidMap() {
 
     for (int i = 0; i < COLS; i++)
         for (int j = 0; j < ROWS; j++)
-            if (grid[i][j] == 1) totalPathCells++;
+            if (mapGrid[i][j] == 1) totalPathCells++;
 
     while (!queue.empty()) {
         std::pair<int, int> current = queue.front();
@@ -158,7 +169,7 @@ bool isValidMap() {
             // 2- a path 
             // 3- not visited
             // if the 3 conditions are met, mark the cell as visited and set it to current cell
-            if (newPositionX >= 0 && newPositionX < COLS && newPositionY >= 0 && newPositionY < ROWS && grid[newPositionX][newPositionY] == 1 && !visited[newPositionX][newPositionY]) {
+            if (newPositionX >= 0 && newPositionX < COLS && newPositionY >= 0 && newPositionY < ROWS && mapGrid[newPositionX][newPositionY] == 1 && !visited[newPositionX][newPositionY]) {
                 visited[newPositionX][newPositionY] = true;
                 queue.push({ newPositionX, newPositionY });
             }
@@ -178,8 +189,8 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
     if (!(col >= 0 && col < COLS && row >= 0 && row < ROWS))
         return;
 
-    int newState = (grid[row][col] + 1) % 3;  // Cycle through states: grass → path → tower
-    grid[row][col] = newState;
+    int newState = (mapGrid[row][col] + 1) % 3;  // Cycle through states: grass → path → tower
+    mapGrid[row][col] = newState;
 
     if (newState == 2)
         numberOfTowers++;
@@ -206,7 +217,7 @@ void startGame() {
 void drawFullMap(sf::RenderWindow& window, int cellSize, MapView& mapView) {
     for (int i = 0; i < numberOfRows; i++) {
         for (int j = 0; j < numberOfColumns; j++) {
-            mapView.drawSingleCell(window, j, i, grid[i][j], cellSize);  // Draw each cell
+            mapView.drawSingleCell(window, j, i, mapGrid[i][j], cellSize);  // Draw each cell
         }
     }
 }
@@ -393,7 +404,7 @@ void extractPath() {
 
     for (int i = 0; i < COLS; i++) {
         for (int j = 0; j < ROWS; j++) {
-            if (grid[i][j] == 1) {
+            if (mapGrid[i][j] == 1) {
                 if (i == 0 || i == COLS - 1 || j == 0 || j == ROWS - 1) {
                     entry = { i, j };
                     break;
@@ -427,7 +438,7 @@ void extractPath() {
             int newX = x + directions[i][0], newY = y + directions[i][1];
 
             if (newX >= 0 && newX < COLS && newY >= 0 && newY < ROWS &&
-                grid[newX][newY] == 1 && !visited[newX][newY]) {
+                mapGrid[newX][newY] == 1 && !visited[newX][newY]) {
                 visited[newX][newY] = true;
                 queue.push({ newX, newY });
             }
