@@ -1,4 +1,5 @@
 ﻿#include "Map.h"
+#include "Menu.h"
 #include "MapView.h"
 #include "Game.h"
 
@@ -12,10 +13,6 @@
 int grid[COLS][ROWS]; // Define the grid here, not in map.h
 
 int numberOfTowers = 0;
-
-
-int mapWidth = (WINDOWSIZE * 2) / 3;
-int infoPanelWidth = WINDOWSIZE / 3;
 
 
 int playerCoins = 100;
@@ -32,9 +29,9 @@ std::vector<sf::Vector2i> pathCells, towerCells;
 std::vector<MapObserver*> observersMap;
 
 
-void initializeMap() {
-    for (int i = 0; i < COLS; i++) {
-        for (int j = 0; j < ROWS; j++) {
+void initializeMap(int numberOfRows, int numberOfColumns) {
+    for (int i = 0; i < numberOfRows; i++) {
+        for (int j = 0; j < numberOfColumns; j++) {
             grid[i][j] = 0; // Default to grass (scenery)
         }
     }
@@ -216,14 +213,14 @@ void drawFullMap(sf::RenderWindow& window, int cellSize, MapView& mapView) {
 
 
 
-void displayMap() {
+void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberOfColumns) {
 
-    sf::RenderWindow window(sf::VideoMode(WINDOWSIZE+infoPanelWidth, WINDOWSIZE + 60), "Tower Defense Map Creation", sf::Style::Resize | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Tower Defense Map Creation", sf::Style::Resize | sf::Style::Close);
 
     MapView mapView(window);
     addObserver(&mapView);
 
-    int cellSize = WINDOWSIZE / ROWS;
+    int cellSize = mapHeight / numberOfRows;
 
 
 
@@ -232,15 +229,6 @@ void displayMap() {
     if (!font.loadFromFile("arial.ttf")) {
         std::cerr << "Failed to load font!" << std::endl;
     }
-
-    // Load textures
-    if (!towerTextureMap.loadFromFile("tower.png") ||
-        !grassTextureMap.loadFromFile("grass_3.png") ||
-        !pathTextureMap.loadFromFile("path.png")) {
-        std::cerr << "Failed to load textures!" << std::endl;
-    }
-
-
 
 
 
@@ -252,25 +240,25 @@ void displayMap() {
         ...
      */
 
-    sf::RectangleShape infoPanel(sf::Vector2f(infoPanelWidth, WINDOWSIZE));
+    sf::RectangleShape infoPanel(sf::Vector2f(infoPanelWidth, infoPanelHeight));
     infoPanel.setFillColor(sf::Color(211, 217, 227));
-    infoPanel.setPosition(WINDOWSIZE, 0);
+    infoPanel.setPosition(mapWidth, 0);
 
     // display the tower counter 
     sf::Text towerCountText("Towers: 0", font, 20);
     towerCountText.setFillColor(sf::Color::Black);
-    towerCountText.setPosition(WINDOWSIZE + 15, 20);
+    towerCountText.setPosition(mapWidth + 15, 20);
 
     // display the player coins
     sf::Text playerCoinsText("Coins: " + playerCoins, font, 20);
     playerCoinsText.setFillColor(sf::Color::Black);
-    playerCoinsText.setPosition(WINDOWSIZE + 15, 70);
+    playerCoinsText.setPosition(mapWidth + 15, 70);
 
 
     // display the shop
     sf::Text damageTowerCostText("Damage Tower: 50 coins", font, 15);
     damageTowerCostText.setFillColor(sf::Color::Black);
-    damageTowerCostText.setPosition(WINDOWSIZE + 15, WINDOWSIZE-200);
+    damageTowerCostText.setPosition(mapWidth + 15, windowHeight -200);
 
     // display the "Start Game" button
     sf::RectangleShape button(sf::Vector2f(200, 40));
@@ -298,13 +286,13 @@ void displayMap() {
                 // Adjust the viewport when the window is resized
                 sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
                 window.setView(sf::View(visibleArea));
-                cellSize = (event.size.width * 2 / 3) / ROWS;
+                cellSize = (event.size.width * 2 / 3) / 20;
 
                 // Resize and reposition info panel
-                int mapWidth = (event.size.width * 2) / 3;
-                int infoPanelWidth = (event.size.width) / 3;
+                /*int mapWidth = (event.size.width * 2) / 3;
+                int infoPanelWidth = (event.size.width) / 3;*/
 
-                infoPanel.setSize(sf::Vector2f(infoPanelWidth, (cellSize*ROWS)));
+                infoPanel.setSize(sf::Vector2f(infoPanelWidth, (cellSize* 20)));
                 infoPanel.setPosition(mapWidth, 0);
 
                 // Resize and reposition button
@@ -323,7 +311,7 @@ void displayMap() {
 
                 playerCoinsText.setPosition(event.size.width * 2 / 3 + 20, 80);
 
-                damageTowerCostText.setPosition(event.size.width * 2 / 3 + 20, WINDOWSIZE-200);
+                damageTowerCostText.setPosition(event.size.width * 2 / 3 + 20, windowHeight-200);
             }
             // handle mouse clicks
             else if (event.type == sf::Event::MouseButtonPressed) {
@@ -360,34 +348,6 @@ void displayMap() {
         window.clear();
 
 
-        // Draw map
-        //for (int i = 0; i < COLS; i++) {
-        //    for (int j = 0; j < ROWS; j++) {
-        //        sf::Sprite sprite;
-        //        sprite.setPosition(j * cellSize, i * cellSize);
-
-
-
-        //        // draw a thin border for each cell
-        //        sf::RectangleShape border(sf::Vector2f(cellSize, cellSize));
-        //        border.setPosition(j * cellSize, i * cellSize);
-        //        border.setFillColor(sf::Color::Transparent);
-        //        border.setOutlineColor(sf::Color::Black);
-        //        border.setOutlineThickness(1);
-
-        //        // set images for each cell type
-        //        if (grid[i][j] == 0) sprite.setTexture(grassTextureMap);
-        //        else if (grid[i][j] == 1) sprite.setTexture(pathTextureMap);
-        //        else if (grid[i][j] == 2) sprite.setTexture(towerTextureMap);
-
-        //        sprite.setScale(static_cast<float>(cellSize) / sprite.getTexture()->getSize().x,
-        //            static_cast<float>(cellSize) / sprite.getTexture()->getSize().y);
-
-        //        window.draw(border);
-        //        window.draw(sprite);
-        //    }
-        //}
-
         // Update button and text position after resize
         button.setPosition((window.getSize().x - 200) / 2, window.getSize().y - 50);
         buttonText.setPosition((window.getSize().x - 150) / 2, window.getSize().y - 45);
@@ -402,13 +362,9 @@ void displayMap() {
         window.draw(buttonText);
 
         // display tower counter text
-        /*towerCountText.setString("Towers: " + std::to_string(numberOfTowers));
-        window.draw(towerCountText);*/
         mapView.drawTowerCount(window);
 
         // display player coins text
-        /*playerCoinsText.setString("Coins: " + std::to_string(playerCoins));
-        window.draw(playerCoinsText);*/
         mapView.drawCoinsCount(window);
 
 

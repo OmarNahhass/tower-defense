@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "Menu.h"
 #include "Map.h"
 
 #include <SFML/Graphics.hpp>
@@ -11,9 +12,7 @@
 
 int main() {
     // Initialize and display the map creation screen
-    /*menuScreen();*/
-    initializeMap();
-    displayMap();
+    menuScreen();
 
     if (isValidMap())
         startGame();

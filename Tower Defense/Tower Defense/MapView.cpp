@@ -1,5 +1,6 @@
 #include "MapView.h"
 #include "Map.h"
+#include "Menu.h"
 
 #include <iostream>
 
@@ -62,7 +63,7 @@ void MapView::drawTowerCount(sf::RenderWindow& window) {
     towerText.setFont(font);
     towerText.setCharacterSize(20);
     towerText.setFillColor(sf::Color::Black);
-    towerText.setPosition(WINDOWSIZE + 15, 20);  // Adjust position as needed
+    towerText.setPosition(mapWidth + 15, 20);  // Adjust position as needed
     towerText.setString("Towers: " + std::to_string(towerCount));
 
     window.draw(towerText);
@@ -80,7 +81,7 @@ void MapView::drawCoinsCount(sf::RenderWindow& window) {
     coinsText.setFont(font);
     coinsText.setCharacterSize(20);
     coinsText.setFillColor(sf::Color::Black);
-    coinsText.setPosition(WINDOWSIZE + 15, 70);  // Adjust position as needed
+    coinsText.setPosition(mapWidth + 15, 70);  // Adjust position as needed
     coinsText.setString("Coins: " + std::to_string(playerCoins));
 
     window.draw(coinsText);

@@ -1,5 +1,6 @@
 #include "CritterView.h"
 #include "Critter.h"
+#include "Map.h"
 
 void CritterView::onCritterMoved(Critter& critter, sf::Vector2f velocity) {
 	critter.getSprite().move(velocity);

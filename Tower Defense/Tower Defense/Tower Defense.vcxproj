@@ -142,6 +142,7 @@
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MapObserver.cpp" />
     <ClCompile Include="MapView.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="NextWave.cpp" />
     <ClCompile Include="SpecialTowers.cpp" />
     <ClCompile Include="Tower.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapObserver.h" />
     <ClInclude Include="MapView.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="NextWave.h" />
     <ClInclude Include="SpecialTowers.h" />
     <ClInclude Include="Tower.h" />
