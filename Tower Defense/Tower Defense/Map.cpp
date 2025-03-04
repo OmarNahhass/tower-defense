@@ -350,8 +350,8 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
 
 
         // Update button and text position after resize
-        button.setPosition((window.getSize().x - 200) / 2, window.getSize().y - 50);
-        buttonText.setPosition((window.getSize().x - 150) / 2, window.getSize().y - 45);
+        button.setPosition((windowWidth/2) - 200, mapHeight);
+        buttonText.setPosition((windowWidth / 2) - 150, mapHeight+10);
 
 
         // Draw info panel
