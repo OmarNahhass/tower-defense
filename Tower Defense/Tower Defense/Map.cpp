@@ -10,7 +10,7 @@
 
 #include <queue>
 
-int grid[COLS][ROWS]; // Define the grid here, not in map.h
+int grid[COLS][ROWS]; 
 
 int numberOfTowers = 0;
 
@@ -204,8 +204,8 @@ void startGame() {
 }
 
 void drawFullMap(sf::RenderWindow& window, int cellSize, MapView& mapView) {
-    for (int i = 0; i < ROWS; i++) {
-        for (int j = 0; j < COLS; j++) {
+    for (int i = 0; i < numberOfRows; i++) {
+        for (int j = 0; j < numberOfColumns; j++) {
             mapView.drawSingleCell(window, j, i, grid[i][j], cellSize);  // Draw each cell
         }
     }

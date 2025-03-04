@@ -4,6 +4,7 @@
 #define MAP_H
 
 #include <SFML/Graphics.hpp>
+#include "Menu.h"
 #include "MapObserver.h"
 
 
@@ -27,7 +28,6 @@ bool isValidMap();
 void extractPath();
 
 void startGame();
-
 
 
 constexpr int ROWS = 20;

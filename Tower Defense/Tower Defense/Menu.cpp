@@ -29,6 +29,7 @@ int numberOfColumns = 20;
 void startMapEditor(int width, int height, int numberOfRows, int numberOfColumns) {
     //sf::RenderWindow mapWindow(sf::VideoMode(windowSize, windowSize), "Map Editor", sf::Style::Close);
 
+
     // Step 1: Initialize the map
     initializeMap(numberOfRows, numberOfColumns); // Creates a numCells x numCells grid and sets all values to 0
     displayMap(width, height, numberOfRows, numberOfColumns);  // Render the map with the given window
@@ -81,16 +82,16 @@ void menuScreen() {
                     resolutionIndex = (resolutionIndex - 1 + resolutions.size()) % resolutions.size();
                 }
                 else if (event.key.code == sf::Keyboard::W) {
-                    numberOfRows += 1;
+                    numberOfRows++;
                 }
                 else if (event.key.code == sf::Keyboard::S && numberOfRows > 10) {
-                    numberOfRows -= 1;
+                    numberOfRows--;
                 }
                 else if (event.key.code == sf::Keyboard::D) {
-                    numberOfColumns += 1;
+                    numberOfColumns++;
                 }
                 else if (event.key.code == sf::Keyboard::A && numberOfColumns > 10) {
-                    numberOfColumns -= 1;
+                    numberOfColumns--;
                 }
             }
             else if (event.type == sf::Event::MouseButtonPressed) {
