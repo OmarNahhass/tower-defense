@@ -122,7 +122,7 @@ void menuScreen() {
 
                     // if the map takes less space than expected, the info panel will take up the remaining width
                     infoPanelWidth = windowWidth - mapWidth;                               
-                    infoPanelHeight = (resolutions[resolutionIndex].second * 9) / 10;
+                    infoPanelHeight = mapHeight;
 
                     startMapEditor(resolutions[resolutionIndex].first, resolutions[resolutionIndex].second, numberOfRows, numberOfColumns);
                     return;
