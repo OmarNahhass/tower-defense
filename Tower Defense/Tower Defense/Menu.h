@@ -7,6 +7,7 @@
 extern int numberOfRows;
 extern int numberOfColumns;
 
+extern int cellSize;
 
 extern int windowWidth; 
 extern int windowHeight;

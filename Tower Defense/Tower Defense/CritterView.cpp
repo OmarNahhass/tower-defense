@@ -1,6 +1,7 @@
 #include "CritterView.h"
 #include "Critter.h"
 #include "Map.h"
+#include "Menu.h"
 
 void CritterView::onCritterMoved(Critter& critter, sf::Vector2f velocity) {
 	critter.getSprite().move(velocity);
@@ -12,7 +13,6 @@ void CritterView::onCritterAdded(Critter& critter, sf::Texture& texture) {
     critter.getSprite().setTexture(texture);
 
     // Ensure the sprite size matches the grid cell size
-    float cellSize = static_cast<float>(WINDOWSIZE) / ROWS;
     critter.getSprite().setScale(cellSize / critter.getSprite().getTexture()->getSize().x,
         cellSize / critter.getSprite().getTexture()->getSize().y);
 
@@ -26,8 +26,8 @@ void CritterView::drawCritters(Critter& critter) {
     //critterSprite.setPosition(critter.position.x * cellSize, critter.position.y * cellSize);
 
     critterSprite.setScale(
-        static_cast<float>(WINDOWSIZE / ROWS) / critterSprite.getTexture()->getSize().x,
-        static_cast<float>(WINDOWSIZE / ROWS) / critterSprite.getTexture()->getSize().y
+        static_cast<float>(cellSize) / critterSprite.getTexture()->getSize().x,
+        static_cast<float>(cellSize) / critterSprite.getTexture()->getSize().y
     );
 
     window.draw(critterSprite);

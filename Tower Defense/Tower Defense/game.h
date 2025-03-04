@@ -7,8 +7,6 @@
 
 void displayGame(sf::RenderWindow& window);      // Opens SFML window and allows user interaction
 
-extern int cellSize;
-
 extern int numberOfCrittersPerWave;
 extern int numberOfCrittersRemaining;
 

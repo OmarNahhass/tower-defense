@@ -5,15 +5,17 @@
 #include <iostream>
 
 
+int towerCounter = 0;
+int playerCoins = 100;
 
 
 void MapView::onCellChanged(int x, int y, int newState) {
     if (newState == 2) {
-        towerCount++;
+        towerCounter++;
         playerCoins -= 50;
     }
     else if (newState == 0) {
-        towerCount--;
+        towerCounter--;
         playerCoins += 50;
     }
     
@@ -64,7 +66,7 @@ void MapView::drawTowerCount(sf::RenderWindow& window) {
     towerText.setCharacterSize(20);
     towerText.setFillColor(sf::Color::Black);
     towerText.setPosition(mapWidth + 15, 20);  // Adjust position as needed
-    towerText.setString("Towers: " + std::to_string(towerCount));
+    towerText.setString("Towers: " + std::to_string(towerCounter));
 
     window.draw(towerText);
 }

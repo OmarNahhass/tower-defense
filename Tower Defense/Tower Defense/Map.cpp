@@ -13,10 +13,6 @@
 int grid[COLS][ROWS]; 
 int** mapGrid = nullptr;
 
-int numberOfTowers = 0;
-
-int playerCoins = 100;
-
 
 #include <vector>
 #include <SFML/System/Vector2.hpp>
@@ -113,8 +109,9 @@ bool isValidMap() {
         displayInvalidMapScreen("Invalid map: Missing entry or exit");
         return false;
     }
+    
 
-    if (numberOfTowers == 0) {
+    if (towerCounter == 0) {
         std::cout << "Invalid map: There should be at least 1 tower in the game.\n";
         displayInvalidMapScreen("Invalid map: There should be at least 1 tower in the game");
         return false;
@@ -148,7 +145,7 @@ bool isValidMap() {
 
 
         // Exit found
-        if (currentPositionX == exit.first && currentPositionY == exit.second && numberOfTowers >= 1 && playerCoins >= 0) {
+        if (currentPositionX == exit.first && currentPositionY == exit.second && towerCounter >= 1 && playerCoins >= 0) {
             return true; 
         }
 
@@ -192,15 +189,12 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
     int newState = (mapGrid[row][col] + 1) % 3;  // Cycle through states: grass → path → tower
     mapGrid[row][col] = newState;
 
-    if (newState == 2)
-        numberOfTowers++;
-
     notifyObservers(col, row, newState);  // Notify all observers about the change
 }
 
 // Placeholder function for the game screen
 void startGame() {
-    sf::RenderWindow gameWindow(sf::VideoMode(WINDOWSIZE + infoPanelWidth, WINDOWSIZE + 60), "Tower Defense Game", sf::Style::Resize | sf::Style::Close);
+    sf::RenderWindow gameWindow(sf::VideoMode(windowWidth, windowHeight), "Tower Defense Game", sf::Style::Resize | sf::Style::Close);
 
     while (gameWindow.isOpen()) {
         sf::Event event;
@@ -299,9 +293,6 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                 window.setView(sf::View(visibleArea));
                 cellSize = (event.size.width * 2 / 3) / 20;
 
-                // Resize and reposition info panel
-                /*int mapWidth = (event.size.width * 2) / 3;
-                int infoPanelWidth = (event.size.width) / 3;*/
 
                 infoPanel.setSize(sf::Vector2f(infoPanelWidth, (cellSize* 20)));
                 infoPanel.setPosition(mapWidth, 0);
@@ -317,7 +308,6 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                 buttonText.setPosition(button.getPosition().x / 2, button.getPosition().y + 10);
 
                 // Resize and Reposition tower counter text
-                //towerCountText.setCharacterSize(newFontSize);
                 towerCountText.setPosition(event.size.width * 2 / 3 + 20, 30);
 
                 playerCoinsText.setPosition(event.size.width * 2 / 3 + 20, 80);
@@ -457,8 +447,8 @@ void removeObserver(MapObserver* observer) {
     observersMap.erase(std::remove(observersMap.begin(), observersMap.end(), observer), observersMap.end());
 }
 
-void notifyObservers(int x, int y, int newState) {
+void notifyObservers(int column, int row, int newState) {
     for (MapObserver* observer : observersMap) {
-        observer->onCellChanged(x, y, newState);
+        observer->onCellChanged(column, row, newState);
     }
 }

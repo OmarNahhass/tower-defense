@@ -1,5 +1,7 @@
 #include "Critter.h"
-#include "Map.h"  // Needed for pathCells
+#include "Map.h"  
+#include "Menu.h"  
+#include "MapView.h"
 #include "Game.h"
 #include <iostream>
 
@@ -47,9 +49,20 @@ Critter::Critter(int lvl, sf::Texture& texture) {
     pathIndex = 0;
     moveProgress = 0.0f;
 
+    sprite.setTexture(texture);
+
+
+    // Get texture size
+    sf::Vector2u textureSize = texture.getSize();
+
+    // Scale sprite to fit exactly within `cellSize`
+    sprite.setScale(static_cast<float>(cellSize) / textureSize.x,
+        static_cast<float>(cellSize) / textureSize.y);
+
 
     hitTime = 0;  // Initialize hit time
     hitDuration = 0.75f;  // Red border stays for 0.75s
+
 
 }
 
@@ -93,8 +106,6 @@ void Critter::move(float deltaTime) {
         return;
     }
 
-    
-    /*sprite.setScale(cellSize / sprite.getTexture()->getSize().x, cellSize / sprite.getTexture()->getSize().y);*/
 
     sf::Vector2f currentPos(pathCells[this->pathIndex].x * cellSize, pathCells[this->pathIndex].y * cellSize);
     sf::Vector2f nextPos(pathCells[this->pathIndex + 1].x * cellSize, pathCells[this->pathIndex + 1].y * cellSize);

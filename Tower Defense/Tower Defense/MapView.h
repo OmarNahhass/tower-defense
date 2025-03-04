@@ -12,9 +12,6 @@ class MapView : public MapObserver {
 public:
     float currentTime;
 
-    int towerCount = 0;
-    int playerCoins = 100;
-
 
     MapView(sf::RenderWindow& window) : MapObserver(window) {
         if (!grassTextureMap.loadFromFile("grass.png")) {
@@ -37,6 +34,10 @@ public:
 private:
     sf::Texture grassTextureMap, pathTextureMap, towerTextureMap;
 };
+
+
+extern int towerCounter;
+extern int playerCoins;
 
 
 #endif

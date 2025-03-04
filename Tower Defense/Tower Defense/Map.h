@@ -15,7 +15,7 @@ extern std::vector<MapObserver*> observersMap;
 // Observer methods
 void addObserver(MapObserver* observer);
 void removeObserver(MapObserver* observer);
-void notifyObservers(int x, int y, int newState);
+void notifyObservers(int column, int row, int newState);
 
 void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellSize);
 void initializeMap(int numberOfRows, int numberOfColumns);
@@ -35,8 +35,6 @@ constexpr int ROWS = 20;
 constexpr int COLS = 20;
 
 extern int numberOfTowers;
-
-extern int playerCoins;
 
 constexpr int WINDOWSIZE = 800;
 

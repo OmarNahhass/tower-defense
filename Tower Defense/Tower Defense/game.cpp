@@ -1,5 +1,7 @@
 #include "game.h"
 #include "Map.h"
+#include "MapView.h"
+#include "Menu.h"
 #include "Critter.h"
 #include "Tower.h"
 #include "CritterGroupGenerator.h"
@@ -30,8 +32,6 @@ std::vector<Critter> spawnQueue;  // Queue of critters waiting to be spawned
 float critterSpawnTimer = 0.0f;   // Timer to control spawning intervals
 int crittersSpawned = 0;          // Track number of critters spawned in current wave
 
-int cellSize = WINDOWSIZE / ROWS;
-
 int numberOfCrittersPerWave = 10;
 int numberOfCrittersRemaining = numberOfCrittersPerWave;
 
@@ -43,10 +43,10 @@ void spawnCritter() {
 void storeTowerPositions() {
     directDamageTowerPositions.clear(); // Reset before scanning
 
-    for (int j = 0; j < numberOfColumns; j++) {  // 
-        for (int i = 0; i < numberOfRows; i++) {  
-            if (mapGrid[i][j] == 2) { // 
-                directDamageTowerPositions.emplace_back(j, i); // Store cell coordinates correctly
+    for (int i = 0; i < numberOfColumns; i++) {  
+        for (int j = 0; j < numberOfRows; j++) {  
+            if (mapGrid[j][i] == 2) { 
+                directDamageTowerPositions.emplace_back(i, j); // Store cell coordinates correctly
             }
         }
     }
@@ -179,8 +179,8 @@ void displayGame(sf::RenderWindow& window) {
     // display an info panel on the right
     // the info panel contains several info (number of towers, money, etc.)
     sf::RectangleShape infoPanel(sf::Vector2f(infoPanelWidth, infoPanelHeight));
-    infoPanel.setFillColor(sf::Color(255, 255, 255));
-    infoPanel.setPosition(windowWidth, 0);
+    infoPanel.setFillColor(sf::Color(211, 217, 227));
+    infoPanel.setPosition(mapWidth, 0);
 
 
 
@@ -195,13 +195,13 @@ void displayGame(sf::RenderWindow& window) {
     // critter counter
     sf::Text critterCountText("Critters Remaining: " + numberOfCrittersRemaining, font, 15);
     critterCountText.setFillColor(sf::Color::Black);
-    critterCountText.setPosition(WINDOWSIZE + 15, 30);
+    critterCountText.setPosition(mapWidth + 15, 30);
 
 
     // display the player coins
     sf::Text playerCoinsText("Coins: " + playerCoins, font, 15);
     playerCoinsText.setFillColor(sf::Color::Black);
-    playerCoinsText.setPosition(WINDOWSIZE + 15, 70);
+    playerCoinsText.setPosition(mapWidth + 15, 70);
 
 
 
@@ -228,7 +228,7 @@ void displayGame(sf::RenderWindow& window) {
                 mapWidth = (event.size.width * 2) / 3;
                 int infoPanelWidth = (event.size.width) / 3;
 
-                infoPanel.setSize(sf::Vector2f(infoPanelWidth, (cellSize * ROWS)));
+                infoPanel.setSize(sf::Vector2f(infoPanelWidth, infoPanelHeight));
                 infoPanel.setPosition(mapWidth, 0);
 
                 // Update all critters' positions based on new cellSize

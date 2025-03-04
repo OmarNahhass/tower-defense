@@ -26,6 +26,8 @@ int infoPanelHeight = 0;
 int numberOfRows = 20;
 int numberOfColumns = 20;
 
+int cellSize = 0;
+
 void startMapEditor(int width, int height, int numberOfRows, int numberOfColumns) {
 
     // Initialize the map
@@ -112,11 +114,11 @@ void menuScreen() {
                     windowHeight = resolutions[resolutionIndex].second;
 
                     
-                    int gridCellSize = std::min(maxMapWidth / numberOfColumns, maxMapHeight / numberOfRows);
+                    cellSize = std::min(maxMapWidth / numberOfColumns, maxMapHeight / numberOfRows);
 
 
                     mapHeight = (resolutions[resolutionIndex].second * 9) / 10;
-                    mapWidth = gridCellSize * numberOfColumns;
+                    mapWidth = cellSize * numberOfColumns;
 
                     // if the map takes less space than expected, the info panel will take up the remaining width
                     infoPanelWidth = windowWidth - mapWidth;                               
