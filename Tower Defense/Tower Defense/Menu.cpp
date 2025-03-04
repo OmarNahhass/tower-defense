@@ -7,6 +7,7 @@
 #include <iostream>
 
 
+// 5 pre-determined screen resolutions
 std::vector<std::pair<int, int>> resolutions = {
     {800, 600}, {1280, 720}, {1600, 900}, {1920, 1080}, {2560, 1440}
 };
@@ -22,22 +23,19 @@ int mapHeight = 0;
 int infoPanelWidth = 0;
 int infoPanelHeight = 0;
 
-
 int numberOfRows = 20;
 int numberOfColumns = 20;
 
 void startMapEditor(int width, int height, int numberOfRows, int numberOfColumns) {
-    //sf::RenderWindow mapWindow(sf::VideoMode(windowSize, windowSize), "Map Editor", sf::Style::Close);
 
-
-    // Step 1: Initialize the map
-    initializeMap(numberOfRows, numberOfColumns); // Creates a numCells x numCells grid and sets all values to 0
-    displayMap(width, height, numberOfRows, numberOfColumns);  // Render the map with the given window
+    // Initialize the map
+    initializeMap(numberOfRows, numberOfColumns); // Creates a rows x columns grid and sets all values to 0
+    displayMap(width, height, numberOfRows, numberOfColumns);  // Render the map 
 }
 
 
 void menuScreen() {
-    sf::RenderWindow window(sf::VideoMode(400, 350), "Settings", sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(400, 350), "Menu", sf::Style::Titlebar | sf::Style::Close);
     sf::Font font;
     if (!font.loadFromFile("arial.ttf")) {
         std::cerr << "Failed to load font!" << std::endl;
@@ -67,6 +65,10 @@ void menuScreen() {
     sf::RectangleShape startButton(sf::Vector2f(160, 40));
     startButton.setPosition(120, 250);
     startButton.setFillColor(sf::Color(100, 100, 255));
+
+    sf::Text extraInfoText("(if the number of columns exceeds the number of rows, select a larger screen resolution)", font, 10);
+    extraInfoText.setPosition(5, 300);
+    extraInfoText.setFillColor(sf::Color::Black);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -100,13 +102,24 @@ void menuScreen() {
                     mousePos.y >= startButton.getPosition().y && mousePos.y <= startButton.getPosition().y + startButton.getSize().y) {
                     window.close();
 
+                    // specify the maximum width and height that the map can have
+                    // the max width and height are calculated to leave enough room for the Info Panel and Start Game button
+                    int maxMapWidth = (resolutions[resolutionIndex].first * 3) / 4;      
+                    int maxMapHeight = (resolutions[resolutionIndex].second * 9) / 10;   
+
+                    // the dimensions of the screen
                     windowWidth = resolutions[resolutionIndex].first;
                     windowHeight = resolutions[resolutionIndex].second;
 
-                    mapWidth = (resolutions[resolutionIndex].first * 2) / 3;
-                    mapHeight = (resolutions[resolutionIndex].second * 9) / 10;
+                    
+                    int gridCellSize = std::min(maxMapWidth / numberOfColumns, maxMapHeight / numberOfRows);
 
-                    infoPanelWidth = resolutions[resolutionIndex].first / 3;
+
+                    mapHeight = (resolutions[resolutionIndex].second * 9) / 10;
+                    mapWidth = gridCellSize * numberOfColumns;
+
+                    // if the map takes less space than expected, the info panel will take up the remaining width
+                    infoPanelWidth = windowWidth - mapWidth;                               
                     infoPanelHeight = (resolutions[resolutionIndex].second * 4) / 5;
 
                     startMapEditor(resolutions[resolutionIndex].first, resolutions[resolutionIndex].second, numberOfRows, numberOfColumns);
@@ -126,6 +139,7 @@ void menuScreen() {
         window.draw(numberOfColumnsText);
         window.draw(startButton);
         window.draw(startButtonText);
+        window.draw(extraInfoText);
         window.display();
     }
 }
