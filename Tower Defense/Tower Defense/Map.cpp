@@ -266,9 +266,12 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
     damageTowerCostText.setPosition(mapWidth + 15, windowHeight -200);
 
     // display the "Start Game" button
-    sf::RectangleShape button(sf::Vector2f(200, 40));
+    int buttonHeight = std::min(windowHeight - mapHeight, windowHeight - infoPanelHeight);
+    int buttonPosition = std::max(mapHeight, infoPanelHeight);
+
+    sf::RectangleShape button(sf::Vector2f(windowWidth, buttonHeight));
     button.setFillColor(sf::Color(100, 100, 255));
-    sf::Text buttonText("Start Game", font, 20);
+    sf::Text buttonText("Start Game", font, 30);
     buttonText.setFillColor(sf::Color::White);
 
 
@@ -350,8 +353,8 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
 
 
         // Update button and text position after resize
-        button.setPosition((windowWidth/2) - 200, mapHeight);
-        buttonText.setPosition((windowWidth / 2) - 150, mapHeight+10);
+        button.setPosition(0, buttonPosition);
+        buttonText.setPosition(windowWidth/2 - 100, mapHeight+20);
 
 
         // Draw info panel

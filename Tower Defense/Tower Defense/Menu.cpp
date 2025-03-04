@@ -9,7 +9,7 @@
 
 // 5 pre-determined screen resolutions
 std::vector<std::pair<int, int>> resolutions = {
-    {800, 600}, {1280, 720}, {1600, 900}, {1920, 1080}, {2560, 1440}
+    {800, 600}, {1280, 720}, {1600, 900}, {1920, 980}
 };
 int resolutionIndex = 0;
 
@@ -122,7 +122,7 @@ void menuScreen() {
 
                     // if the map takes less space than expected, the info panel will take up the remaining width
                     infoPanelWidth = windowWidth - mapWidth;                               
-                    infoPanelHeight = (resolutions[resolutionIndex].second * 4) / 5;
+                    infoPanelHeight = (resolutions[resolutionIndex].second * 9) / 10;
 
                     startMapEditor(resolutions[resolutionIndex].first, resolutions[resolutionIndex].second, numberOfRows, numberOfColumns);
                     return;
