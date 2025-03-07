@@ -40,6 +40,7 @@ GameState currentState = GameState::InGame;
 
 
 
+
 void spawnCritter() {
     critters.emplace_back(currentWave, critterTexture); // Construct directly in place
     std::cerr << "Spawned a critter! Current size: " << critters.size() << std::endl;
@@ -122,8 +123,18 @@ void startWave(CritterView& critterView) {
 
 
 
-void updateWave(float deltaTime, float currentTime, CritterView& critterView) {
+void updateWave(float deltaTime, float currentTime, CritterView& critterView, sf::RenderWindow& window) {
     int timeRemaining = 0;
+
+    sf::Font font;
+    if (!font.loadFromFile("arial.ttf")) {
+        std::cerr << "Failed to load font!" << std::endl;
+        return;
+    }
+
+    sf::Text waveMessage;
+
+    
 
     // check the states of the game
     switch (currentState) {
@@ -162,7 +173,14 @@ void updateWave(float deltaTime, float currentTime, CritterView& critterView) {
         waveDelayTimer += deltaTime;
         timeRemaining = 5 - static_cast<int>(waveDelayTimer); // Convert to integer seconds
 
-        std::cerr << "Wave ended. Changing screen in " << timeRemaining << " seconds." << std::endl;
+        waveMessage.setFont(font);
+        waveMessage.setCharacterSize(15);
+        waveMessage.setFillColor(sf::Color::Green);
+        waveMessage.setPosition(mapWidth + 10, 150); // Adjust position on screen
+
+        //std::cerr << "Wave ended. Changing screen in " << timeRemaining << " seconds." << std::endl;
+        waveMessage.setString("Wave ended. Next wave in " + std::to_string(timeRemaining) + " seconds");
+        window.draw(waveMessage);
 
         // Start next wave after 5-second delay
         if (waveDelayTimer >= 5.0f) {  
@@ -172,6 +190,9 @@ void updateWave(float deltaTime, float currentTime, CritterView& critterView) {
 
     // Allow the player to change the map and add towers
     case GameState::MapCustomization:
+
+        // close game window and transition to map creation screen
+        window.close();
         displayMap(windowWidth, windowHeight, numberOfRows, numberOfColumns);
 
         break;
@@ -219,9 +240,6 @@ void displayGame(sf::RenderWindow& window) {
     storeTowerPositions(); // Get tower positions 
     spawnTowers();         // Now spawn towers
 
-    //if (currentWave == 1)
-    //    startWave(critterView);           // Start first wave
-
 
     /*
     Info panel    
@@ -243,8 +261,6 @@ void displayGame(sf::RenderWindow& window) {
 
     while (window.isOpen()) {
         sf::Event event;
-        
-
 
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
@@ -322,23 +338,12 @@ void displayGame(sf::RenderWindow& window) {
             }
         }
 
-        // display information about the wave
-        //sf::Text waveMessage;
-        //waveMessage.setFont(font);
-        //waveMessage.setCharacterSize(24);
-        //waveMessage.setFillColor(sf::Color::White);
-        //waveMessage.setPosition(20, 20); // Adjust position on screen
 
-        //if (waitingForNextWave) {
-        //    int timeRemaining = 10 - static_cast<int>(waveDelayTimer);
-        //    waveMessage.setString("Wave ended. Next wave in " + std::to_string(timeRemaining) + " seconds");
-        //    window.draw(waveMessage);
-        //}
 
         window.draw(infoPanel);
 
         // Update game logic
-        updateWave(deltaTime, currentTime, critterView);
+        updateWave(deltaTime, currentTime, critterView, window);
         updateCritters(deltaTime, currentTime);
         updateTowers(currentTime);
 
