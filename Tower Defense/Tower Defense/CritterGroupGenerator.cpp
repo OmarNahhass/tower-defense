@@ -3,7 +3,7 @@
 
 std::vector<Critter> CritterGroupGenerator::generateWaveCritters(int waveNumber, sf::Texture& texture, CritterObserver& observer) {
     std::vector<Critter> crittersWave;
-    crittersWave.reserve(10); // Reserve space to avoid reallocations
+    crittersWave.reserve(5); // Reserve space to avoid reallocations
 
     // 10 critters per wave
     for (int i = 0; i < numberOfCrittersPerWave; i++) {

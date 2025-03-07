@@ -34,8 +34,6 @@ extern int** mapGrid;
 constexpr int ROWS = 20;
 constexpr int COLS = 20;
 
-extern int numberOfTowers;
-
 constexpr int WINDOWSIZE = 800;
 
 extern int grid[ROWS][COLS];  // Declare grid here but define in map.cpp

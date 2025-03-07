@@ -22,7 +22,7 @@ extern int infoPanelWidth;
 extern int infoPanelHeight;
 
 void menuScreen();
-void startMapEditor(int width, int height, int numCells);
+void startMapEditor(int width, int height, int numberOfRows, int numberOfColumns);
 
 
 

@@ -223,9 +223,9 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Tower Defense Map Creation", sf::Style::Resize | sf::Style::Close);
 
     MapView mapView(window);
-    addObserver(&mapView);
 
-    //int cellSize = mapHeight / numberOfRows;
+    if (observersMap.size() == 0)
+        addObserver(&mapView);
 
 
 
@@ -347,6 +347,7 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                     if (isValidMap()) {
                         window.close();
                         extractPath();
+                        currentState = GameState::WaveStart;
                         startGame();
                         return;
                     }

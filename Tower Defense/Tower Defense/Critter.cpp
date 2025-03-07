@@ -41,7 +41,7 @@ void displayGameOverScreen() {
 
 Critter::Critter(int lvl, sf::Texture& texture) {
     hitPoints = lvl * 10;
-    reward = lvl * 10;
+    reward = lvl * 20;
     strength = lvl * 1;
     speed = lvl * 10; // Speed per second
     level = lvl;

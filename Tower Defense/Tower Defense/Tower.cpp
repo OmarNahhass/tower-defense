@@ -32,13 +32,12 @@ Tower::~Tower() {}
 void Tower::shoot(std::vector<Critter>& critters, float currentTime) {
     if (currentTime - lastShotTime < (1.0f / rateOfFire)) return; // Enforce firing rate
 
-    int CELL_SIZE = WINDOWSIZE / ROWS;
 
     for (auto& critter : critters) {
      
         // Convert critter position from pixels to grid coordinates
-        int critterGridX = critter.getPosition().x / CELL_SIZE;
-        int critterGridY = critter.getPosition().y / CELL_SIZE;
+        int critterGridX = critter.getPosition().x / cellSize;
+        int critterGridY = critter.getPosition().y / cellSize;
 
         // Calculate Euclidean distance in grid units
         float dx = critterGridX - position.x;

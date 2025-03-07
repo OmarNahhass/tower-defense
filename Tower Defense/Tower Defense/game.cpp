@@ -24,7 +24,7 @@ std::vector<sf::Vector2i> directDamageTowerPositions;
 
 
 std::vector<Critter> activeCritters; 
-int currentWave = 1;
+int currentWave = 0;
 bool waitingForNextWave = false;    // Indicates if we are waiting to start a new wave
 float waveDelayTimer = 0.0f;        // Timer for delay between waves
 
@@ -32,8 +32,13 @@ std::vector<Critter> spawnQueue;  // Queue of critters waiting to be spawned
 float critterSpawnTimer = 0.0f;   // Timer to control spawning intervals
 int crittersSpawned = 0;          // Track number of critters spawned in current wave
 
-int numberOfCrittersPerWave = 10;
+int numberOfCrittersPerWave = 5;
 int numberOfCrittersRemaining = numberOfCrittersPerWave;
+
+
+GameState currentState = GameState::InGame;
+
+
 
 void spawnCritter() {
     critters.emplace_back(currentWave, critterTexture); // Construct directly in place
@@ -111,42 +116,69 @@ void startWave(CritterView& critterView) {
     crittersSpawned = 0;       // Reset spawn count
     critterSpawnTimer = 0.0f;  // Reset spawn timer
     waitingForNextWave = false;
+
+    currentState = GameState::InGame;
 }
 
 
 
 void updateWave(float deltaTime, float currentTime, CritterView& critterView) {
-    // Check if the wave is completed
-    if (spawnQueue.empty() && activeCritters.empty() && !waitingForNextWave) {
-        std::cerr << "Wave " << currentWave << " cleared! Starting countdown for next wave...\n";
-        waitingForNextWave = true;
-        waveDelayTimer = 0.0f;
-    }
+    int timeRemaining = 0;
 
-    // Wait for 10 seconds before starting the next wave
-    if (waitingForNextWave) {
-        waveDelayTimer += deltaTime;
-        int timeRemaining = 10 - static_cast<int>(waveDelayTimer); // Convert to integer seconds
+    // check the states of the game
+    switch (currentState) {
 
-        std::cerr << "Wave ended. Next wave in " << timeRemaining << " seconds." << std::endl;
+    // a new wave has started
+    case GameState:: WaveStart:
+        currentWave++;
+        numberOfCrittersRemaining = numberOfCrittersPerWave;
+        waveDelayTimer = 0.0f;  
 
+        startWave(critterView);
 
-        // start next wave
-        if (waveDelayTimer >= 10.0f) {  // 10-second delay
-            currentWave++;
-            startWave(critterView);
+        break;
+
+    // after starting a new wave -> ongoing game
+    case GameState::InGame:
+        // Check if the wave is completed
+        if (spawnQueue.empty() && activeCritters.empty() && !waitingForNextWave) {
+            std::cerr << "Wave " << currentWave << " cleared! Starting countdown for next wave...\n";
+            waveDelayTimer = 0.0f; 
+            currentState = GameState::WaveEnd;
         }
-    }
 
+        // Spawn critters every 5 seconds
+        critterSpawnTimer += deltaTime;
+        if (!spawnQueue.empty() && critterSpawnTimer >= 5.0f) {
+            activeCritters.push_back(spawnQueue.front());  // Add one critter to activeCritters list
+            spawnQueue.erase(spawnQueue.begin());         // Remove it from the queue
+            critterSpawnTimer = 0.0f;  // Reset spawn timer after each critter spawn
+        }
 
-    // Spawn critters every 5 seconds
-    critterSpawnTimer += deltaTime;
-    if (!spawnQueue.empty() && critterSpawnTimer >= 5.0f) {
-        activeCritters.push_back(spawnQueue.front());  // Add one critter to activeCritters list
-        spawnQueue.erase(spawnQueue.begin());         // Remove it from the queue
-        critterSpawnTimer = 0.0f;  // Reset timer
+        break;
+    
+    // a wave has ended. Display message
+    case GameState::WaveEnd:
+        waveDelayTimer += deltaTime;
+        timeRemaining = 5 - static_cast<int>(waveDelayTimer); // Convert to integer seconds
+
+        std::cerr << "Wave ended. Changing screen in " << timeRemaining << " seconds." << std::endl;
+
+        // Start next wave after 5-second delay
+        if (waveDelayTimer >= 5.0f) {  
+            currentState = GameState::MapCustomization;
+        }
+        break;
+
+    // Allow the player to change the map and add towers
+    case GameState::MapCustomization:
+        displayMap(windowWidth, windowHeight, numberOfRows, numberOfColumns);
+
+        break;
     }
 }
+
+
 
 
 
@@ -186,7 +218,9 @@ void displayGame(sf::RenderWindow& window) {
 
     storeTowerPositions(); // Get tower positions 
     spawnTowers();         // Now spawn towers
-    startWave(critterView);           // Start first wave
+
+    //if (currentWave == 1)
+    //    startWave(critterView);           // Start first wave
 
 
     /*
@@ -289,17 +323,17 @@ void displayGame(sf::RenderWindow& window) {
         }
 
         // display information about the wave
-        sf::Text waveMessage;
-        waveMessage.setFont(font);
-        waveMessage.setCharacterSize(24);
-        waveMessage.setFillColor(sf::Color::White);
-        waveMessage.setPosition(20, 20); // Adjust position on screen
+        //sf::Text waveMessage;
+        //waveMessage.setFont(font);
+        //waveMessage.setCharacterSize(24);
+        //waveMessage.setFillColor(sf::Color::White);
+        //waveMessage.setPosition(20, 20); // Adjust position on screen
 
-        if (waitingForNextWave) {
-            int timeRemaining = 10 - static_cast<int>(waveDelayTimer);
-            waveMessage.setString("Wave ended. Next wave in " + std::to_string(timeRemaining) + " seconds");
-            window.draw(waveMessage);
-        }
+        //if (waitingForNextWave) {
+        //    int timeRemaining = 10 - static_cast<int>(waveDelayTimer);
+        //    waveMessage.setString("Wave ended. Next wave in " + std::to_string(timeRemaining) + " seconds");
+        //    window.draw(waveMessage);
+        //}
 
         window.draw(infoPanel);
 
