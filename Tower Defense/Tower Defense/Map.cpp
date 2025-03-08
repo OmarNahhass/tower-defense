@@ -183,7 +183,7 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
     int col = mousePos.x / cellSize;
     int row = mousePos.y / cellSize;
 
-    if (!(col >= 0 && col < COLS && row >= 0 && row < ROWS))
+    if (!(col >= 0 && col < numberOfColumns && row >= 0 && row < numberOfRows))
         return;
 
     int newState = (mapGrid[row][col] + 1) % 3;  // Cycle through states: grass → path → tower
@@ -334,12 +334,12 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
             else if (event.type == sf::Event::MouseButtonPressed) {
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
-                // mouse clicks that handle when the player clicks on a cell
-                if (mousePos.y < window.getSize().y - 60) {
+                // clicks handled inside the map
+                if (mousePos.y < mapHeight && mousePos.x <= mapWidth) {
                     handleMouseClick(mousePos, event.mouseButton.button, cellSize);
                     showError = false;
                 }
-                // mouse clicks that handle the "Start Game" button
+                // clicks handled when the "Start Game" button is pressed
                 else if (mousePos.x >= button.getPosition().x &&
                     mousePos.x <= button.getPosition().x + button.getSize().x &&
                     mousePos.y >= button.getPosition().y &&
