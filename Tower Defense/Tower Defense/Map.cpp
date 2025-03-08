@@ -263,7 +263,7 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
     // display the shop
     sf::Text damageTowerCostText("Damage Tower: 50 coins", font, 15);
     damageTowerCostText.setFillColor(sf::Color::Black);
-    damageTowerCostText.setPosition(mapWidth + 15, windowHeight -200);
+    damageTowerCostText.setPosition(mapWidth + 15, infoPanelHeight -100);
 
 
 

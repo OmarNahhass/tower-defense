@@ -174,12 +174,12 @@ void updateWave(float deltaTime, float currentTime, CritterView& critterView, sf
         timeRemaining = 5 - static_cast<int>(waveDelayTimer); // Convert to integer seconds
 
         waveMessage.setFont(font);
-        waveMessage.setCharacterSize(15);
-        waveMessage.setFillColor(sf::Color::Green);
-        waveMessage.setPosition(mapWidth + 10, 150); // Adjust position on screen
+        waveMessage.setCharacterSize(12);
+        waveMessage.setFillColor(sf::Color(0, 94, 17));
+        waveMessage.setPosition(mapWidth + 10, 200); // Adjust position on screen
 
         //std::cerr << "Wave ended. Changing screen in " << timeRemaining << " seconds." << std::endl;
-        waveMessage.setString("Wave ended. Next wave in " + std::to_string(timeRemaining) + " seconds");
+        waveMessage.setString("Wave ended. Changing screen in " + std::to_string(timeRemaining) + " seconds");
         window.draw(waveMessage);
 
         // Start next wave after 5-second delay
@@ -244,16 +244,23 @@ void displayGame(sf::RenderWindow& window) {
     /*
     Info panel    
     */
+    // wave counter
+    sf::Text waveCountText("WAVE #" + std::to_string(currentWave+1), font, 20);
+    waveCountText.setStyle(sf::Text::Bold);
+    waveCountText.setFillColor(sf::Color::Black);
+    waveCountText.setPosition(mapWidth + 15, 20);
+
+
     // critter counter
     sf::Text critterCountText("Critters Remaining: " + numberOfCrittersRemaining, font, 15);
     critterCountText.setFillColor(sf::Color::Black);
-    critterCountText.setPosition(mapWidth + 15, 30);
+    critterCountText.setPosition(mapWidth + 15, 100);
 
 
     // display the player coins
     sf::Text playerCoinsText("Coins: " + playerCoins, font, 15);
     playerCoinsText.setFillColor(sf::Color::Black);
-    playerCoinsText.setPosition(mapWidth + 15, 70);
+    playerCoinsText.setPosition(mapWidth + 15, 140);
 
 
 
@@ -349,6 +356,8 @@ void displayGame(sf::RenderWindow& window) {
 
         // Draw game objects
         drawTowers(window);
+
+        window.draw(waveCountText);
 
         // display the critter counter 
         critterCountText.setString("Critters Remaining: " + std::to_string(numberOfCrittersRemaining));
