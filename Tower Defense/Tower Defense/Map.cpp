@@ -186,7 +186,7 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
     if (!(col >= 0 && col < numberOfColumns && row >= 0 && row < numberOfRows))
         return;
 
-    int newState = (mapGrid[row][col] + 1) % 3;  // Cycle through states: grass → path → tower
+    int newState = (mapGrid[row][col] + 1) % 3;  // Cycle through states: grass -> path -> tower
     mapGrid[row][col] = newState;
 
     notifyObservers(col, row, newState);  // Notify all observers about the change

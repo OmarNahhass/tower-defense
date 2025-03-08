@@ -26,6 +26,17 @@ public:
     void notifyAdded(sf::Texture& texture);
 
     int hitPoints, reward, strength, speed, level;
+
+    int maxHealth;
+
+    int getMaxHealth() {
+        return maxHealth;
+    }
+
+    int getHitPoints() {
+        return hitPoints;
+    }
+
     bool reachedExit;
 
     const sf::Sprite& getSprite() const { return sprite; }

@@ -3,6 +3,8 @@
 #include <iostream>
 #include <cmath>
 
+int damageDoneToCritter = 0;
+
 
 Tower::Tower(int x, int y, int cost, int refundValue, int range, int powerAmount, float rateOfFire, sf::Texture& texture)
     : position(x, y), cost(cost), refundValue(refundValue), range(range),
@@ -48,6 +50,7 @@ void Tower::shoot(std::vector<Critter>& critters, float currentTime) {
         if (distance <= range) {  
             lastShotTime = currentTime;
             critter.takeDamage(power, currentTime);  // Store hit time
+            damageDoneToCritter = power;
             break;
         }
     }

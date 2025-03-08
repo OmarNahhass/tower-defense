@@ -32,4 +32,6 @@ public:
     int sell();
 };
 
+extern int damageDoneToCritter;
+
 #endif // TOWER_H

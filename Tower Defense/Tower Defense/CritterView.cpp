@@ -2,6 +2,7 @@
 #include "Critter.h"
 #include "Map.h"
 #include "Menu.h"
+#include "Tower.h"
 
 void CritterView::onCritterMoved(Critter& critter, sf::Vector2f velocity) {
 	critter.getSprite().move(velocity);
@@ -23,8 +24,6 @@ void CritterView::onCritterAdded(Critter& critter, sf::Texture& texture) {
 void CritterView::drawCritters(Critter& critter) {
     sf::Sprite critterSprite = critter.sprite;
 
-    //critterSprite.setPosition(critter.position.x * cellSize, critter.position.y * cellSize);
-
     critterSprite.setScale(
         static_cast<float>(cellSize) / critterSprite.getTexture()->getSize().x,
         static_cast<float>(cellSize) / critterSprite.getTexture()->getSize().y
@@ -32,15 +31,48 @@ void CritterView::drawCritters(Critter& critter) {
 
     window.draw(critterSprite);
 
-    if (critter.isHit(currentTime)) {  // Draw red border if recently hit
-        sf::RectangleShape border(sf::Vector2f(critterSprite.getGlobalBounds().width, critterSprite.getGlobalBounds().height));
+    // Health bar properties
+    float healthBarWidth = critterSprite.getGlobalBounds().width;
+    float healthBarHeight = 5;
 
-        // Red border for when a critter gets hit
-        border.setPosition(critterSprite.getGlobalBounds().left, critterSprite.getGlobalBounds().top);
-        border.setOutlineThickness(3);
-        border.setOutlineColor(sf::Color::Red);
-        border.setFillColor(sf::Color::Transparent);
+    // compute the remaining health 
+    float healthPercentage = static_cast<float>(critter.getHitPoints()) / critter.getMaxHealth();
 
-        window.draw(border);
-    }
+    // Background bar (Black)
+    sf::RectangleShape healthBarBackground(sf::Vector2f(healthBarWidth, healthBarHeight));
+    healthBarBackground.setFillColor(sf::Color::Black);
+    healthBarBackground.setPosition(critterSprite.getPosition().x, critterSprite.getPosition().y - 10);
+
+    // Remaining Health (Red, scales with health)
+    sf::RectangleShape remainingHealth(sf::Vector2f(healthBarWidth * healthPercentage, healthBarHeight));
+    remainingHealth.setFillColor(sf::Color::Red);
+    remainingHealth.setPosition(healthBarBackground.getPosition());
+
+    window.draw(healthBarBackground);
+    window.draw(remainingHealth);
+
+    //if (critter.isHit(currentTime)) {
+    //    // Get the position of the critter
+    //    sf::Vector2f position = critterSprite.getPosition();
+
+    //    // Create text for displaying damage (from the tower)
+    //    sf::Font font;
+    //    if (!font.loadFromFile("arial.ttf")) {
+    //        std::cerr << "Failed to load font!" << std::endl;
+    //        return;
+    //    }
+
+    //    sf::Text damageText;
+    //    damageText.setFont(font);
+    //    damageText.setString("-" + std::to_string(damageDoneToCritter)); // Use tower.getDamage()
+    //    damageText.setCharacterSize(15);
+    //    damageText.setFillColor(sf::Color::Red);
+    //    damageText.setStyle(sf::Text::Bold);
+
+    //    // Position the text at the top-right of the critter sprite
+    //    damageText.setPosition(position.x + critterSprite.getGlobalBounds().width - 5,
+    //        position.y - 10); // Slightly above the sprite
+
+    //    window.draw(damageText);
+    //}
 }
