@@ -23,6 +23,12 @@ public:
         if (!towerTextureMap.loadFromFile("tower.png")) {
             std::cerr << "Error loading tower texture\n";
         }
+        if (!towerSlowDownTextureMap.loadFromFile("towerSlowDown.png")) {
+            std::cerr << "Error loading towerSlowDown texture\n";
+        }
+        if (!towerSniperTextureMap.loadFromFile("towerSniper.png")) {
+            std::cerr << "Error loading towerSniper texture\n";
+        }
     }
 
     void drawTowerCount(sf::RenderWindow& window);
@@ -32,7 +38,7 @@ public:
 
 
 private:
-    sf::Texture grassTextureMap, pathTextureMap, towerTextureMap;
+    sf::Texture grassTextureMap, pathTextureMap, towerTextureMap, towerSlowDownTextureMap, towerSniperTextureMap;
 };
 
 

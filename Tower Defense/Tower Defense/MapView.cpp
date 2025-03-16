@@ -1,6 +1,7 @@
 #include "MapView.h"
 #include "Map.h"
 #include "Menu.h"
+#include "SpecialTowers.h"
 
 #include <iostream>
 
@@ -14,9 +15,18 @@ void MapView::onCellChanged(int x, int y, int newState) {
         towerCounter++;
         playerCoins -= 50;
     }
+    // refund cost of previous tower before purchasing new one
+    else if (newState == 3) {
+        playerCoins += 50;    
+        playerCoins -= 150;
+    }
+    else if (newState == 4) {
+        playerCoins += 150;
+        playerCoins -= 250;
+    }
     else if (newState == 0) {
         towerCounter--;
-        playerCoins += 50;
+        playerCoins += 250;
     }
     
     drawSingleCell(window, x, y, newState, 40);  // Only update this cell
@@ -40,6 +50,8 @@ void MapView::drawSingleCell(sf::RenderWindow& window, int x, int y, int newStat
     if (newState == 0) sprite.setTexture(grassTextureMap);
     else if (newState == 1) sprite.setTexture(pathTextureMap);
     else if (newState == 2) sprite.setTexture(towerTextureMap);
+    else if (newState == 3) sprite.setTexture(towerSlowDownTextureMap);
+    else if (newState == 4) sprite.setTexture(towerSniperTextureMap);
 
     sprite.setScale(static_cast<float>(cellSize) / sprite.getTexture()->getSize().x,
         static_cast<float>(cellSize) / sprite.getTexture()->getSize().y);

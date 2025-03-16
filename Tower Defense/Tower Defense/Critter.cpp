@@ -42,13 +42,17 @@ void displayGameOverScreen() {
 Critter::Critter(int lvl, sf::Texture& texture) {
     hitPoints = lvl * 10;
     maxHealth = hitPoints;
-    reward = lvl * 20;
+    reward = lvl * 50;
     strength = lvl * 1;
-    speed = lvl * 10; // Speed per second
+    initialSpeed = lvl * 10; // Speed per second
     level = lvl;
     reachedExit = false;
     pathIndex = 0;
     moveProgress = 0.0f;
+
+    isSlowed = false;
+    slowEndTime = 0;
+    speed = initialSpeed;
 
     sprite.setTexture(texture);
 
@@ -93,6 +97,15 @@ bool Critter::takeDamage(int damage, float currentTime) {
     return false;
 }
 
+void Critter::slowDown(float currentTime) {
+    if (!isSlowed) { // Only slow down if not already slowed
+        speed /= 2;
+        isSlowed = true;
+        slowEndTime = currentTime + 2; // Slowdown lasts for 5 seconds
+        std::cout << "Slowed down\n";
+    }
+}
+
 
 // Check if critter is still in "hit" state (for red border effect)
 bool Critter::isHit(float currentTime) const {
@@ -107,6 +120,13 @@ void Critter::move(float deltaTime) {
         return;
     }
 
+    if (isSlowed && deltaTime >= slowEndTime) {
+        speed = initialSpeed; // Restore speed after 5 seconds
+        isSlowed = false;
+        std::cout << "Back to normal speed\n";
+    }
+
+    //std::cout << "Speed: " << speed << "\n";
 
     sf::Vector2f currentPos(pathCells[this->pathIndex].x * cellSize, pathCells[this->pathIndex].y * cellSize);
     sf::Vector2f nextPos(pathCells[this->pathIndex + 1].x * cellSize, pathCells[this->pathIndex + 1].y * cellSize);

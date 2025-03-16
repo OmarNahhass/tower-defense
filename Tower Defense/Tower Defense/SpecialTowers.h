@@ -11,19 +11,28 @@ public:
     void shoot(std::vector<Critter>& target, float currentTime) override;
 };
 
-// Derived AoETower class
-class AoETower : public Tower
-{
-public:
-    AoETower(int x, int y, sf::Texture& texture);
-    void shoot(std::vector<Critter>& target, float currentTime) override;
-};
-
 // Derived SlowingTower class
 class SlowingTower : public Tower
 {
 public:
     SlowingTower(int x, int y, sf::Texture& texture);
+    void shoot(std::vector<Critter>& target, float currentTime) override;
+};
+
+// Derived SlowingTower class
+class SniperTower : public Tower
+{
+public:
+    SniperTower(int x, int y, sf::Texture& texture);
+    void shoot(std::vector<Critter>& target, float currentTime) override;
+};
+
+
+// Derived AoETower class
+class AoETower : public Tower
+{
+public:
+    AoETower(int x, int y, sf::Texture& texture);
     void shoot(std::vector<Critter>& target, float currentTime) override;
 };
 

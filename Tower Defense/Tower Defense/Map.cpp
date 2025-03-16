@@ -17,7 +17,7 @@ int** mapGrid = nullptr;
 #include <vector>
 #include <SFML/System/Vector2.hpp>
 
-sf::Texture grassTextureMap, pathTextureMap, towerTextureMap;
+sf::Texture grassTextureMap, pathTextureMap, towerTextureMap, towerSlowDownTextureMap, towerSniperTextureMap;
 
 std::vector<sf::Vector2i> pathCells, towerCells;
 
@@ -186,7 +186,7 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
     if (!(col >= 0 && col < numberOfColumns && row >= 0 && row < numberOfRows))
         return;
 
-    int newState = (mapGrid[row][col] + 1) % 3;  // Cycle through states: grass -> path -> tower
+    int newState = (mapGrid[row][col] + 1) % 5;  // Cycle through states: grass -> path -> tower -> towerSlowDown -> towerSniper
     mapGrid[row][col] = newState;
 
     notifyObservers(col, row, newState);  // Notify all observers about the change
@@ -261,9 +261,17 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
 
 
     // display the shop
-    sf::Text damageTowerCostText("Damage Tower: 50 coins", font, 15);
+    sf::Text damageTowerCostText("Regular Tower (Green): 50 coins", font, 15);
     damageTowerCostText.setFillColor(sf::Color::Black);
-    damageTowerCostText.setPosition(mapWidth + 15, infoPanelHeight -100);
+    damageTowerCostText.setPosition(mapWidth + 15, infoPanelHeight -140);
+
+    sf::Text slowDownTowerCostText("Slow Down Tower (Blue): 150 coins", font, 15);
+    slowDownTowerCostText.setFillColor(sf::Color::Black);
+    slowDownTowerCostText.setPosition(mapWidth + 15, infoPanelHeight - 100);
+
+    sf::Text sniperTowerCostText("Sniper Tower (Red): 250 coins", font, 15);
+    sniperTowerCostText.setFillColor(sf::Color::Black);
+    sniperTowerCostText.setPosition(mapWidth + 15, infoPanelHeight - 60);
 
 
 
@@ -329,6 +337,8 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                 towerCountText.setPosition(mapWidth+20, 30);
                 playerCoinsText.setPosition(mapWidth + 20, 80);
                 damageTowerCostText.setPosition(mapWidth + 20, windowHeight-200);
+                slowDownTowerCostText.setPosition(mapWidth + 20, windowHeight - 160);
+                sniperTowerCostText.setPosition(mapWidth + 20, windowHeight - 120);
             }
             // handle mouse clicks
             else if (event.type == sf::Event::MouseButtonPressed) {
@@ -382,9 +392,14 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
         mapView.drawCoinsCount(window);
 
 
-
+        // draw shop info
         window.draw(damageTowerCostText);
-        drawFullMap(window, cellSize, mapView);  // Pass mapView
+        window.draw(slowDownTowerCostText);
+        window.draw(sniperTowerCostText);
+
+
+        drawFullMap(window, cellSize, mapView);  
+
         window.display();
     }
 }

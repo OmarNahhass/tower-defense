@@ -25,7 +25,10 @@ public:
     void notifyRemoved();
     void notifyAdded(sf::Texture& texture);
 
-    int hitPoints, reward, strength, speed, level;
+    int hitPoints, reward, strength, initialSpeed, speed, level;
+
+    bool isSlowed;
+    float slowEndTime;
 
     int maxHealth;
 
@@ -54,6 +57,8 @@ public:
     void displayGameOverScren();
 
     bool takeDamage(int damage, float currentTime);
+
+    void slowDown(float currentTime);
 
     void setHitTime(float time) { lastHitTime = time; }
     bool isHit(float currentTime) const;

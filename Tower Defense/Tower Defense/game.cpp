@@ -15,12 +15,12 @@
 
 
 // images for grass, path, towers, and critters
-sf::Texture grassTextureGame, pathTextureGame, damageTowerTextureGame, critterTexture;
+sf::Texture grassTextureGame, pathTextureGame, damageTowerTextureGame, slowDownTowerTextureGame, sniperTowerTextureGame, critterTexture;
 
 std::vector<Critter> critters;  // List of critters
-std::vector<Tower> towers;      // List of towers
+std::vector<std::unique_ptr<Tower>> towers; // List of towers
 
-std::vector<sf::Vector2i> directDamageTowerPositions;
+std::vector<sf::Vector2i> directDamageTowerPositions, slowDownTowerPositions, sniperTowerPositiions;
 
 
 std::vector<Critter> activeCritters; 
@@ -48,11 +48,20 @@ void spawnCritter() {
 
 void storeTowerPositions() {
     directDamageTowerPositions.clear(); // Reset before scanning
+    slowDownTowerPositions.clear(); // Reset before scanning
+    sniperTowerPositiions.clear(); // Reset before scanning
 
     for (int i = 0; i < numberOfColumns; i++) {  
         for (int j = 0; j < numberOfRows; j++) {  
+
+            // Store cell coordinates correctly
             if (mapGrid[j][i] == 2) { 
-                directDamageTowerPositions.emplace_back(i, j); // Store cell coordinates correctly
+                directDamageTowerPositions.emplace_back(i, j);
+            }else if (mapGrid[j][i] == 3) {
+                slowDownTowerPositions.emplace_back(i, j); 
+            }
+            else if (mapGrid[j][i] == 4) {
+                sniperTowerPositiions.emplace_back(i, j); 
             }
         }
     }
@@ -61,19 +70,26 @@ void storeTowerPositions() {
 
 // spawn towners at their corresponding location on the map
 void spawnTowers() {
-    towers.clear(); // Clear old towers before spawning new ones
 
     for (const auto& pos : directDamageTowerPositions) {
-        towers.emplace_back(DirectDamageTower(pos.x, pos.y, damageTowerTextureGame));
+        towers.emplace_back(std::make_unique<DirectDamageTower>(pos.x, pos.y, damageTowerTextureGame));
+
+    }
+    for (const auto& pos : slowDownTowerPositions) {
+        towers.emplace_back(std::make_unique<SlowingTower>(pos.x, pos.y, slowDownTowerTextureGame));
+
+    }
+    for (const auto& pos : sniperTowerPositiions) {
+        towers.emplace_back(std::make_unique<SniperTower>(pos.x, pos.y, sniperTowerTextureGame));
     }
 }
 
 
 // Draw towers
 void drawTowers(sf::RenderWindow& window) {
-    for (const auto& tower : towers) {
-        sf::Sprite towerSprite = tower.sprite;
-        towerSprite.setPosition(tower.position.x * cellSize, tower.position.y * cellSize);
+    for (const auto& tower : towers) {  // Use `const auto&` to access the `unique_ptr`
+        sf::Sprite towerSprite = tower->sprite;  // Use `tower->` instead of `tower.`
+        towerSprite.setPosition(tower->position.x * cellSize, tower->position.y * cellSize);
 
         towerSprite.setScale(
             static_cast<float>(cellSize) / towerSprite.getTexture()->getSize().x,
@@ -83,10 +99,11 @@ void drawTowers(sf::RenderWindow& window) {
     }
 }
 
+
 // Update towers to shoot at critters
 void updateTowers(float currentTime) {
     for (auto& tower : towers) {
-        tower.shoot(activeCritters, currentTime);
+        tower->shoot(activeCritters, currentTime);
     }
 }
 
@@ -219,6 +236,8 @@ void displayGame(sf::RenderWindow& window) {
 
     // Load textures and initialize the first wave
     if (!damageTowerTextureGame.loadFromFile("tower.png") ||
+        !slowDownTowerTextureGame.loadFromFile("towerSlowDown.png") ||
+        !sniperTowerTextureGame.loadFromFile("towerSniper.png") ||
         !grassTextureGame.loadFromFile("grass_3.png") ||
         !pathTextureGame.loadFromFile("path.png") ||
         !critterTexture.loadFromFile("critter.jpg")) {

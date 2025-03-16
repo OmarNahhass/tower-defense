@@ -30,37 +30,6 @@ Tower::Tower(int x, int y, int cost, int refundValue, int range, int powerAmount
 // Virtual destructor implementation
 Tower::~Tower() {}
 
-// Shoot method implementation w/ cooldown
-void Tower::shoot(std::vector<Critter>& critters, float currentTime) {
-    if (currentTime - lastShotTime < (1.0f / rateOfFire)) return; // Enforce firing rate
-
-
-    for (auto& critter : critters) {
-     
-        // Convert critter position from pixels to grid coordinates
-        int critterGridX = critter.getPosition().x / cellSize;
-        int critterGridY = critter.getPosition().y / cellSize;
-
-        // Calculate Euclidean distance in grid units
-        float dx = critterGridX - position.x;
-        float dy = critterGridY - position.y;
-        float distance = std::sqrt(dx * dx + dy * dy);
-
-
-        if (distance <= range) {  
-            lastShotTime = currentTime;
-            critter.takeDamage(power, currentTime);  // Store hit time
-            damageDoneToCritter = power;
-            break;
-        }
-    }
-
-    // Remove dead critters after loop
-    critters.erase(std::remove_if(critters.begin(), critters.end(), [](const Critter& c) { return c.hitPoints <= 0; }), critters.end());
-}
-
-
-
 
 // Upgrade method implementation
 void Tower::upgrade()
