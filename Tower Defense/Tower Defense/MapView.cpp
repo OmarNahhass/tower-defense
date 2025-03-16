@@ -13,20 +13,20 @@ int playerCoins = 100;
 void MapView::onCellChanged(int x, int y, int newState) {
     if (newState == 2) {
         towerCounter++;
-        playerCoins -= 50;
+        playerCoins -= Tower::cost_DirectDamageTower;
     }
     // refund cost of previous tower before purchasing new one
     else if (newState == 3) {
-        playerCoins += 50;    
-        playerCoins -= 150;
+        playerCoins += Tower::cost_DirectDamageTower;
+        playerCoins -= Tower::cost_SlowingTower;
     }
     else if (newState == 4) {
-        playerCoins += 150;
-        playerCoins -= 250;
+        playerCoins += Tower::cost_SlowingTower;
+        playerCoins -= Tower::cost_SniperTower;
     }
     else if (newState == 0) {
         towerCounter--;
-        playerCoins += 250;
+        playerCoins += Tower::cost_SniperTower;
     }
     
     drawSingleCell(window, x, y, newState, 40);  // Only update this cell

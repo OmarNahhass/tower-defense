@@ -2,6 +2,7 @@
 #include "Menu.h"
 #include "MapView.h"
 #include "Game.h"
+#include "Tower.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -261,17 +262,18 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
 
 
     // display the shop
-    sf::Text damageTowerCostText("Regular Tower (Green): 50 coins", font, 15);
+    sf::Text damageTowerCostText("Regular Tower (Green): " + std::to_string(Tower::cost_DirectDamageTower), font, 15);
     damageTowerCostText.setFillColor(sf::Color::Black);
-    damageTowerCostText.setPosition(mapWidth + 15, infoPanelHeight -140);
+    damageTowerCostText.setPosition(mapWidth + 15, infoPanelHeight - 140);
 
-    sf::Text slowDownTowerCostText("Slow Down Tower (Blue): 150 coins", font, 15);
+    sf::Text slowDownTowerCostText("Slow Down Tower (Blue): " + std::to_string(Tower::cost_SlowingTower), font, 15);
     slowDownTowerCostText.setFillColor(sf::Color::Black);
     slowDownTowerCostText.setPosition(mapWidth + 15, infoPanelHeight - 100);
 
-    sf::Text sniperTowerCostText("Sniper Tower (Red): 250 coins", font, 15);
+    sf::Text sniperTowerCostText("Sniper Tower (Red): " + std::to_string(Tower::cost_SniperTower), font, 15);
     sniperTowerCostText.setFillColor(sf::Color::Black);
     sniperTowerCostText.setPosition(mapWidth + 15, infoPanelHeight - 60);
+
 
 
 

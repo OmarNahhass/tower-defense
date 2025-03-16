@@ -20,6 +20,10 @@ protected:
     float lastShotTime;
 
 public:
+    static const int cost_DirectDamageTower;
+    static const int cost_SlowingTower;
+    static const int cost_SniperTower;
+
     sf::Vector2i position; // Position in the grid
     sf::Sprite sprite; // Tower sprite
 

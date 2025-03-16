@@ -5,6 +5,10 @@
 
 int damageDoneToCritter = 0;
 
+const int Tower::cost_DirectDamageTower = 50;
+const int Tower::cost_SlowingTower = 150;
+const int Tower::cost_SniperTower = 250;
+
 
 Tower::Tower(int x, int y, int cost, int refundValue, int range, int powerAmount, float rateOfFire, sf::Texture& texture)
     : position(x, y), cost(cost), refundValue(refundValue), range(range),
