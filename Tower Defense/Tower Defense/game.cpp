@@ -371,8 +371,8 @@ void displayGame(sf::RenderWindow& window) {
 
         // Update game logic
         updateWave(deltaTime, currentTime, critterView, window);
-        updateCritters(deltaTime, currentTime);
         updateTowers(currentTime);
+        updateCritters(deltaTime, currentTime);
 
         // Draw game objects
         drawTowers(window);

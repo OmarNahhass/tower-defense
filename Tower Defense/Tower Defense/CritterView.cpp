@@ -29,7 +29,7 @@ void CritterView::drawCritters(Critter& critter) {
         static_cast<float>(cellSize) / critterSprite.getTexture()->getSize().y
     );
 
-    window.draw(critterSprite);
+   
 
     // Health bar properties
     float healthBarWidth = critterSprite.getGlobalBounds().width;
@@ -48,31 +48,8 @@ void CritterView::drawCritters(Critter& critter) {
     remainingHealth.setFillColor(sf::Color::Red);
     remainingHealth.setPosition(healthBarBackground.getPosition());
 
+
+    window.draw(critterSprite);
     window.draw(healthBarBackground);
     window.draw(remainingHealth);
-
-    //if (critter.isHit(currentTime)) {
-    //    // Get the position of the critter
-    //    sf::Vector2f position = critterSprite.getPosition();
-
-    //    // Create text for displaying damage (from the tower)
-    //    sf::Font font;
-    //    if (!font.loadFromFile("arial.ttf")) {
-    //        std::cerr << "Failed to load font!" << std::endl;
-    //        return;
-    //    }
-
-    //    sf::Text damageText;
-    //    damageText.setFont(font);
-    //    damageText.setString("-" + std::to_string(damageDoneToCritter)); // Use tower.getDamage()
-    //    damageText.setCharacterSize(15);
-    //    damageText.setFillColor(sf::Color::Red);
-    //    damageText.setStyle(sf::Text::Bold);
-
-    //    // Position the text at the top-right of the critter sprite
-    //    damageText.setPosition(position.x + critterSprite.getGlobalBounds().width - 5,
-    //        position.y - 10); // Slightly above the sprite
-
-    //    window.draw(damageText);
-    //}
 }
