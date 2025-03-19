@@ -2,40 +2,54 @@
 #include "Map.h"
 #include "Tower.h"
 #include "Critter.h"
+#include "Strategies.h"
 
 #include <iostream>
 
 // DirectDamageTower constructor
 DirectDamageTower::DirectDamageTower(int x, int y, sf::Texture& texture)
-    : Tower(x, y, 100, 100, 5, 2, 1, texture) { // Updated to match the new Tower constructor
+    : Tower(x, y, 100, 100, 5, 2, 1, texture, std::make_unique<NearestToTower>()) { // Updated to match the new Tower constructor
 }
 // DirectDamageTower shoot method
 void DirectDamageTower::shoot(std::vector<Critter>& critters, float currentTime) {
     if (currentTime - lastShotTime < (1.0f / rateOfFire)) return; // Enforce firing rate
 
-    int CELL_SIZE = WINDOWSIZE / ROWS;
+    std::vector<Critter*> inRangeCritters;
+    int cellSize = WINDOWSIZE / ROWS;
 
+    // find critter in range
     for (auto& critter : critters) {
-
-        // Convert critter position from pixels to grid coordinates
         int critterGridX = critter.getPosition().x / cellSize;
         int critterGridY = critter.getPosition().y / cellSize;
 
-        // Calculate Euclidean distance in grid units
         float dx = critterGridX - position.x;
         float dy = critterGridY - position.y;
         float distance = std::sqrt(dx * dx + dy * dy);
 
-        /*std::cerr << "Tower at (" << position.x << ", " << position.y
-            << ") checking critter at (" << critterGridX << ", " << critterGridY
-            << ") | Distance: " << distance << " | Range: " << range << std::endl;*/
-
         if (distance <= range) {
-            //std::cerr << "SHOOT!" << std::endl;
-            lastShotTime = currentTime;
-            critter.takeDamage(power, currentTime);  // Store hit time
-            break;
+            inRangeCritters.push_back(&critter);
         }
+    }
+
+    
+    if (inRangeCritters.empty()) return;  // No targets available
+
+    Critter* target = nullptr;
+
+    // determine which critter to attack
+    if (inRangeCritters.size() == 1) {    // only one critter in range, attack directly
+        
+        target = inRangeCritters[0];
+    }
+    else if (strategy) {                  // multiple critters, use strategy
+       
+        target = strategy->selectTarget(inRangeCritters);
+    }
+
+    // apply damage
+    if (target) {
+        lastShotTime = currentTime;
+        target->takeDamage(power, currentTime);  
     }
 
     // Remove dead critters after loop
@@ -46,9 +60,10 @@ void DirectDamageTower::shoot(std::vector<Critter>& critters, float currentTime)
 
 
 
+
 // SlowingTower constructor
 SlowingTower::SlowingTower(int x, int y, sf::Texture& texture) 
-    : Tower(x, y, 150, 150, 2, 0, 10, texture) {
+    : Tower(x, y, 150, 150, 2, 0, 10, texture, std::make_unique<NearestToExit>()) {
 }
 
 // SlowingTower shoot method
@@ -56,13 +71,12 @@ void SlowingTower::shoot(std::vector<Critter>& critters, float currentTime)
 {
     if (currentTime - lastShotTime < (1.0f / rateOfFire)) return; // Enforce firing rate
 
-    int CELL_SIZE = WINDOWSIZE / ROWS;
 
     for (auto& critter : critters) {
 
         // Convert critter position from pixels to grid coordinates
-        int critterGridX = critter.getPosition().x / CELL_SIZE;
-        int critterGridY = critter.getPosition().y / CELL_SIZE;
+        int critterGridX = critter.getPosition().x / cellSize;
+        int critterGridY = critter.getPosition().y / cellSize;
 
         // Calculate Euclidean distance in grid units
         float dx = critterGridX - position.x;
@@ -83,13 +97,12 @@ void SlowingTower::shoot(std::vector<Critter>& critters, float currentTime)
 
 // SniperTower constructor
 SniperTower::SniperTower(int x, int y, sf::Texture& texture)
-    : Tower(x, y, 250, 250, numberOfColumns/2, 50, 15, texture) { 
+    : Tower(x, y, 250, 250, numberOfColumns/2, 50, 15, texture, std::make_unique<StrongestCritter>()) {
 }
 // SniperTower shoot method
 void SniperTower::shoot(std::vector<Critter>& critters, float currentTime) {
     if (currentTime - lastShotTime < (1.0f / rateOfFire)) return; // Enforce firing rate
 
-    int CELL_SIZE = WINDOWSIZE / ROWS;
 
     for (auto& critter : critters) {
 

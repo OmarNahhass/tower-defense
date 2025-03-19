@@ -33,7 +33,7 @@ public:
 
     void drawTowerCount(sf::RenderWindow& window);
     void drawCoinsCount(sf::RenderWindow& window);
-    void onCellChanged(int x, int y, int newState);
+    void onCellChanged(int x, int y, int newState, int previousState);
     void drawSingleCell(sf::RenderWindow& window, int x, int y, int newState, int cellSize);
 
 

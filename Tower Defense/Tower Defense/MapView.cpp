@@ -10,7 +10,10 @@ int towerCounter = 0;
 int playerCoins = 100;
 
 
-void MapView::onCellChanged(int x, int y, int newState) {
+void MapView::onCellChanged(int x, int y, int newState, int previousState) {
+    std::cout << "newstate: " << newState << " | previousState: " << previousState << "\n";
+
+
     if (newState == 2) {
         towerCounter++;
         playerCoins -= Tower::cost_DirectDamageTower;
@@ -24,7 +27,15 @@ void MapView::onCellChanged(int x, int y, int newState) {
         playerCoins += Tower::cost_SlowingTower;
         playerCoins -= Tower::cost_SniperTower;
     }
-    else if (newState == 0) {
+    else if (newState == 0 && previousState == 2) {
+        towerCounter--;
+        playerCoins += Tower::cost_DirectDamageTower;
+    }
+    else if (newState == 0 && previousState == 3) {
+        towerCounter--;
+        playerCoins += Tower::cost_SlowingTower;
+    }
+    else if (newState == 0 && previousState == 4) {
         towerCounter--;
         playerCoins += Tower::cost_SniperTower;
     }

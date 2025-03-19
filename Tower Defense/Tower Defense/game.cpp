@@ -70,6 +70,7 @@ void storeTowerPositions() {
 
 // spawn towners at their corresponding location on the map
 void spawnTowers() {
+    towers.clear();
 
     for (const auto& pos : directDamageTowerPositions) {
         towers.emplace_back(std::make_unique<DirectDamageTower>(pos.x, pos.y, damageTowerTextureGame));
@@ -87,8 +88,8 @@ void spawnTowers() {
 
 // Draw towers
 void drawTowers(sf::RenderWindow& window) {
-    for (const auto& tower : towers) {  // Use `const auto&` to access the `unique_ptr`
-        sf::Sprite towerSprite = tower->sprite;  // Use `tower->` instead of `tower.`
+    for (const auto& tower : towers) { 
+        sf::Sprite towerSprite = tower->sprite; 
         towerSprite.setPosition(tower->position.x * cellSize, tower->position.y * cellSize);
 
         towerSprite.setScale(

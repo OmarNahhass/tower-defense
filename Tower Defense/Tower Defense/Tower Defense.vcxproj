@@ -145,6 +145,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="NextWave.cpp" />
     <ClCompile Include="SpecialTowers.cpp" />
+    <ClCompile Include="Strategies.cpp" />
     <ClCompile Include="Tower.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +160,7 @@
     <ClInclude Include="Menu.h" />
     <ClInclude Include="NextWave.h" />
     <ClInclude Include="SpecialTowers.h" />
+    <ClInclude Include="Strategies.h" />
     <ClInclude Include="Tower.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

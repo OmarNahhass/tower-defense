@@ -2,6 +2,8 @@
 #define TOWER_H
 
 #include "Critter.h"
+#include "Strategies.h"
+
 #include <SFML/Graphics.hpp>
 #include <vector>
 
@@ -18,6 +20,7 @@ protected:
     int rateOfFire;
     int level;
     float lastShotTime;
+    std::unique_ptr<Strategies> strategy;
 
 public:
     static const int cost_DirectDamageTower;
@@ -28,12 +31,18 @@ public:
     sf::Sprite sprite; // Tower sprite
 
 
-    Tower(int x, int y, int cost, int refundValue, int range, int power, float rateOfFire, sf::Texture& texture);
+    Tower(int x, int y, int cost, int refundValue, int range, int power, float rateOfFire, sf::Texture& texture, std::unique_ptr<Strategies> strat);
     virtual ~Tower(); // Virtual destructor
 
     virtual void shoot(std::vector<Critter>& target, float currentTime) = 0;
     void upgrade();
     int sell();
+
+    void setStrategy(std::unique_ptr<Strategies> newStrategy) {
+        strategy = std::move(newStrategy);
+    }
+
+    void shoot(std::vector<Critter*>& target, float currentTime);
 };
 
 extern int damageDoneToCritter;

@@ -27,12 +27,6 @@ std::vector<MapObserver*> observersMap;
 
 
 void initializeMap(int numberOfRows, int numberOfColumns) {
-    //for (int i = 0; i < numberOfRows; i++) {
-    //    for (int j = 0; j < numberOfColumns; j++) {
-    //        grid[i][j] = 0; // Default to grass (scenery)
-    //    }
-    //}
-
     mapGrid = new int* [mapHeight];
 
     for (int i = 0; i < mapHeight; ++i) {
@@ -187,11 +181,21 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
     if (!(col >= 0 && col < numberOfColumns && row >= 0 && row < numberOfRows))
         return;
 
-    int newState = (mapGrid[row][col] + 1) % 5;  // Cycle through states: grass -> path -> tower -> towerSlowDown -> towerSniper
-    mapGrid[row][col] = newState;
+    int previousState = mapGrid[row][col];   // original state of the cell
+    int newState = previousState;            // start with the same value
 
-    notifyObservers(col, row, newState);  // Notify all observers about the change
+    if (button == sf::Mouse::Left) {
+        newState = (previousState + 1) % 5;  // grass -> path -> tower -> towerSlowDown -> towerSniper
+    }
+    else if (button == sf::Mouse::Right) {
+        newState = 0;                        // reset to grass
+    }
+
+    mapGrid[row][col] = newState;            // apply the new state of the cell
+
+    notifyObservers(col, row, newState, previousState);  
 }
+
 
 // Placeholder function for the game screen
 void startGame() {
@@ -477,8 +481,8 @@ void removeObserver(MapObserver* observer) {
     observersMap.erase(std::remove(observersMap.begin(), observersMap.end(), observer), observersMap.end());
 }
 
-void notifyObservers(int column, int row, int newState) {
+void notifyObservers(int column, int row, int newState, int previousState) {
     for (MapObserver* observer : observersMap) {
-        observer->onCellChanged(column, row, newState);
+        observer->onCellChanged(column, row, newState, previousState);
     }
 }
