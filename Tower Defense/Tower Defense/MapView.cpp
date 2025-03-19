@@ -11,9 +11,6 @@ int playerCoins = 100;
 
 
 void MapView::onCellChanged(int x, int y, int newState, int previousState) {
-    std::cout << "newstate: " << newState << " | previousState: " << previousState << "\n";
-
-
     if (newState == 2) {
         towerCounter++;
         playerCoins -= Tower::cost_DirectDamageTower;
