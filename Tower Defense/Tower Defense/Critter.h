@@ -64,6 +64,8 @@ public:
     bool isHit(float currentTime) const;
 
     void move(float deltaTime); // Movement logic
+
+    int getRemainingPathCells();
 };
 
 #endif

@@ -123,10 +123,8 @@ void Critter::move(float deltaTime) {
     if (isSlowed && deltaTime >= slowEndTime) {
         speed = initialSpeed; // Restore speed after 5 seconds
         isSlowed = false;
-        std::cout << "Back to normal speed\n";
     }
 
-    //std::cout << "Speed: " << speed << "\n";
 
     sf::Vector2f currentPos(pathCells[this->pathIndex].x * cellSize, pathCells[this->pathIndex].y * cellSize);
     sf::Vector2f nextPos(pathCells[this->pathIndex + 1].x * cellSize, pathCells[this->pathIndex + 1].y * cellSize);
@@ -135,6 +133,7 @@ void Critter::move(float deltaTime) {
     float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
 
+    // critter hasn't reached the next cell yet
     if (distance > 0.0f) {
         sf::Vector2f velocity = (direction / distance) * static_cast<float>(speed) * deltaTime;
         moveProgress += speed * deltaTime;
@@ -145,6 +144,14 @@ void Critter::move(float deltaTime) {
         }
         notifyMoved(velocity);
     }
+}
+
+
+// calculate how many path cells until a critter reaches the exit
+int Critter::getRemainingPathCells() {
+    if (pathIndex >= pathCells.size()) return 0; // Critter already at the exit
+
+    return static_cast<int>(pathCells.size()) - pathIndex;
 }
 
 void Critter::addObserver(CritterObserver* observer, sf::Texture& texture) {

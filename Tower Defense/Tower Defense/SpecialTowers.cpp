@@ -8,14 +8,13 @@
 
 // DirectDamageTower constructor
 DirectDamageTower::DirectDamageTower(int x, int y, sf::Texture& texture)
-    : Tower(x, y, 100, 100, 5, 2, 1, texture, std::make_unique<StrongestCritter>()) { // Updated to match the new Tower constructor
+    : Tower(x, y, 100, 100, 50, 2, 1, texture, std::make_unique<NearestToTower>()) { // Updated to match the new Tower constructor
 }
 // DirectDamageTower shoot method
 void DirectDamageTower::shoot(std::vector<Critter>& critters, float currentTime) {
     if (currentTime - lastShotTime < (1.0f / rateOfFire)) return; // Enforce firing rate
 
     std::vector<Critter*> inRangeCritters;
-    int cellSize = WINDOWSIZE / ROWS;
 
     // find critter in range
     for (auto& critter : critters) {
@@ -38,12 +37,11 @@ void DirectDamageTower::shoot(std::vector<Critter>& critters, float currentTime)
 
     // determine which critter to attack
     if (inRangeCritters.size() == 1) {    // only one critter in range, attack directly
-        
         target = inRangeCritters[0];
     }
     else if (strategy) {                  // multiple critters, use strategy
        
-        target = strategy->selectTarget(inRangeCritters);
+        target = strategy->selectTarget(inRangeCritters, position.x, position.y);
     }
 
     // apply damage
