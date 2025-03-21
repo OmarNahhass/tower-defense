@@ -4,6 +4,10 @@
 #include "Game.h"
 #include "Tower.h"
 #include "UpgradeButton.h"
+#include "SpecialTowers.h"
+#include "PowerDecorator.h"
+#include "AtkSpeekDecorator.h"
+#include "RangeDecorator.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -16,6 +20,9 @@
 int grid[COLS][ROWS]; 
 int** mapGrid = nullptr;
 
+std::map<std::pair<int, int>, std::unique_ptr<Tower>> towerMap;
+
+
 
 sf::Texture grassTextureMap, pathTextureMap, towerTextureMap, towerSlowDownTextureMap, towerSniperTextureMap;
 
@@ -25,7 +32,7 @@ std::vector<sf::Vector2i> pathCells, towerCells;
 std::vector<MapObserver*> observersMap;
 
 
-int selectedTower = 0;
+std::pair<int, int> selectedTower = { -1, -1 };
 bool showUpgradeMenu = false;
 bool towerClicked = false;
 
@@ -191,36 +198,53 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
     if (button == sf::Mouse::Left) {
         newState = (previousState + 1) % 5;  // grass -> path -> tower -> towerSlowDown -> towerSniper
         showUpgradeMenu = false;
+
+        if (newState == 2) {
+            towerMap[{col, row}] = std::make_unique<DirectDamageTower>(col, row, towerTextureMap);
+        }
+        else if (newState == 3) {
+            towerMap[{col, row}] = std::make_unique<SlowingTower>(col, row, towerSlowDownTextureMap);
+        }
+        else if (newState == 4) {
+            towerMap[{col, row}] = std::make_unique<SniperTower>(col, row, towerSniperTextureMap);
+        }
+        else {
+            towerMap.erase({ col, row }); // Remove if reset to grass
+        }
     }
     else if (button == sf::Mouse::Right) {
         newState = 0;                        // reset to grass
         showUpgradeMenu = false;
-    }
-    else if (button == sf::Mouse::Middle) {
-        towerClicked = false;
-        showUpgradeMenu = false;
-
-        if (newState == 2 || newState == 3 || newState == 4) {
-
-            if (newState == 2) selectedTower = 2;
-            else if (newState == 3) selectedTower = 3;
-            else if (newState == 4) selectedTower = 4;
-            
-            showUpgradeMenu = true; // Show upgrade buttons
-            towerClicked = true;
-            return;
-        }
-
-        // If no tower was clicked, hide the upgrade menu
-        if (!towerClicked) {
-            selectedTower = 0;
-            showUpgradeMenu = false;
-        }
+        towerMap.erase({ col, row });
     }
 
     mapGrid[row][col] = newState;            // apply the new state of the cell
 
     notifyObservers(col, row, newState, previousState);  
+}
+
+void handleUpgradeButton(sf::Vector2i mousePos, int cellSize) {
+    int col = mousePos.x / cellSize;
+    int row = mousePos.y / cellSize;
+
+    if (!(col >= 0 && col < numberOfColumns && row >= 0 && row < numberOfRows))
+        return;
+
+    towerClicked = false;
+    showUpgradeMenu = false;
+
+    auto it = towerMap.find({ col, row });
+    if (it != towerMap.end()) {
+        selectedTower = { col, row };
+        towerClicked = true;
+        showUpgradeMenu = true;
+    }
+
+    // If no tower was clicked, hide the upgrade menu
+    if (!towerClicked) {
+        selectedTower = { -1, -1 };
+        showUpgradeMenu = false;
+    }
 }
 
 
@@ -401,12 +425,17 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                         errorTimer.restart();
                     }
                 }
-
+                // clicks handled when the user presses any "Upgrade" button
                 if (showUpgradeMenu && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                     sf::Vector2f mousePos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
 
                     if (upgradeDamageButton.isClicked(mousePos)) {
-                        std::cout << "Upgrade Damage\n";
+                        auto it = towerMap.find(selectedTower);
+                        //std::cout << "selectedTower first: " << selectedTower.first << " selectedTower second: " << selectedTower.second;
+                        if (it != towerMap.end()) {
+                            it->second = std::make_unique<PowerDecorator>(std::move(it->second));
+                            std::cout << "Upgrade Damage\n";
+                        }
                     }
                     if (upgradeFireRateButton.isClicked(mousePos)) {
                         std::cout << "Upgrade Fire Rate\n";
@@ -414,6 +443,14 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                     if (upgradeRangeButton.isClicked(mousePos)) {
                         std::cout << "Upgrade Range\n";
                     }
+                }
+            }
+            // Allows the user to press "Space" to upgrade a tower
+            else if (event.type == sf::Event::KeyPressed) {
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
+                if (event.key.code == sf::Keyboard::Space) {
+                    handleUpgradeButton(mousePos, cellSize);
                 }
             }
         }

@@ -16,8 +16,6 @@ public:
         wrappedTower->upgrade();
         power += 2;
     }
-
-
 };
 
 #endif 
