@@ -59,7 +59,7 @@ public:
         power = newPower;
     }
     void setRange(int newRange) {
-        range = range;
+        range = newRange;
     }
     void setRateOfFire(float newRateOfFire) {
         rateOfFire = newRateOfFire;

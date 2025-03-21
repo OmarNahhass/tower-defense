@@ -9,12 +9,21 @@ class RangeDecorator : public TowerDecorator {
 public:
     RangeDecorator(std::unique_ptr<Tower> tower)
         : TowerDecorator(std::move(tower)) {
-        range++;
+
+        //wrappedTower->setRange(wrappedTower->getRange() + 2);
+    }
+
+    int getRange() const override {
+        return wrappedTower->getRange();
     }
 
     void upgrade() override {
         wrappedTower->upgrade();
-        range++;
+        wrappedTower->setRange(wrappedTower->getRange() + 2);
+    }
+
+    void shoot(std::vector<Critter>& target, float currentTime) override {
+        wrappedTower->shoot(target, currentTime);  
     }
 };
 

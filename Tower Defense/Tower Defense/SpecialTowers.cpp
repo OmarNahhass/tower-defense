@@ -8,7 +8,7 @@
 
 // DirectDamageTower constructor
 DirectDamageTower::DirectDamageTower(int x, int y, sf::Texture& texture)
-    : Tower(x, y, 100, 100, 50, 2, 1, texture, std::make_unique<NearestToTower>()) { // Updated to match the new Tower constructor
+    : Tower(x, y, 100, 100, numberOfColumns/5, 2, 1, texture, std::make_unique<NearestToTower>()) { // Updated to match the new Tower constructor
 }
 // DirectDamageTower shoot method
 void DirectDamageTower::shoot(std::vector<Critter>& critters, float currentTime) {

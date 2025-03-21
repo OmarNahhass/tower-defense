@@ -10,7 +10,7 @@ public:
     PowerDecorator(std::unique_ptr<Tower> tower)
         : TowerDecorator(std::move(tower)) {
 
-        wrappedTower->setPower(wrappedTower->getPower() + 2);
+        //wrappedTower->setPower(wrappedTower->getPower() + 2);
     }
 
     int getPower() const override {
@@ -23,7 +23,7 @@ public:
     }
 
     void shoot(std::vector<Critter>& target, float currentTime) override {
-        wrappedTower->shoot(target, currentTime);  // Now uses modified power
+        wrappedTower->shoot(target, currentTime);  
     }
 
 
