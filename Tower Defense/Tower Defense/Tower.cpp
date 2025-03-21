@@ -30,7 +30,12 @@ Tower::Tower(int x, int y, int cost, int refundValue, int range, int powerAmount
         static_cast<float>(cellSize) / sprite.getTexture()->getSize().y
     );
 }
-
+int Tower::getCost() {
+    return cost;
+}
+int Tower::getRefundValue() {
+    return refundValue;
+}
 void Tower::shoot(std::vector<Critter*>& targets, float currentTime) {
     if (strategy) {
 
@@ -51,8 +56,6 @@ Tower::~Tower() {}
 void Tower::upgrade()
 {
     level++;
-    power += 10;
-    range += 1;
 }
 
 int Tower::sell()

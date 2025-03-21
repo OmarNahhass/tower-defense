@@ -34,15 +34,26 @@ public:
     Tower(int x, int y, int cost, int refundValue, int range, int power, float rateOfFire, sf::Texture& texture, std::unique_ptr<Strategies> strat);
     virtual ~Tower(); // Virtual destructor
 
+    Tower(const Tower& other)
+        : cost(other.cost), refundValue(other.refundValue), range(other.range), power(other.power), rateOfFire(other.rateOfFire),
+        level(other.level), lastShotTime(other.lastShotTime), position(other.position), sprite(other.sprite)
+    {
+        if (other.strategy) {
+            strategy = other.strategy->clone();
+        }
+    }
+
     virtual void shoot(std::vector<Critter>& target, float currentTime) = 0;
-    void upgrade();
-    int sell();
+    virtual void upgrade();
+    virtual int sell();
 
     void setStrategy(std::unique_ptr<Strategies> newStrategy) {
         strategy = std::move(newStrategy);
     }
 
     void shoot(std::vector<Critter*>& target, float currentTime);
+    int getCost();
+    int getRefundValue();
 };
 
 extern int damageDoneToCritter;
