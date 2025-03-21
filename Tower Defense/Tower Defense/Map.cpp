@@ -431,10 +431,9 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
 
                     if (upgradeDamageButton.isClicked(mousePos)) {
                         auto it = towerMap.find(selectedTower);
-                        //std::cout << "selectedTower first: " << selectedTower.first << " selectedTower second: " << selectedTower.second;
                         if (it != towerMap.end()) {
                             it->second = std::make_unique<PowerDecorator>(std::move(it->second));
-                            std::cout << "Upgrade Damage\n";
+                            std::cout << "Power upgraded! New power: " << it->second->getPower() << std::endl;
                         }
                     }
                     if (upgradeFireRateButton.isClicked(mousePos)) {

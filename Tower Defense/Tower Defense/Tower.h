@@ -54,6 +54,20 @@ public:
     void shoot(std::vector<Critter*>& target, float currentTime);
     int getCost();
     int getRefundValue();
+
+    void setPower(int newPower) {
+        power = newPower;
+    }
+    void setRange(int newRange) {
+        range = range;
+    }
+    void setRateOfFire(float newRateOfFire) {
+        rateOfFire = newRateOfFire;
+    }
+
+    virtual int getPower() const { return power; }
+    virtual int getRange() const { return range; }
+    virtual float getFireRate() const { return rateOfFire; }
 };
 
 extern int damageDoneToCritter;

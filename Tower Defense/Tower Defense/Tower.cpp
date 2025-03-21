@@ -37,12 +37,14 @@ int Tower::getRefundValue() {
     return refundValue;
 }
 void Tower::shoot(std::vector<Critter*>& targets, float currentTime) {
+    std::cout << "Current Tower Power: " << getPower() << std::endl;
+
     if (strategy) {
 
         Critter* target = strategy->selectTarget(targets);
 
         if (target) {
-            target->takeDamage(power, currentTime);  // Default damage behavior
+            target->takeDamage(getPower(), currentTime);  // Default damage behavior
         }
     }
 }

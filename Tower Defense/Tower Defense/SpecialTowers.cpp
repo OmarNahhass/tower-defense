@@ -47,7 +47,7 @@ void DirectDamageTower::shoot(std::vector<Critter>& critters, float currentTime)
     // apply damage
     if (target) {
         lastShotTime = currentTime;
-        target->takeDamage(power, currentTime);  
+        target->takeDamage(getPower(), currentTime);
     }
 
     // Remove dead critters after loop

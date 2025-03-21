@@ -5,11 +5,14 @@
 
 #include <SFML/Graphics.hpp>
 #include "Menu.h"
+#include "Tower.h"
 #include "MapObserver.h"
 
 
 
 extern std::vector<MapObserver*> observersMap;
+
+extern std::map<std::pair<int, int>, std::unique_ptr<Tower>> towerMap;
 
 
 // Observer methods

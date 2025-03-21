@@ -25,6 +25,10 @@ public:
         return wrappedTower->sell();
     }
 
+    int getPower() const override { return wrappedTower->getPower(); }
+    int getRange() const override { return wrappedTower->getRange(); }
+    float getFireRate() const override { return wrappedTower->getFireRate(); }
+
 };
 
 #endif

@@ -103,8 +103,15 @@ void drawTowers(sf::RenderWindow& window) {
 
 // Update towers to shoot at critters
 void updateTowers(float currentTime) {
-    for (auto& tower : towers) {
+    /*for (auto& tower : towers) {
+        std::cout << "Tower type: " << typeid(*tower).name() << " | Power: " << tower->getPower() << std::endl;
         tower->shoot(activeCritters, currentTime);
+    }*/
+
+    for (auto& tower : towerMap) {  // Iterate over all towers in the map
+        tower.second->shoot(activeCritters, currentTime);
+
+        //std::cout << "Tower type: " << typeid(*tower).name() << std::endl; // Prints actual type
     }
 }
 
