@@ -147,6 +147,7 @@
     <ClCompile Include="SpecialTowers.cpp" />
     <ClCompile Include="Strategies.cpp" />
     <ClCompile Include="Tower.cpp" />
+    <ClCompile Include="UpgradeButton.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Critter.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="SpecialTowers.h" />
     <ClInclude Include="Strategies.h" />
     <ClInclude Include="Tower.h" />
+    <ClInclude Include="UpgradeButton.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,20 +3,19 @@
 #include "MapView.h"
 #include "Game.h"
 #include "Tower.h"
+#include "UpgradeButton.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <iostream>
-
+#include <vector>
+#include <SFML/System/Vector2.hpp>
 #include <queue>
 
 int grid[COLS][ROWS]; 
 int** mapGrid = nullptr;
 
-
-#include <vector>
-#include <SFML/System/Vector2.hpp>
 
 sf::Texture grassTextureMap, pathTextureMap, towerTextureMap, towerSlowDownTextureMap, towerSniperTextureMap;
 
@@ -24,6 +23,11 @@ std::vector<sf::Vector2i> pathCells, towerCells;
 
 
 std::vector<MapObserver*> observersMap;
+
+
+int selectedTower = 0;
+bool showUpgradeMenu = false;
+bool towerClicked = false;
 
 
 void initializeMap(int numberOfRows, int numberOfColumns) {
@@ -186,9 +190,32 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
 
     if (button == sf::Mouse::Left) {
         newState = (previousState + 1) % 5;  // grass -> path -> tower -> towerSlowDown -> towerSniper
+        showUpgradeMenu = false;
     }
     else if (button == sf::Mouse::Right) {
         newState = 0;                        // reset to grass
+        showUpgradeMenu = false;
+    }
+    else if (button == sf::Mouse::Middle) {
+        towerClicked = false;
+        showUpgradeMenu = false;
+
+        if (newState == 2 || newState == 3 || newState == 4) {
+
+            if (newState == 2) selectedTower = 2;
+            else if (newState == 3) selectedTower = 3;
+            else if (newState == 4) selectedTower = 4;
+            
+            showUpgradeMenu = true; // Show upgrade buttons
+            towerClicked = true;
+            return;
+        }
+
+        // If no tower was clicked, hide the upgrade menu
+        if (!towerClicked) {
+            selectedTower = 0;
+            showUpgradeMenu = false;
+        }
     }
 
     mapGrid[row][col] = newState;            // apply the new state of the cell
@@ -240,7 +267,9 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
         std::cerr << "Failed to load font!" << std::endl;
     }
 
-
+    UpgradeButton upgradeDamageButton(mapWidth + 15, 150, infoPanelWidth - 50, 40, "Upgrade DAMAGE");
+    UpgradeButton upgradeFireRateButton(mapWidth + 15, 200, infoPanelWidth - 50, 40, "Upgrade FIRERATE");
+    UpgradeButton upgradeRangeButton(mapWidth + 15, 250, infoPanelWidth - 50, 40, "Upgrade RANGE");
 
 
     /* 
@@ -372,6 +401,20 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                         errorTimer.restart();
                     }
                 }
+
+                if (showUpgradeMenu && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2f mousePos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+
+                    if (upgradeDamageButton.isClicked(mousePos)) {
+                        std::cout << "Upgrade Damage\n";
+                    }
+                    if (upgradeFireRateButton.isClicked(mousePos)) {
+                        std::cout << "Upgrade Fire Rate\n";
+                    }
+                    if (upgradeRangeButton.isClicked(mousePos)) {
+                        std::cout << "Upgrade Range\n";
+                    }
+                }
             }
         }
 
@@ -402,6 +445,15 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
         window.draw(damageTowerCostText);
         window.draw(slowDownTowerCostText);
         window.draw(sniperTowerCostText);
+
+        
+     
+
+        if (showUpgradeMenu) {
+            upgradeDamageButton.draw(window);
+            upgradeFireRateButton.draw(window);
+            upgradeRangeButton.draw(window);
+        }
 
 
         drawFullMap(window, cellSize, mapView);  
