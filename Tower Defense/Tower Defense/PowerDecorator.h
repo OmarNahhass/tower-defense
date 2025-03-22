@@ -9,8 +9,6 @@ class PowerDecorator : public TowerDecorator {
 public:
     PowerDecorator(std::unique_ptr<Tower> tower)
         : TowerDecorator(std::move(tower)) {
-
-        //wrappedTower->setPower(wrappedTower->getPower() + 2);
     }
 
     int getPower() const override {

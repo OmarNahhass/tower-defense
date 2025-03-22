@@ -9,7 +9,6 @@ class AtkSpeedDecorator : public TowerDecorator {
 public:
     AtkSpeedDecorator(std::unique_ptr<Tower> tower)
         : TowerDecorator(std::move(tower)) {
-            rateOfFire *= 1.1f;
     }
 
     float getFireRate() const override {
