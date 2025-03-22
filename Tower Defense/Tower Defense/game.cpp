@@ -39,6 +39,8 @@ int numberOfCrittersRemaining = numberOfCrittersPerWave;
 GameState currentState = GameState::InGame;
 
 
+sf::Clock gameClock;
+
 
 
 void spawnCritter() {
@@ -103,15 +105,10 @@ void drawTowers(sf::RenderWindow& window) {
 
 // Update towers to shoot at critters
 void updateTowers(float currentTime) {
-    /*for (auto& tower : towers) {
-        std::cout << "Tower type: " << typeid(*tower).name() << " | Power: " << tower->getPower() << std::endl;
-        tower->shoot(activeCritters, currentTime);
-    }*/
-
     for (auto& tower : towerMap) {  // Iterate over all towers in the map
         tower.second->shoot(activeCritters, currentTime);
 
-        //std::cout << "Tower type: " << typeid(*tower).name() << std::endl; // Prints actual type
+        //std::cout << "Tower type: " << typeid(*(tower.second)).name() << std::endl;
     }
 }
 
@@ -291,7 +288,7 @@ void displayGame(sf::RenderWindow& window) {
 
 
 
-    sf::Clock clock, gameClock;
+    sf::Clock clock;
 
     while (window.isOpen()) {
         sf::Event event;

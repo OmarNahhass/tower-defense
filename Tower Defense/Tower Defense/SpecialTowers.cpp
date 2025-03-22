@@ -12,7 +12,14 @@ DirectDamageTower::DirectDamageTower(int x, int y, sf::Texture& texture)
 }
 // DirectDamageTower shoot method
 void DirectDamageTower::shoot(std::vector<Critter>& critters, float currentTime) {
-    if (currentTime - lastShotTime < (1.0f / rateOfFire)) return; // Enforce firing rate
+    std::cout << "Current time: " << currentTime << std::endl;
+    std::cout << "Last shot time: " << lastShotTime << std::endl;
+    std::cout << "rate of fire: " << rateOfFire << std::endl;
+
+    if (currentTime - lastShotTime < (1.0f / rateOfFire)) {
+        std::cout << "not shooting" << std::endl;
+        return; // Enforce firing rate
+    }
 
     std::vector<Critter*> inRangeCritters;
 
