@@ -17,8 +17,8 @@ public:
         wrappedTower->shoot(target, currentTime);
     }
 
-    virtual void upgrade() override {
-        wrappedTower->upgrade();
+    virtual int upgrade() override {
+        return wrappedTower->upgrade();
     }
 
     virtual int sell() override {

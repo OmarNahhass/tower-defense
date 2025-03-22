@@ -433,19 +433,26 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                         auto it = towerMap.find(selectedTower);
                         if (it != towerMap.end()) {
                             it->second = std::make_unique<PowerDecorator>(std::move(it->second));
-                            it->second->upgrade();
+                            int upgradeCost = it->second->upgrade();
+                            playerCoins -= upgradeCost;
                             std::cout << "Power upgraded! New power: " << it->second->getPower() << std::endl;
                         }
                     }
                     if (upgradeFireRateButton.isClicked(mousePos)) {
-                        std::cout << "Upgrade Fire Rate\n";
+                        auto it = towerMap.find(selectedTower);
+                        if (it != towerMap.end()) {
+                            it->second = std::make_unique<AtkSpeedDecorator>(std::move(it->second));
+                            int upgradeCost = it->second->upgrade();
+                            playerCoins -= upgradeCost;
+                            std::cout << "Fire rate upgraded! New fire rate: " << it->second->getFireRate() << std::endl;
+                        }
                     }
                     if (upgradeRangeButton.isClicked(mousePos)) {
                         auto it = towerMap.find(selectedTower);
                         if (it != towerMap.end()) {
                             it->second = std::make_unique<RangeDecorator>(std::move(it->second));
-                            std::cout << "Old range: " << it->second->getRange() << std::endl;
-                            it->second->upgrade();
+                            int upgradeCost = it->second->upgrade();
+                            playerCoins -= upgradeCost;
                             std::cout << "Range upgraded! New range: " << it->second->getRange() << std::endl;
                         }
                     }

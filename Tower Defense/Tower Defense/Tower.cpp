@@ -53,9 +53,12 @@ Tower::~Tower() {}
 
 
 // Upgrade method implementation
-void Tower::upgrade()
+int Tower::upgrade()
 {
     level++;
+    float scaleFactor = 0.5f; 
+    int upgradeCost = static_cast<int>(cost * scaleFactor * level);  
+    return upgradeCost;
 }
 
 int Tower::sell()

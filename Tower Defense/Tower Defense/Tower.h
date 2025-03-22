@@ -44,7 +44,7 @@ public:
     }
 
     virtual void shoot(std::vector<Critter>& target, float currentTime) = 0;
-    virtual void upgrade();
+    virtual int upgrade();
     virtual int sell();
 
     void setStrategy(std::unique_ptr<Strategies> newStrategy) {

@@ -15,9 +15,9 @@ public:
         return wrappedTower->getRange();
     }
 
-    void upgrade() override {
-        wrappedTower->upgrade();
-        wrappedTower->setRange(wrappedTower->getRange() + 2);
+    int upgrade() override {
+        wrappedTower->setRange(wrappedTower->getRange() + 2); 
+        return wrappedTower->upgrade();
     }
 
     void shoot(std::vector<Critter>& target, float currentTime) override {

@@ -15,9 +15,9 @@ public:
         return wrappedTower->getFireRate();
     }
 
-    void upgrade() override {
-        wrappedTower->upgrade();
+    int upgrade() override {
         wrappedTower->setRateOfFire(wrappedTower->getFireRate() * 1.1f);
+        return wrappedTower->upgrade();
     }
 
     void shoot(std::vector<Critter>& target, float currentTime) override {
