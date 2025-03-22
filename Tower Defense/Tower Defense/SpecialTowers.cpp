@@ -8,7 +8,7 @@
 
 // DirectDamageTower constructor
 DirectDamageTower::DirectDamageTower(int x, int y, sf::Texture& texture)
-    : Tower(x, y, 100, 100, numberOfColumns/5, 2, 1, texture, std::make_unique<NearestToTower>()) { // Updated to match the new Tower constructor
+    : Tower(x, y, 50, 40, numberOfColumns/5, 2, 1, texture, std::make_unique<NearestToTower>()) { // Updated to match the new Tower constructor
 }
 // DirectDamageTower shoot method
 void DirectDamageTower::shoot(std::vector<Critter>& critters, float currentTime) {
@@ -62,7 +62,7 @@ void DirectDamageTower::shoot(std::vector<Critter>& critters, float currentTime)
 
 // SlowingTower constructor
 SlowingTower::SlowingTower(int x, int y, sf::Texture& texture) 
-    : Tower(x, y, 150, 150, 2, 0, 10, texture, std::make_unique<NearestToExit>()) {
+    : Tower(x, y, 150, 100, 2, 0, 10, texture, std::make_unique<NearestToExit>()) {
 }
 
 // SlowingTower shoot method
@@ -96,7 +96,7 @@ void SlowingTower::shoot(std::vector<Critter>& critters, float currentTime)
 
 // SniperTower constructor
 SniperTower::SniperTower(int x, int y, sf::Texture& texture)
-    : Tower(x, y, 250, 250, numberOfColumns/2, 50, 15, texture, std::make_unique<StrongestCritter>()) {
+    : Tower(x, y, 250, 200, numberOfColumns/2, 50, 15, texture, std::make_unique<StrongestCritter>()) {
 }
 // SniperTower shoot method
 void SniperTower::shoot(std::vector<Critter>& critters, float currentTime) {

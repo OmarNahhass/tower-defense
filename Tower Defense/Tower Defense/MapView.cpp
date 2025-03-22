@@ -24,17 +24,8 @@ void MapView::onCellChanged(int x, int y, int newState, int previousState) {
         playerCoins += Tower::cost_SlowingTower;
         playerCoins -= Tower::cost_SniperTower;
     }
-    else if (newState == 0 && previousState == 2) {
+    else if (newState == 0 && previousState != 0 && previousState != 1) {
         towerCounter--;
-        playerCoins += Tower::cost_DirectDamageTower;
-    }
-    else if (newState == 0 && previousState == 3) {
-        towerCounter--;
-        playerCoins += Tower::cost_SlowingTower;
-    }
-    else if (newState == 0 && previousState == 4) {
-        towerCounter--;
-        playerCoins += Tower::cost_SniperTower;
     }
     
     drawSingleCell(window, x, y, newState, 40);  // Only update this cell

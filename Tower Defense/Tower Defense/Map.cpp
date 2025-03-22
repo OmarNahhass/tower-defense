@@ -213,9 +213,18 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
         }
     }
     else if (button == sf::Mouse::Right) {
-        newState = 0;                        // reset to grass
-        showUpgradeMenu = false;
-        towerMap.erase({ col, row });
+        auto tower = towerMap.find({ col, row });
+        if (tower != towerMap.end()) {
+            int refundAmount = tower->second->sell();
+
+            // Refund the player's coins
+            playerCoins += refundAmount;
+            std::cout << "Tower sold! Refunded " << refundAmount << " coins." << std::endl;
+
+            newState = 0;                         // reset to grass
+            showUpgradeMenu = false;
+            towerMap.erase({ col, row });         // remove the tower from the map
+        }
     }
 
     mapGrid[row][col] = newState;            // apply the new state of the cell
@@ -233,8 +242,8 @@ void handleUpgradeButton(sf::Vector2i mousePos, int cellSize) {
     towerClicked = false;
     showUpgradeMenu = false;
 
-    auto it = towerMap.find({ col, row });
-    if (it != towerMap.end()) {
+    auto tower = towerMap.find({ col, row });
+    if (tower != towerMap.end()) {
         selectedTower = { col, row };
         towerClicked = true;
         showUpgradeMenu = true;
@@ -430,30 +439,30 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                     sf::Vector2f mousePos = window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
 
                     if (upgradeDamageButton.isClicked(mousePos)) {
-                        auto it = towerMap.find(selectedTower);
-                        if (it != towerMap.end()) {
-                            it->second = std::make_unique<PowerDecorator>(std::move(it->second));
-                            int upgradeCost = it->second->upgrade();
+                        auto tower = towerMap.find(selectedTower);
+                        if (tower != towerMap.end()) {
+                            tower->second = std::make_unique<PowerDecorator>(std::move(tower->second));
+                            int upgradeCost = tower->second->upgrade();
                             playerCoins -= upgradeCost;
-                            std::cout << "Power upgraded! New power: " << it->second->getPower() << std::endl;
+                            std::cout << "Power upgraded! New power: " << tower->second->getPower() << std::endl;
                         }
                     }
                     if (upgradeFireRateButton.isClicked(mousePos)) {
-                        auto it = towerMap.find(selectedTower);
-                        if (it != towerMap.end()) {
-                            it->second = std::make_unique<AtkSpeedDecorator>(std::move(it->second));
-                            int upgradeCost = it->second->upgrade();
+                        auto tower = towerMap.find(selectedTower);
+                        if (tower != towerMap.end()) {
+                            tower->second = std::make_unique<AtkSpeedDecorator>(std::move(tower->second));
+                            int upgradeCost = tower->second->upgrade();
                             playerCoins -= upgradeCost;
-                            std::cout << "Fire rate upgraded! New fire rate: " << it->second->getFireRate() << std::endl;
+                            std::cout << "Fire rate upgraded! New fire rate: " << tower->second->getFireRate() << std::endl;
                         }
                     }
                     if (upgradeRangeButton.isClicked(mousePos)) {
-                        auto it = towerMap.find(selectedTower);
-                        if (it != towerMap.end()) {
-                            it->second = std::make_unique<RangeDecorator>(std::move(it->second));
-                            int upgradeCost = it->second->upgrade();
+                        auto tower = towerMap.find(selectedTower);
+                        if (tower != towerMap.end()) {
+                            tower->second = std::make_unique<RangeDecorator>(std::move(tower->second));
+                            int upgradeCost = tower->second->upgrade();
                             playerCoins -= upgradeCost;
-                            std::cout << "Range upgraded! New range: " << it->second->getRange() << std::endl;
+                            std::cout << "Range upgraded! New range: " << tower->second->getRange() << std::endl;
                         }
                     }
                 }
