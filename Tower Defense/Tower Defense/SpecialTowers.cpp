@@ -96,7 +96,7 @@ void SlowingTower::shoot(std::vector<Critter>& critters, float currentTime)
 
 // SniperTower constructor
 SniperTower::SniperTower(int x, int y, sf::Texture& texture)
-    : Tower(x, y, 250, 200, numberOfColumns/2, 50, 15, texture, std::make_unique<StrongestCritter>()) {
+    : Tower(x, y, 250, 200, numberOfColumns/2, 10, 15, texture, std::make_unique<StrongestCritter>()) {
 }
 // SniperTower shoot method
 void SniperTower::shoot(std::vector<Critter>& critters, float currentTime) {

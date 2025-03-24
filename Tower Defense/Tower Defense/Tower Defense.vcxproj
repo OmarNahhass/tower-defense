@@ -151,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Critter.h" />
+    <ClInclude Include="CritterFactory.h" />
     <ClInclude Include="CritterGroupGenerator.h" />
     <ClInclude Include="CritterObserver.h" />
     <ClInclude Include="CritterView.h" />

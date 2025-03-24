@@ -104,5 +104,8 @@
     <ClInclude Include="UpgradeButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CritterFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
