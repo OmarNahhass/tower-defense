@@ -44,7 +44,7 @@ Critter::Critter(int lvl, sf::Texture& texture) {
     maxHealth = hitPoints;
     reward = lvl * 50;
     strength = lvl * 1;
-    initialSpeed = lvl * 10; // Speed per second
+    initialSpeed = lvl * 10.0f; // Speed per second
     level = lvl;
     reachedExit = false;
     pathIndex = 0;

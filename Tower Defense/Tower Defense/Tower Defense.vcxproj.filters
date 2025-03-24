@@ -60,6 +60,15 @@
     <ClCompile Include="UpgradeButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FastCritter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StrongCritter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BossCritter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Map.h">
@@ -105,6 +114,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CritterFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FastCritter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StrongCritter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BossCritter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

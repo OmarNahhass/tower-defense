@@ -10,9 +10,9 @@ class Strategies {
 public:
     virtual ~Strategies() = default; // Virtual destructor for proper cleanup
 
-    virtual Critter* selectTarget(std::vector<Critter*>& targets) { return nullptr; }
+    virtual Critter* selectTarget(std::vector<std::unique_ptr<Critter>>& targets) { return nullptr; }
 
-    virtual Critter* selectTarget(std::vector<Critter*>& targets, int posX, int pos) { return nullptr; }
+    virtual Critter* selectTarget(std::vector<std::unique_ptr<Critter>>& targets, int posX, int pos) { return nullptr; }
 
     virtual std::unique_ptr<Strategies> clone() const = 0;
 };
@@ -20,7 +20,7 @@ public:
 
 class NearestToTower : public Strategies {
 public:
-    Critter* selectTarget(std::vector<Critter*>& targets, int postX, int posY) override;
+    Critter* selectTarget(std::vector<std::unique_ptr<Critter>>& targets, int postX, int posY) override;
 
     std::unique_ptr<Strategies> clone() const override {
         return std::make_unique<NearestToTower>(*this);
@@ -30,7 +30,7 @@ public:
 
 class NearestToExit : public Strategies {
 public:
-    Critter* selectTarget(std::vector<Critter*>& targets, int posX, int posY) override;
+    Critter* selectTarget(std::vector<std::unique_ptr<Critter>>& targets, int posX, int posY) override;
 
     std::unique_ptr<Strategies> clone() const override {
         return std::make_unique<NearestToExit>(*this);
@@ -40,7 +40,7 @@ public:
 
 class StrongestCritter : public Strategies {
 public:
-    Critter* selectTarget(std::vector<Critter*>& targets) override;
+    Critter* selectTarget(std::vector<std::unique_ptr<Critter>>& targets) override;
 
     std::unique_ptr<Strategies> clone() const override {
         return std::make_unique<StrongestCritter>(*this);
@@ -50,7 +50,7 @@ public:
 
 class WeakestCritter : public Strategies {
 public:
-    Critter* selectTarget(std::vector<Critter*>& targets) override;
+    Critter* selectTarget(std::vector<std::unique_ptr<Critter>>& targets) override;
 
     std::unique_ptr<Strategies> clone() const override {
         return std::make_unique<WeakestCritter>(*this);

@@ -36,7 +36,7 @@ int Tower::getCost() {
 int Tower::getRefundValue() {
     return refundValue;
 }
-void Tower::shoot(std::vector<Critter*>& targets, float currentTime) {
+void Tower::shoot(std::vector<std::unique_ptr<Critter>>& targets, float currentTime) {
     if (strategy) {
 
         Critter* target = strategy->selectTarget(targets);

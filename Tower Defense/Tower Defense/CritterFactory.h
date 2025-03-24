@@ -33,9 +33,6 @@ public:
 class CritterFactoryManager
 {
 public:
-    static std::vector<std::unique_ptr<Critter>> generateWave(int waveNumber, sf::Texture& texture, CritterObserver& observer);
-
-private:
     static std::unique_ptr<CritterFactory> getFactoryForWave(int waveNumber);
 };
 

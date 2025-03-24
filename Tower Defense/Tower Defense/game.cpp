@@ -22,13 +22,12 @@ std::vector<std::unique_ptr<Tower>> towers; // List of towers
 
 std::vector<sf::Vector2i> directDamageTowerPositions, slowDownTowerPositions, sniperTowerPositiions;
 
-
-std::vector<Critter> activeCritters; 
 int currentWave = 0;
 bool waitingForNextWave = false;    // Indicates if we are waiting to start a new wave
 float waveDelayTimer = 0.0f;        // Timer for delay between waves
 
-std::vector<Critter> spawnQueue;  // Queue of critters waiting to be spawned
+std::vector<std::unique_ptr<Critter>> spawnQueue; // Queue of critters waiting to be spawned
+std::vector<std::unique_ptr<Critter>> activeCritters;
 float critterSpawnTimer = 0.0f;   // Timer to control spawning intervals
 int crittersSpawned = 0;          // Track number of critters spawned in current wave
 
@@ -107,17 +106,15 @@ void drawTowers(sf::RenderWindow& window) {
 void updateTowers(float currentTime) {
     for (auto& tower : towerMap) {  // Iterate over all towers in the map
         tower.second->shoot(activeCritters, currentTime);
-
-        //std::cout << "Tower type: " << typeid(*(tower.second)).name() << std::endl;
     }
 }
 
 // Update critters movement and remove dead ones
 void updateCritters(float deltaTime, float currentTime) {
     for (auto critter = activeCritters.begin(); critter != activeCritters.end();) {
-        critter->move(deltaTime);
+        (*critter)->move(deltaTime);
       
-        if (critter->takeDamage(0, currentTime)) { // Remove if dead
+        if ((*critter)->takeDamage(0, currentTime)) { // Remove if dead
             critter = activeCritters.erase(critter);
         }
         else {
@@ -183,7 +180,7 @@ void updateWave(float deltaTime, float currentTime, CritterView& critterView, sf
         // Spawn critters every 5 seconds
         critterSpawnTimer += deltaTime;
         if (!spawnQueue.empty() && critterSpawnTimer >= 5.0f) {
-            activeCritters.push_back(spawnQueue.front());  // Add one critter to activeCritters list
+            activeCritters.push_back(std::move(spawnQueue.front()));  // Add one critter to activeCritters list
             spawnQueue.erase(spawnQueue.begin());         // Remove it from the queue
             critterSpawnTimer = 0.0f;  // Reset spawn timer after each critter spawn
         }
@@ -326,9 +323,9 @@ void displayGame(sf::RenderWindow& window) {
 
                 // Update all critters' positions based on new cellSize
                 for (auto& critter : activeCritters) {
-                    critter.sprite.setPosition(
-                        pathCells[critter.pathIndex].x * cellSize,
-                        pathCells[critter.pathIndex].y * cellSize
+                    critter -> sprite.setPosition(
+                        pathCells[critter->pathIndex].x * cellSize,
+                        pathCells[critter->pathIndex].y * cellSize
                     );
                 }
             }         

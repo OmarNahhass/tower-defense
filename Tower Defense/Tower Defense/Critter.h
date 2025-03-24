@@ -45,6 +45,8 @@ public:
     const sf::Sprite& getSprite() const { return sprite; }
     sf::Sprite& getSprite() { return sprite; }
 
+    virtual std::string getType() const = 0;
+
     float hitTime;  // Initialize hit time
     float hitDuration;  // Red border stays for 0.2s
 

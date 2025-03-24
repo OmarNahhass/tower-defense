@@ -43,7 +43,7 @@ public:
         }
     }
 
-    virtual void shoot(std::vector<Critter>& target, float currentTime) = 0;
+    virtual void shoot(std::vector<std::unique_ptr<Critter>>& target, float currentTime) = 0;
     virtual int upgrade();
     virtual int sell();
 
@@ -51,7 +51,7 @@ public:
         strategy = std::move(newStrategy);
     }
 
-    void shoot(std::vector<Critter*>& target, float currentTime);
+    //void shoot(std::vector<std::unique_ptr<Critter>>& target, float currentTime);
     int getCost();
     int getRefundValue();
 
