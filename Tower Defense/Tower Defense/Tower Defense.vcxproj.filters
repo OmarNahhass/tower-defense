@@ -60,6 +60,9 @@
     <ClCompile Include="UpgradeButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClInclude Include="CritterFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
     <ClCompile Include="FastCritter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

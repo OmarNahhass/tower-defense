@@ -53,7 +53,7 @@ void DirectDamageTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, f
 
     // Remove dead critters after loop
     critters.erase(std::remove_if(critters.begin(), critters.end(),
-        [](const Critter& c) { return c.hitPoints <= 0; }),
+        [](const std::unique_ptr<Critter>& c) { return c->hitPoints <= 0; }),
         critters.end());
 }
 
@@ -125,7 +125,7 @@ void SniperTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, float c
 
     // Remove dead critters after loop
     critters.erase(std::remove_if(critters.begin(), critters.end(),
-        [](const Critter& c) { return c.hitPoints <= 0; }),
+        [](const std::unique_ptr<Critter>& c) { return c->hitPoints <= 0; }),
         critters.end());
 }
 

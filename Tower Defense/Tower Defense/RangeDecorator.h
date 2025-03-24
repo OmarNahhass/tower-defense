@@ -20,7 +20,7 @@ public:
         return wrappedTower->upgrade();
     }
 
-    void shoot(std::vector<Critter>& target, float currentTime) override {
+    void shoot(std::vector<std::unique_ptr<Critter>>& target, float currentTime) override {
         wrappedTower->shoot(target, currentTime);  
     }
 };

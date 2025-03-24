@@ -39,7 +39,12 @@ int Tower::getRefundValue() {
 void Tower::shoot(std::vector<std::unique_ptr<Critter>>& targets, float currentTime) {
     if (strategy) {
 
-        Critter* target = strategy->selectTarget(targets);
+        std::vector<Critter*> rawTargets;
+        for (auto& critter : targets) {
+            rawTargets.push_back(critter.get());  // Convert unique_ptr to raw pointer
+        }
+
+        Critter* target = strategy->selectTarget(rawTargets);
 
         if (target) {
             target->takeDamage(getPower(), currentTime);  // Default damage behavior

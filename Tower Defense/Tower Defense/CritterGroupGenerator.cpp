@@ -1,4 +1,5 @@
 #include "CritterFactory.h"
+#include "CritterFactoryManager.h"
 #include "CritterGroupGenerator.h"
 
 std::vector<std::unique_ptr<Critter>> CritterGroupGenerator::generateWaveCritters(int waveNumber, sf::Texture& texture, CritterObserver& observer)
@@ -11,11 +12,13 @@ std::vector<std::unique_ptr<Critter>> CritterGroupGenerator::generateWaveCritter
     {
         std::unique_ptr<CritterFactory> factory = CritterFactoryManager::getFactoryForWave(waveNumber);
 
-        std::unique_ptr<Critter> critter = factory->createCritter(waveNumber, texture);
+        if (factory != nullptr) {
+            std::unique_ptr<Critter> critter = factory->createCritter(waveNumber, texture);
 
-        critter->addObserver(&observer, texture);
+            critter->addObserver(&observer, texture);
 
-        wave.push_back(std::move(critter));
+            wave.push_back(std::move(critter));
+        }
     }
 
     return wave;

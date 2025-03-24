@@ -16,7 +16,7 @@ Critter* NearestToTower::selectTarget(std::vector<Critter*>& targets, int towerP
 
     float minDistance = mapWidth;
 
-    for (Critter* critter : targets) {
+    for (auto& critter : targets) {
 
         // calculate distance in terms of the grid, not pixels
         int critterGridX = critter->getPosition().x / cellSize;
@@ -46,7 +46,7 @@ Critter* NearestToExit::selectTarget(std::vector<Critter*>& targets, int exitPos
 
     int minPathRemaining = std::numeric_limits<int>::max();
 
-    for (Critter* critter : targets) {
+    for (auto& critter : targets) {
         // get each critter's number of remaining path cells until reaching the exit
         int pathRemaining = critter->getRemainingPathCells(); 
 
@@ -68,7 +68,7 @@ Critter* StrongestCritter::selectTarget(std::vector<Critter*>& targets) {
     Critter* strongest = nullptr;
     int maxHealth = 0;
 
-    for (Critter* critter : targets) {
+    for (auto& critter : targets) {
 
         // find new strongest critter
         if (critter->getHitPoints() > maxHealth) {
@@ -88,7 +88,7 @@ Critter* WeakestCritter::selectTarget(std::vector<Critter*>& targets) {
     Critter* weakest = nullptr;
     int minHealth = 1000;
 
-    for (Critter* critter : targets) {
+    for (auto& critter : targets) {
 
         // find new weakest critter
         if (critter->getHitPoints() < minHealth) {
