@@ -13,10 +13,6 @@ DirectDamageTower::DirectDamageTower(int x, int y, sf::Texture& texture)
 }
 // DirectDamageTower shoot method
 void DirectDamageTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, float currentTime) {
-    //std::cout << "currentTime: " << currentTime << "\n";
-    //std::cout << "lastShotTime: " << lastShotTime << "\n";
-    
-
     if (currentTime - lastShotTime < (1.0f / rateOfFire)) return; // Enforce firing rate
 
     std::vector<Critter*> inRangeCritters;
@@ -56,14 +52,12 @@ void DirectDamageTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, f
     // shoot new target
     if (target && target != currentTarget) {
         currentTarget = target;
-        std::cout << "Current Target position: (" << currentTarget->getPosition().x << ", " << currentTarget->getPosition().y << ")\n";
 
         sf::Vector2f towerPosition(position.x * cellSize, position.y * cellSize);
         sf::Vector2f targetPosition(currentTarget->getPosition().x, currentTarget->getPosition().y);
-        std::cout << "New bullet position: (" << targetPosition.x << ", " << targetPosition.y << ")\n";
 
         // Create a bullet 
-        bullet = std::make_unique<DirectDamageBullet>(towerPosition, targetPosition);
+        bullet = std::make_unique<DirectDamageBullet>(towerPosition, currentTarget);
 
         // update lastShotTime
         lastShotTime = currentTime;
@@ -75,7 +69,7 @@ void DirectDamageTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, f
 
         sf::Vector2f towerPosition(position.x * cellSize, position.y * cellSize);
         sf::Vector2f targetPosition(currentTarget->getPosition().x, currentTarget->getPosition().y);
-        bullet = std::make_unique<DirectDamageBullet>(towerPosition, targetPosition);
+        bullet = std::make_unique<DirectDamageBullet>(towerPosition, currentTarget);
 
         std::cout << "Shot at the same target!\n";
     }

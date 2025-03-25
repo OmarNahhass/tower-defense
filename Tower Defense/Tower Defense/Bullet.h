@@ -11,15 +11,17 @@ public:
     sf::Vector2f velocity;
     static constexpr float BULLET_SPEED = 0.02f;  // Constant bullet speed
 
-    Bullet(sf::Vector2f startPosition, sf::Vector2f targetPosition)
-        : position(startPosition), target(targetPosition) {
+    Bullet(sf::Vector2f startPosition, Critter* critter)
+        : position(startPosition), target(critter) {
 
         shape.setRadius(5.0f);
         shape.setFillColor(sf::Color::Red);
         shape.setPosition(startPosition);
 
+        targetPosition = { target->getPosition().x , target->getPosition().y};
+
         // Compute direction
-        sf::Vector2f direction = target - startPosition;
+        sf::Vector2f direction = targetPosition - position;
         float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
         if (length != 0) direction /= length;  
 
@@ -32,8 +34,8 @@ public:
 
     bool hasReachedTarget() const {
         // Calculate distance between current position and target
-        float distSquared = (position.x - target.x) * (position.x - target.x) +
-            (position.y - target.y) * (position.y - target.y);
+        float distSquared = (position.x - target->getPosition().x) * (position.x - target->getPosition().x) +
+            (position.y - target->getPosition().y) * (position.y - target->getPosition().y);
 
         // acceptable range for the bullet to reach the critter (bullet doesn't have to hit the exact coordinates of the target)
         float tolerance = 10.0f;
@@ -50,19 +52,20 @@ public:
 
 protected:
     sf::Vector2f position;
-    sf::Vector2f target;
+    Critter* target;
+    sf::Vector2f targetPosition;
 };
 
 
 class DirectDamageBullet : public Bullet {
 public:
-    DirectDamageBullet(sf::Vector2f startPosition, sf::Vector2f targetPosition)
-        : Bullet(startPosition, targetPosition) {
+    DirectDamageBullet(sf::Vector2f startPosition, Critter* target)
+        : Bullet(startPosition, target) {
     }
 
     void move(float deltaTime) override {
         // Recalculate direction to target every frame
-        sf::Vector2f direction = target - position;
+        sf::Vector2f direction = targetPosition - position;
         float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
         if (length > 0) {
@@ -80,14 +83,10 @@ public:
 
     void dealDamage(std::vector<std::unique_ptr<Critter>>& critters) override {
         // Deal damage if the bullet has reached the target
-        for (auto& critter : critters) {
-            if (hasReachedTarget()) {
-                std::cout << "Critter shot!";
-                critter->takeDamage(2, 0);  
-                hasDamagedTarget = true;
-                break;
-            }
-        }
+        if (hasReachedTarget()) {
+            target->takeDamage(2, 0);  
+            hasDamagedTarget = true;
+        } 
     }
 
     bool shouldBulletBeRemoved() const override {
@@ -101,13 +100,13 @@ private:
 
 class SlowingBullet : public Bullet {
 public:
-    SlowingBullet(sf::Vector2f startPosition, sf::Vector2f targetPosition)
+    SlowingBullet(sf::Vector2f startPosition, Critter* targetPosition)
         : Bullet(startPosition, targetPosition) {
     }
 
     void move(float deltaTime) override {
         // Move the bullet directly towards the target
-        sf::Vector2f direction = target - position;
+        sf::Vector2f direction = targetPosition - position;
         float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
         direction /= magnitude;  // Normalize direction vector
 
@@ -129,13 +128,13 @@ public:
 
 class SniperBullet : public Bullet {
 public:
-    SniperBullet(sf::Vector2f startPosition, sf::Vector2f targetPosition)
+    SniperBullet(sf::Vector2f startPosition, Critter* targetPosition)
         : Bullet(startPosition, targetPosition) {
     }
 
     void move(float deltaTime) override {
         // Move the bullet directly towards the target
-        sf::Vector2f direction = target - position;
+        sf::Vector2f direction = targetPosition - position;
         float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
         direction /= magnitude;  // Normalize direction vector
 
