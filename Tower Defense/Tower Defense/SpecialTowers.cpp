@@ -13,7 +13,7 @@ DirectDamageTower::DirectDamageTower(int x, int y, sf::Texture& texture)
 }
 // DirectDamageTower shoot method
 void DirectDamageTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, float currentTime) {
-    if (currentTime - lastShotTime < (1.0f / rateOfFire)) return; // Enforce firing rate
+    if (currentTime - lastShotTime < rateOfFire) return; // Enforce firing rate
 
     std::vector<Critter*> inRangeCritters;
 
@@ -68,7 +68,7 @@ void DirectDamageTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, f
         lastShotTime = currentTime;
 
         sf::Vector2f towerPosition(position.x * cellSize, position.y * cellSize);
-        sf::Vector2f targetPosition(currentTarget->getPosition().x, currentTarget->getPosition().y);
+
         bullet = std::make_unique<DirectDamageBullet>(towerPosition, currentTarget);
 
         std::cout << "Shot at the same target!\n";
@@ -85,14 +85,14 @@ void DirectDamageTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, f
 
 // SlowingTower constructor
 SlowingTower::SlowingTower(int x, int y, sf::Texture& texture) 
-    : Tower(x, y, 150, 100, 2, 0, 10, texture, std::make_unique<NearestToExit>()) {
+    : Tower(x, y, 150, 100, numberOfColumns/4, 0, 5, texture, std::make_unique<NearestToExit>()) {
 }
 
 // SlowingTower shoot method
-void SlowingTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, float currentTime)
-{
-    if (currentTime - lastShotTime < (1.0f / rateOfFire)) return; // Enforce firing rate
+void SlowingTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, float currentTime){
+    if (currentTime - lastShotTime < rateOfFire) return; // Enforce firing rate
 
+    std::vector<Critter*> inRangeCritters;
 
     for (auto& critter : critters) {
 
@@ -105,13 +105,46 @@ void SlowingTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, float 
         float dy = critterGridY - position.y;
         float distance = std::sqrt(dx * dx + dy * dy);
 
-
         if (distance <= range) {
-            //std::cerr << "SHOOT!" << std::endl;
-            lastShotTime = currentTime;
-            critter->slowDown(currentTime);  // Store hit time
-            break;
+            inRangeCritters.push_back(critter.get());
         }
+    }
+
+    if (inRangeCritters.empty()) return;  // No targets available
+
+    Critter* target = nullptr;
+
+    // determine which critter to attack
+    if (inRangeCritters.size() == 1) {    // only one critter in range, attack directly
+        target = inRangeCritters[0];
+    }
+    else if (strategy) {                  // multiple critters, use strategy
+        target = strategy->selectTarget(inRangeCritters);
+    }
+
+
+    // shoot new target
+    if (target && target != currentTarget) {
+        currentTarget = target;
+
+        sf::Vector2f towerPosition(position.x * cellSize, position.y * cellSize);
+
+        // Create a bullet 
+        bullet = std::make_unique<SlowingBullet>(towerPosition, currentTarget, currentTime);
+
+        // update lastShotTime
+        lastShotTime = currentTime;
+        std::cout << "Shot at a new target!!\n";
+    }
+    // shoot same target
+    else if (target == currentTarget && currentTarget) {
+        lastShotTime = currentTime;
+
+        sf::Vector2f towerPosition(position.x * cellSize, position.y * cellSize);
+        //sf::Vector2f targetPosition(currentTarget->getPosition().x, currentTarget->getPosition().y);
+        bullet = std::make_unique<SlowingBullet>(towerPosition, currentTarget, currentTime);
+
+        std::cout << "Shot at the same target!\n";
     }
 }
 
@@ -123,7 +156,7 @@ SniperTower::SniperTower(int x, int y, sf::Texture& texture)
 }
 // SniperTower shoot method
 void SniperTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, float currentTime) {
-    if (currentTime - lastShotTime < (1.0f / rateOfFire)) return; // Enforce firing rate
+    if (currentTime - lastShotTime < rateOfFire) return; // Enforce firing rate
 
 
     for (auto& critter : critters) {

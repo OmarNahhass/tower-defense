@@ -23,14 +23,13 @@ protected:
     int level;
     float lastShotTime;
     std::unique_ptr<Strategies> strategy;
-    //std::unique_ptr<Bullet> bullet;
 
 public:
     static const int cost_DirectDamageTower;
     static const int cost_SlowingTower;
     static const int cost_SniperTower;
 
-    std::unique_ptr<DirectDamageBullet> bullet;
+    std::unique_ptr<Bullet> bullet;
 
     sf::Vector2i position; // Position in the grid
     sf::Sprite sprite; // Tower sprite

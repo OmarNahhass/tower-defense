@@ -18,6 +18,7 @@ class SlowingTower : public Tower
 public:
     SlowingTower(int x, int y, sf::Texture& texture);
     void shoot(std::vector<std::unique_ptr<Critter>>& target, float currentTime) override;
+    Critter* currentTarget = nullptr;
 };
 
 // Derived SlowingTower class

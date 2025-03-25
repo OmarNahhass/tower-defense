@@ -3,13 +3,14 @@
 #include <cmath>
 
 #include "Game.h"
+#include "Game.h"
 #include "Critter.h"
 
 class Bullet {
 public:
     sf::CircleShape shape;
     sf::Vector2f velocity;
-    static constexpr float BULLET_SPEED = 0.02f;  // Constant bullet speed
+    static constexpr float BULLET_SPEED = 0.03f;  // Constant bullet speed
 
     Bullet(sf::Vector2f startPosition, Critter* critter)
         : position(startPosition), target(critter) {
@@ -29,8 +30,9 @@ public:
         velocity = direction * BULLET_SPEED;
     }
 
+
     virtual void move(float deltaTime) = 0;  // Pure virtual, to be implemented by derived classes
-    virtual void dealDamage(std::vector<std::unique_ptr<Critter>>& critters) = 0;  // Virtual damage logic
+    virtual void dealDamage() = 0;  // Virtual damage logic
 
     bool hasReachedTarget() const {
         // Calculate distance between current position and target
@@ -77,11 +79,11 @@ public:
         shape.setPosition(position);
 
         if (!hasDamagedTarget) {
-            dealDamage(activeCritters);
+            dealDamage();
         }
     }
 
-    void dealDamage(std::vector<std::unique_ptr<Critter>>& critters) override {
+    void dealDamage() override {
         // Deal damage if the bullet has reached the target
         if (hasReachedTarget()) {
             target->takeDamage(2, 0);  
@@ -100,36 +102,53 @@ private:
 
 class SlowingBullet : public Bullet {
 public:
-    SlowingBullet(sf::Vector2f startPosition, Critter* targetPosition)
-        : Bullet(startPosition, targetPosition) {
+    SlowingBullet(sf::Vector2f startPosition, Critter* target, float currentTime)
+        : Bullet(startPosition, target) {
+
+        currentTime = currentTime;
     }
 
     void move(float deltaTime) override {
-        // Move the bullet directly towards the target
+        // Recalculate direction to target every frame
         sf::Vector2f direction = targetPosition - position;
-        float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-        direction /= magnitude;  // Normalize direction vector
+        float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
-        position += direction * BULLET_SPEED * deltaTime;
-    }
+        if (length > 0) {
+            direction /= length; // Normalize
+            velocity = direction * BULLET_SPEED; // Scale velocity
+        }
 
-    void dealDamage(std::vector<std::unique_ptr<Critter>>& critters) override {
-        // Deal damage if the bullet has reached the target
-        for (auto& critter : critters) {
-            if (hasReachedTarget()) {
-                critter->takeDamage(0, 0);  
-                break;  // Only damage one critter for now
-            }
+        position += velocity * deltaTime;
+        shape.setPosition(position);
+
+        if (!hasSlowedTheTarget) {
+            dealDamage();
         }
     }
+
+    void dealDamage() override {
+        // Deal damage if the bullet has reached the target
+        if (hasReachedTarget()) {
+            target->slowDown(currentTime);  
+            hasSlowedTheTarget = true;
+        }
+    }
+
+    bool shouldBulletBeRemoved() const override {
+        return hasSlowedTheTarget;
+    }
+
+private:
+    float currentTime = 0.0f;
+    bool hasSlowedTheTarget = false;
 };
 
 
 
 class SniperBullet : public Bullet {
 public:
-    SniperBullet(sf::Vector2f startPosition, Critter* targetPosition)
-        : Bullet(startPosition, targetPosition) {
+    SniperBullet(sf::Vector2f startPosition, Critter* target)
+        : Bullet(startPosition, target) {
     }
 
     void move(float deltaTime) override {
@@ -141,13 +160,10 @@ public:
         position += direction * BULLET_SPEED * deltaTime;
     }
 
-    void dealDamage(std::vector<std::unique_ptr<Critter>>& critters) override {
+    void dealDamage() override {
         // Deal damage if the bullet has reached the target
-        for (auto& critter : critters) {
-            if (hasReachedTarget()) {
-                critter->takeDamage(10, 0);  
-                break;  // Only damage one critter for now
-            }
+        if (hasReachedTarget()) {
+            target->takeDamage(10, 0);  
         }
     }
 };

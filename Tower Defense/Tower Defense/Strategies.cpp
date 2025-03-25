@@ -43,7 +43,7 @@ Critter* NearestToTower::selectTarget(std::vector<Critter*>& targets, int towerP
 }
 
 // nearest to the exit
-Critter* NearestToExit::selectTarget(std::vector<Critter*>& targets, int exitPosX, int exitPosY) {
+Critter* NearestToExit::selectTarget(std::vector<Critter*>& targets) {
     std::cout << "Shooting nearest critter to the exit\n";
     if (targets.empty()) return nullptr;
 
