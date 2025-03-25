@@ -80,6 +80,10 @@ sf::Vector2f Critter::getPosition() const {
 * Method returns true if the critter is killed
 */
 bool Critter::takeDamage(int damage, float currentTime) {
+
+    if (hitPoints <= 0) {
+        return true;  // No further damage is applied if already dead
+    }
     
     if (damage > 0) {  // Only update when actually hit
         hitPoints -= damage;

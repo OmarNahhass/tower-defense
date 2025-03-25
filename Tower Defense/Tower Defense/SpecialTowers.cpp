@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+
 // DirectDamageTower constructor
 DirectDamageTower::DirectDamageTower(int x, int y, sf::Texture& texture)
     : Tower(x, y, 50, 40, numberOfColumns/5, 2, 1, texture, std::make_unique<NearestToTower>()) { // Updated to match the new Tower constructor
@@ -13,7 +14,6 @@ DirectDamageTower::DirectDamageTower(int x, int y, sf::Texture& texture)
 // DirectDamageTower shoot method
 void DirectDamageTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, float currentTime) {
     if (currentTime - lastShotTime < (1.0f / rateOfFire)) return; // Enforce firing rate
-
 
     std::vector<Critter*> inRangeCritters;
 
@@ -45,10 +45,17 @@ void DirectDamageTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, f
         target = strategy->selectTarget(inRangeCritters, position.x, position.y);
     }
 
-    // apply damage
+    // shoot bullet
     if (target) {
         lastShotTime = currentTime;
-        target->takeDamage(getPower(), currentTime);
+
+        sf::Vector2f towerPosition(position.x * cellSize, position.y*cellSize);
+        sf::Vector2f targetPosition(target->getPosition().x, target->getPosition().y);
+        float bulletSpeed = 0.5f;
+
+        // Create a bullet and add it to the tower's list of bullets
+        std::unique_ptr<DirectDamageBullet> newDirectDamageBullet = std::make_unique<DirectDamageBullet>(towerPosition, targetPosition);
+        bullets.push_back(std::move(newDirectDamageBullet));  // Store the bullet
     }
 
     // Remove dead critters after loop

@@ -7,6 +7,7 @@
 #include "CritterGroupGenerator.h"
 #include "SpecialTowers.h"
 #include "CritterView.h"
+#include "Bullet.h"
 
 
 #include <SFML/Graphics.hpp>
@@ -28,6 +29,8 @@ float waveDelayTimer = 0.0f;        // Timer for delay between waves
 
 std::vector<std::unique_ptr<Critter>> spawnQueue; // Queue of critters waiting to be spawned
 std::vector<std::unique_ptr<Critter>> activeCritters;
+
+
 float critterSpawnTimer = 0.0f;   // Timer to control spawning intervals
 int crittersSpawned = 0;          // Track number of critters spawned in current wave
 
@@ -219,6 +222,38 @@ void updateWave(float deltaTime, float currentTime, CritterView& critterView, sf
 }
 
 
+// method reponsible for updating the position of each bullet, from its corresponding tower to the target
+void updateBullets(sf::RenderWindow& window, float deltaTime) {
+    // Iterate over all towers in the map
+    for (auto& tower : towerMap) {
+        auto& bullets = tower.second->bullets;  
+
+        // Create a temporary vector to hold bullets to be removed
+        std::vector<std::unique_ptr<Bullet>> bulletsToRemove;
+
+        for (auto& bullet : bullets) {
+            if (bullet) {  
+                bullet->move(deltaTime);  // Update the bullet's position
+                window.draw(bullet->shape);  // Draw the bullet
+
+                // Check if the bullet has damaged its target and should be removed
+                if (bullet->shouldBulletBeRemoved()) {
+                    bulletsToRemove.push_back(std::move(bullet));  
+                }
+            } 
+        }
+
+        // Remove bullets that have damaged a target
+        for (auto& bullet : bulletsToRemove) {
+            auto it = std::find(bullets.begin(), bullets.end(), bullet);
+            if (it != bullets.end()) {
+                bullets.erase(it); 
+            }
+        }
+    }
+}
+
+
 
 
 
@@ -374,6 +409,7 @@ void displayGame(sf::RenderWindow& window) {
         updateWave(deltaTime, currentTime, critterView, window);
         updateTowers(currentTime);
         updateCritters(deltaTime, currentTime);
+        updateBullets(window, currentTime);
 
         // Draw game objects
         drawTowers(window);

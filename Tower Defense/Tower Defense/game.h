@@ -5,6 +5,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Critter.h"
+
 void displayGame(sf::RenderWindow& window);      // Opens SFML window and allows user interaction
 
 enum class GameState {
@@ -18,6 +20,9 @@ extern GameState currentState;
 
 extern int numberOfCrittersPerWave;
 extern int numberOfCrittersRemaining;
+
+extern std::vector<std::unique_ptr<Critter>> activeCritters;  // Declare as extern
+
 
 
 #endif

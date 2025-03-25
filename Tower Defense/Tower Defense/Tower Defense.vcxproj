@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BossCritter.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Critter.cpp" />
     <ClCompile Include="CritterFactoryManager.cpp" />
     <ClCompile Include="CritterGroupGenerator.cpp" />
@@ -155,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BossCritter.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Critter.h" />
     <ClInclude Include="CritterFactory.h" />
     <ClInclude Include="CritterFactoryManager.h" />

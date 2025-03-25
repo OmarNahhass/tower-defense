@@ -3,6 +3,7 @@
 
 #include "Critter.h"
 #include "Strategies.h"
+#include "Bullet.h"
 
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -12,6 +13,7 @@ class Critter;
 // Base Tower class
 class Tower
 {
+
 protected:
     int cost;
     int refundValue;
@@ -21,11 +23,14 @@ protected:
     int level;
     float lastShotTime;
     std::unique_ptr<Strategies> strategy;
+    //std::unique_ptr<Bullet> bullet;
 
 public:
     static const int cost_DirectDamageTower;
     static const int cost_SlowingTower;
     static const int cost_SniperTower;
+
+    std::vector<std::unique_ptr<Bullet>> bullets;
 
     sf::Vector2i position; // Position in the grid
     sf::Sprite sprite; // Tower sprite

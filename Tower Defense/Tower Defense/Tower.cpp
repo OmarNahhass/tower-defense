@@ -52,6 +52,20 @@ void Tower::shoot(std::vector<std::unique_ptr<Critter>>& targets, float currentT
     }
 }
 
+//void Tower::shoot(std::vector<std::unique_ptr<Critter>>& targets, float currentTime) {
+//    float currentTime = currentTime;
+//
+//    if (currentTime - lastShotTime >= rateOfFire) {
+//        sf::Vector2f critterPos = critter->getPosition();
+//        float distance = std::hypot(critterPos.x - position.x, critterPos.y - position.y);
+//        float bulletSpeed = distance / rateOfFire;  // Ensure bullet reaches target before next shot
+//
+//        bullet = std::make_unique<Bullet>(position, critterPos, bulletSpeed);
+//        lastShotTime = currentTime;
+//    }
+//}
+
+
 
 // Virtual destructor implementation
 Tower::~Tower() {}
