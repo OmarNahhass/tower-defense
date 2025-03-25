@@ -61,6 +61,15 @@ public:
     }
 
     void move(float deltaTime) override {
+        // Recalculate direction to target every frame
+        sf::Vector2f direction = target - position;
+        float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+        if (length > 0) {
+            direction /= length; // Normalize
+            velocity = direction * BULLET_SPEED; // Scale velocity
+        }
+
         position += velocity * deltaTime;
         shape.setPosition(position);
 

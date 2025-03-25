@@ -30,7 +30,7 @@ public:
     static const int cost_SlowingTower;
     static const int cost_SniperTower;
 
-    std::vector<std::unique_ptr<Bullet>> bullets;
+    std::unique_ptr<DirectDamageBullet> bullet;
 
     sf::Vector2i position; // Position in the grid
     sf::Sprite sprite; // Tower sprite

@@ -19,16 +19,21 @@ Critter* NearestToTower::selectTarget(std::vector<Critter*>& targets, int towerP
     for (auto& critter : targets) {
 
         // calculate distance in terms of the grid, not pixels
-        int critterGridX = critter->getPosition().x / cellSize;
-        int critterGridY = critter->getPosition().y / cellSize;
+        int critterPosX = critter->getPosition().x;
+        int critterPosY = critter->getPosition().y;
 
-        float dx = critterGridX - towerPosX;
-        float dy = critterGridY - towerPosY;
+        //std::cout << "Critter pos: " << critterPosX << " " << critterPosY << "\n";
+        //std::cout << "Tower pos: " << towerPosX << " " << towerPosY << "\n";
+
+        float dx = towerPosX - critterPosX;
+        float dy = towerPosY - critterPosY;
         float distance = std::sqrt(dx * dx + dy * dy);
 
+        //std::cout << "Distance: " << distance << "\n";
 
         // find new closest critter to tower
         if (distance < minDistance) {
+            //std::cout << "New closest Critter:\n";
             minDistance = distance;
             nearest = critter;
         }

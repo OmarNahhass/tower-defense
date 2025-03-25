@@ -226,30 +226,29 @@ void updateWave(float deltaTime, float currentTime, CritterView& critterView, sf
 void updateBullets(sf::RenderWindow& window, float deltaTime) {
     // Iterate over all towers in the map
     for (auto& tower : towerMap) {
-        auto& bullets = tower.second->bullets;  
+        auto& bullet = tower.second->bullet;  
 
         // Create a temporary vector to hold bullets to be removed
         std::vector<std::unique_ptr<Bullet>> bulletsToRemove;
 
-        for (auto& bullet : bullets) {
-            if (bullet) {  
-                bullet->move(deltaTime);  // Update the bullet's position
-                window.draw(bullet->shape);  // Draw the bullet
+        if (bullet) {  
+            bullet->move(deltaTime);  // Update the bullet's position
+            window.draw(bullet->shape);  // Draw the bullet
 
-                // Check if the bullet has damaged its target and should be removed
-                if (bullet->shouldBulletBeRemoved()) {
-                    bulletsToRemove.push_back(std::move(bullet));  
-                }
-            } 
-        }
+            // Check if the bullet has damaged its target and should be removed
+            if (bullet->shouldBulletBeRemoved()) {
+                bulletsToRemove.push_back(std::move(bullet));  
+            }
+        } 
+        
 
         // Remove bullets that have damaged a target
-        for (auto& bullet : bulletsToRemove) {
-            auto it = std::find(bullets.begin(), bullets.end(), bullet);
+        /*for (auto& bullet : bulletsToRemove) {
+            auto it = std::find(bullet, bullets), bullet);
             if (it != bullets.end()) {
                 bullets.erase(it); 
             }
-        }
+        }*/
     }
 }
 
