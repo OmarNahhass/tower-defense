@@ -12,8 +12,8 @@ public:
     sf::Vector2f velocity;
     static constexpr float BULLET_SPEED = 0.03f;  // Constant bullet speed
 
-    Bullet(sf::Vector2f startPosition, Critter* critter)
-        : position(startPosition), target(critter) {
+    Bullet(sf::Vector2f startPosition, Critter* critter, int power)
+        : position(startPosition), target(critter), power(power) {
 
         shape.setRadius(5.0f);
         shape.setFillColor(sf::Color::Red);
@@ -55,14 +55,15 @@ public:
 protected:
     sf::Vector2f position;
     Critter* target;
+    int power;
     sf::Vector2f targetPosition;
 };
 
 
 class DirectDamageBullet : public Bullet {
 public:
-    DirectDamageBullet(sf::Vector2f startPosition, Critter* target)
-        : Bullet(startPosition, target) {
+    DirectDamageBullet(sf::Vector2f startPosition, Critter* target, int power)
+        : Bullet(startPosition, target, power) {
     }
 
     void move(float deltaTime) override {
@@ -86,7 +87,7 @@ public:
     void dealDamage() override {
         // Deal damage if the bullet has reached the target
         if (hasReachedTarget()) {
-            target->takeDamage(2, 0);  
+            target->takeDamage(power, 0);  
             hasDamagedTarget = true;
         } 
     }
@@ -102,8 +103,8 @@ private:
 
 class SlowingBullet : public Bullet {
 public:
-    SlowingBullet(sf::Vector2f startPosition, Critter* target, float currentTime)
-        : Bullet(startPosition, target) {
+    SlowingBullet(sf::Vector2f startPosition, Critter* target, float currentTime, int power)
+        : Bullet(startPosition, target, power) {
 
         currentTime = currentTime;
     }
@@ -147,23 +148,40 @@ private:
 
 class SniperBullet : public Bullet {
 public:
-    SniperBullet(sf::Vector2f startPosition, Critter* target)
-        : Bullet(startPosition, target) {
+    SniperBullet(sf::Vector2f startPosition, Critter* target, int power)
+        : Bullet(startPosition, target, power) {
     }
 
     void move(float deltaTime) override {
-        // Move the bullet directly towards the target
+        // Recalculate direction to target every frame
         sf::Vector2f direction = targetPosition - position;
-        float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-        direction /= magnitude;  // Normalize direction vector
+        float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
-        position += direction * BULLET_SPEED * deltaTime;
+        if (length > 0) {
+            direction /= length; // Normalize
+            velocity = direction * BULLET_SPEED; // Scale velocity
+        }
+
+        position += velocity * deltaTime;
+        shape.setPosition(position);
+
+        if (!hasDamagedTarget) {
+            dealDamage();
+        }
     }
 
     void dealDamage() override {
         // Deal damage if the bullet has reached the target
         if (hasReachedTarget()) {
-            target->takeDamage(10, 0);  
+            target->takeDamage(power, 0);
+            hasDamagedTarget = true;
         }
     }
+
+    bool shouldBulletBeRemoved() const override {
+        return hasDamagedTarget;
+    }
+
+private:
+    bool hasDamagedTarget = false;
 };

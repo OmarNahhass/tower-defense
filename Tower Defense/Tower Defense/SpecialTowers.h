@@ -27,6 +27,7 @@ class SniperTower : public Tower
 public:
     SniperTower(int x, int y, sf::Texture& texture);
     void shoot(std::vector<std::unique_ptr<Critter>>& target, float currentTime) override;
+    Critter* currentTarget = nullptr;
 };
 
 
@@ -36,6 +37,7 @@ class AoETower : public Tower
 public:
     AoETower(int x, int y, sf::Texture& texture);
     void shoot(std::vector<std::unique_ptr<Critter>>& target, float currentTime) override;
+    Critter* currentTarget = nullptr;
 };
 
 #endif

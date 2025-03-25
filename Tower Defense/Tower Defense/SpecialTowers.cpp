@@ -44,11 +44,6 @@ void DirectDamageTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, f
         target = strategy->selectTarget(inRangeCritters, position.x * cellSize, position.y * cellSize);
     }
 
-    if (target) {
-        std::cout << "Selected target: " << target << "\n";
-        std::cout << "Target position: (" << target->getPosition().x << ", " << target->getPosition().y << ")\n";
-    }
-
     // shoot new target
     if (target && target != currentTarget) {
         currentTarget = target;
@@ -57,11 +52,10 @@ void DirectDamageTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, f
         sf::Vector2f targetPosition(currentTarget->getPosition().x, currentTarget->getPosition().y);
 
         // Create a bullet 
-        bullet = std::make_unique<DirectDamageBullet>(towerPosition, currentTarget);
+        bullet = std::make_unique<DirectDamageBullet>(towerPosition, currentTarget, getPower());
 
         // update lastShotTime
         lastShotTime = currentTime;
-        std::cout << "Shot at a new target!!\n";
     }
     // shoot same target
     else if (target == currentTarget && currentTarget) {
@@ -69,9 +63,7 @@ void DirectDamageTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, f
 
         sf::Vector2f towerPosition(position.x * cellSize, position.y * cellSize);
 
-        bullet = std::make_unique<DirectDamageBullet>(towerPosition, currentTarget);
-
-        std::cout << "Shot at the same target!\n";
+        bullet = std::make_unique<DirectDamageBullet>(towerPosition, currentTarget, getPower());
     }
 
     // Remove dead critters after loop
@@ -130,21 +122,18 @@ void SlowingTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, float 
         sf::Vector2f towerPosition(position.x * cellSize, position.y * cellSize);
 
         // Create a bullet 
-        bullet = std::make_unique<SlowingBullet>(towerPosition, currentTarget, currentTime);
+        bullet = std::make_unique<SlowingBullet>(towerPosition, currentTarget, currentTime, getPower());
 
         // update lastShotTime
         lastShotTime = currentTime;
-        std::cout << "Shot at a new target!!\n";
     }
     // shoot same target
     else if (target == currentTarget && currentTarget) {
         lastShotTime = currentTime;
 
         sf::Vector2f towerPosition(position.x * cellSize, position.y * cellSize);
-        //sf::Vector2f targetPosition(currentTarget->getPosition().x, currentTarget->getPosition().y);
-        bullet = std::make_unique<SlowingBullet>(towerPosition, currentTarget, currentTime);
 
-        std::cout << "Shot at the same target!\n";
+        bullet = std::make_unique<SlowingBullet>(towerPosition, currentTarget, currentTime, getPower());
     }
 }
 
@@ -158,6 +147,7 @@ SniperTower::SniperTower(int x, int y, sf::Texture& texture)
 void SniperTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, float currentTime) {
     if (currentTime - lastShotTime < rateOfFire) return; // Enforce firing rate
 
+    std::vector<Critter*> inRangeCritters;
 
     for (auto& critter : critters) {
 
@@ -170,13 +160,43 @@ void SniperTower::shoot(std::vector<std::unique_ptr<Critter>>& critters, float c
         float dy = critterGridY - position.y;
         float distance = std::sqrt(dx * dx + dy * dy);
 
-
         if (distance <= range) {
-            //std::cerr << "SHOOT!" << std::endl;
-            lastShotTime = currentTime;
-            critter->takeDamage(power, currentTime);  // Store hit time
-            break;
+            inRangeCritters.push_back(critter.get());
         }
+    }
+
+    if (inRangeCritters.empty()) return;  // No targets available
+
+    Critter* target = nullptr;
+
+    // determine which critter to attack
+    if (inRangeCritters.size() == 1) {    // only one critter in range, attack directly
+        target = inRangeCritters[0];
+    }
+    else if (strategy) {                  // multiple critters, use strategy
+        target = strategy->selectTarget(inRangeCritters);
+    }
+
+
+    // shoot new target
+    if (target && target != currentTarget) {
+        currentTarget = target;
+
+        sf::Vector2f towerPosition(position.x * cellSize, position.y * cellSize);
+
+        // Create a bullet 
+        bullet = std::make_unique<SniperBullet>(towerPosition, currentTarget, getPower());
+
+        // update lastShotTime
+        lastShotTime = currentTime;
+    }
+    // shoot same target
+    else if (target == currentTarget && currentTarget) {
+        lastShotTime = currentTime;
+
+        sf::Vector2f towerPosition(position.x * cellSize, position.y * cellSize);
+
+        bullet = std::make_unique<SniperBullet>(towerPosition, currentTarget, getPower());
     }
 
     // Remove dead critters after loop
