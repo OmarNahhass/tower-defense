@@ -7,6 +7,21 @@
 
 #include "Critter.h"
 
+class Game {
+private: 
+    static bool exitGame;
+
+public:
+    static bool isExitingGame() {
+        return exitGame;
+    }
+
+    static void setExitGame(bool isGamingExiting) {
+        exitGame = isGamingExiting;
+    }
+};
+
+
 void displayGame(sf::RenderWindow& window);      // Opens SFML window and allows user interaction
 
 enum class GameState {

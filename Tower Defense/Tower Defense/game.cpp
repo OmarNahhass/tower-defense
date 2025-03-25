@@ -14,6 +14,8 @@
 #include <iostream>
 #include <vector>
 
+bool Game::exitGame = false;
+
 
 // images for grass, path, towers, and critters
 sf::Texture grassTextureGame, pathTextureGame, damageTowerTextureGame, slowDownTowerTextureGame, sniperTowerTextureGame, critterTexture;
@@ -240,15 +242,6 @@ void updateBullets(sf::RenderWindow& window, float deltaTime) {
                 bulletsToRemove.push_back(std::move(bullet));  
             }
         } 
-        
-
-        // Remove bullets that have damaged a target
-        /*for (auto& bullet : bulletsToRemove) {
-            auto it = std::find(bullet, bullets), bullet);
-            if (it != bullets.end()) {
-                bullets.erase(it); 
-            }
-        }*/
     }
 }
 
@@ -327,6 +320,7 @@ void displayGame(sf::RenderWindow& window) {
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
             {
+                Game::setExitGame(true);
                 window.close();
             }
             else if (event.type == sf::Event::Resized) {

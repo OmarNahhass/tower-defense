@@ -18,7 +18,13 @@ private:
 public:
     // lvl = wave number
     Critter(int lvl, sf::Texture& texture);
-    virtual ~Critter() = default;
+
+    virtual ~Critter() {
+        // Properly remove observers before destruction
+        for (auto* observer : observers) {
+            removeObserver(observer);
+        }
+    }
 
     int hitPoints, reward, strength, initialSpeed, speed, level;
 
