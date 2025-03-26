@@ -18,12 +18,13 @@ private:
 public:
     // lvl = wave number
     Critter(int lvl, sf::Texture& texture);
-    //Observer methods
-    void addObserver(CritterObserver* observer, sf::Texture& texture);
-    void removeObserver(CritterObserver* observer);
-    void notifyMoved(sf::Vector2f velocity);
-    void notifyRemoved();
-    void notifyAdded(sf::Texture& texture);
+
+    virtual ~Critter() {
+        // Properly remove observers before destruction
+        for (auto* observer : observers) {
+            removeObserver(observer);
+        }
+    }
 
     int hitPoints, reward, strength, initialSpeed, speed, level;
 
@@ -31,6 +32,16 @@ public:
     float slowEndTime;
 
     int maxHealth;
+
+    bool reachedExit;
+
+    float hitTime;  // Initialize hit time
+    float hitDuration;  // Red border stays for 0.2s
+
+    sf::Sprite sprite;  // Visual representation
+    int pathIndex;      // Tracks movement along the path
+    float moveProgress; // Fraction of movement between two points
+
 
     int getMaxHealth() {
         return maxHealth;
@@ -40,19 +51,12 @@ public:
         return hitPoints;
     }
 
-    bool reachedExit;
-
     const sf::Sprite& getSprite() const { return sprite; }
     sf::Sprite& getSprite() { return sprite; }
 
-    float hitTime;  // Initialize hit time
-    float hitDuration;  // Red border stays for 0.2s
+    virtual std::string getType() const { return "Basic Critter"; }
 
     sf::Vector2f getPosition() const;
-
-    sf::Sprite sprite;  // Visual representation
-    int pathIndex;      // Tracks movement along the path
-    float moveProgress; // Fraction of movement between two points
 
     void displayGameOverScren();
 
@@ -66,6 +70,15 @@ public:
     void move(float deltaTime); // Movement logic
 
     int getRemainingPathCells();
+
+
+
+    //Observer methods
+    void addObserver(CritterObserver* observer, sf::Texture& texture);
+    void removeObserver(CritterObserver* observer);
+    void notifyMoved(sf::Vector2f velocity);
+    void notifyRemoved();
+    void notifyAdded(sf::Texture& texture);
 };
 
 #endif

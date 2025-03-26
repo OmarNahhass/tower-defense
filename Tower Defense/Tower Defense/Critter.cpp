@@ -44,7 +44,7 @@ Critter::Critter(int lvl, sf::Texture& texture) {
     maxHealth = hitPoints;
     reward = lvl * 50;
     strength = lvl * 1;
-    initialSpeed = lvl * 10; // Speed per second
+    initialSpeed = lvl * 10.0f; // Speed per second
     level = lvl;
     reachedExit = false;
     pathIndex = 0;
@@ -80,6 +80,10 @@ sf::Vector2f Critter::getPosition() const {
 * Method returns true if the critter is killed
 */
 bool Critter::takeDamage(int damage, float currentTime) {
+
+    if (hitPoints <= 0) {
+        return true;  // No further damage is applied if already dead
+    }
     
     if (damage > 0) {  // Only update when actually hit
         hitPoints -= damage;
@@ -142,6 +146,7 @@ void Critter::move(float deltaTime) {
             this->pathIndex++;
             moveProgress = 0.0f;
         }
+
         notifyMoved(velocity);
     }
 }
@@ -160,19 +165,27 @@ void Critter::addObserver(CritterObserver* observer, sf::Texture& texture) {
 }
 
 void Critter::removeObserver(CritterObserver* observer) {
-    observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
+    auto it = std::find(observers.begin(), observers.end(), observer);
+    if (it != observers.end()) {
+        observers.erase(it);
+    }
 }
 
 void Critter::notifyMoved(sf::Vector2f velocity) {
+    if (Game::isExitingGame()) return;
 
     for (auto* observer : observers) {
-        observer->onCritterMoved(*this, velocity);
+        if (observer != nullptr) {
+            observer->onCritterMoved(*this, velocity);
+        }  
     }
 }
 
 void Critter::notifyAdded(sf::Texture& texture) {
     for (auto* observer : observers) {
-        observer->onCritterAdded(*this, texture);
+        if (observer != nullptr) {
+            observer->onCritterAdded(*this, texture);
+        }
     }
 }
 

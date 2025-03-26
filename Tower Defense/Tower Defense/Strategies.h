@@ -30,7 +30,7 @@ public:
 
 class NearestToExit : public Strategies {
 public:
-    Critter* selectTarget(std::vector<Critter*>& targets, int posX, int posY) override;
+    Critter* selectTarget(std::vector<Critter*>& targets) override;
 
     std::unique_ptr<Strategies> clone() const override {
         return std::make_unique<NearestToExit>(*this);

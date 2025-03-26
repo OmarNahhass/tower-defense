@@ -11,6 +11,14 @@ class CritterView: public CritterObserver {
 public:
     float currentTime;
     CritterView(sf::RenderWindow& window) : CritterObserver(window) {}
+
+    virtual ~CritterView() {
+        // Properly remove observer when view is destroyed
+        for (auto* critter : critters) {
+            critter->removeObserver(this);
+        }
+    }
+
     void drawCritters(Critter& critter);
     void onCritterMoved(Critter& critter, sf::Vector2f velocity) override;
     void onCritterAdded(Critter& critter, sf::Texture& texture) override;

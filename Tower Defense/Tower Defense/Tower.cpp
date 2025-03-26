@@ -36,16 +36,35 @@ int Tower::getCost() {
 int Tower::getRefundValue() {
     return refundValue;
 }
-void Tower::shoot(std::vector<Critter*>& targets, float currentTime) {
+void Tower::shoot(std::vector<std::unique_ptr<Critter>>& targets, float currentTime) {
     if (strategy) {
 
-        Critter* target = strategy->selectTarget(targets);
+        std::vector<Critter*> rawTargets;
+        for (auto& critter : targets) {
+            rawTargets.push_back(critter.get());  // Convert unique_ptr to raw pointer
+        }
+
+        Critter* target = strategy->selectTarget(rawTargets);
 
         if (target) {
             target->takeDamage(getPower(), currentTime);  // Default damage behavior
         }
     }
 }
+
+//void Tower::shoot(std::vector<std::unique_ptr<Critter>>& targets, float currentTime) {
+//    float currentTime = currentTime;
+//
+//    if (currentTime - lastShotTime >= rateOfFire) {
+//        sf::Vector2f critterPos = critter->getPosition();
+//        float distance = std::hypot(critterPos.x - position.x, critterPos.y - position.y);
+//        float bulletSpeed = distance / rateOfFire;  // Ensure bullet reaches target before next shot
+//
+//        bullet = std::make_unique<Bullet>(position, critterPos, bulletSpeed);
+//        lastShotTime = currentTime;
+//    }
+//}
+
 
 
 // Virtual destructor implementation

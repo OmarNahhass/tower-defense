@@ -7,11 +7,14 @@
 #include "CritterGroupGenerator.h"
 #include "SpecialTowers.h"
 #include "CritterView.h"
+#include "Bullet.h"
 
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+
+bool Game::exitGame = false;
 
 
 // images for grass, path, towers, and critters
@@ -22,13 +25,14 @@ std::vector<std::unique_ptr<Tower>> towers; // List of towers
 
 std::vector<sf::Vector2i> directDamageTowerPositions, slowDownTowerPositions, sniperTowerPositiions;
 
-
-std::vector<Critter> activeCritters; 
 int currentWave = 0;
 bool waitingForNextWave = false;    // Indicates if we are waiting to start a new wave
 float waveDelayTimer = 0.0f;        // Timer for delay between waves
 
-std::vector<Critter> spawnQueue;  // Queue of critters waiting to be spawned
+std::vector<std::unique_ptr<Critter>> spawnQueue; // Queue of critters waiting to be spawned
+std::vector<std::unique_ptr<Critter>> activeCritters;
+
+
 float critterSpawnTimer = 0.0f;   // Timer to control spawning intervals
 int crittersSpawned = 0;          // Track number of critters spawned in current wave
 
@@ -107,17 +111,15 @@ void drawTowers(sf::RenderWindow& window) {
 void updateTowers(float currentTime) {
     for (auto& tower : towerMap) {  // Iterate over all towers in the map
         tower.second->shoot(activeCritters, currentTime);
-
-        //std::cout << "Tower type: " << typeid(*(tower.second)).name() << std::endl;
     }
 }
 
 // Update critters movement and remove dead ones
 void updateCritters(float deltaTime, float currentTime) {
     for (auto critter = activeCritters.begin(); critter != activeCritters.end();) {
-        critter->move(deltaTime);
+        (*critter)->move(deltaTime);
       
-        if (critter->takeDamage(0, currentTime)) { // Remove if dead
+        if ((*critter)->takeDamage(0, currentTime)) { // Remove if dead
             critter = activeCritters.erase(critter);
         }
         else {
@@ -183,7 +185,7 @@ void updateWave(float deltaTime, float currentTime, CritterView& critterView, sf
         // Spawn critters every 5 seconds
         critterSpawnTimer += deltaTime;
         if (!spawnQueue.empty() && critterSpawnTimer >= 5.0f) {
-            activeCritters.push_back(spawnQueue.front());  // Add one critter to activeCritters list
+            activeCritters.push_back(std::move(spawnQueue.front()));  // Add one critter to activeCritters list
             spawnQueue.erase(spawnQueue.begin());         // Remove it from the queue
             critterSpawnTimer = 0.0f;  // Reset spawn timer after each critter spawn
         }
@@ -218,6 +220,28 @@ void updateWave(float deltaTime, float currentTime, CritterView& critterView, sf
         displayMap(windowWidth, windowHeight, numberOfRows, numberOfColumns);
 
         break;
+    }
+}
+
+
+// method reponsible for updating the position of each bullet, from its corresponding tower to the target
+void updateBullets(sf::RenderWindow& window, float deltaTime) {
+    // Iterate over all towers in the map
+    for (auto& tower : towerMap) {
+        auto& bullet = tower.second->bullet;  
+
+        // Create a temporary vector to hold bullets to be removed
+        std::vector<std::unique_ptr<Bullet>> bulletsToRemove;
+
+        if (bullet) {  
+            bullet->move(deltaTime);  // Update the bullet's position
+            window.draw(bullet->shape);  // Draw the bullet
+
+            // Check if the bullet has damaged its target and should be removed
+            if (bullet->shouldBulletBeRemoved()) {
+                bulletsToRemove.push_back(std::move(bullet));  
+            }
+        } 
     }
 }
 
@@ -296,6 +320,7 @@ void displayGame(sf::RenderWindow& window) {
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
             {
+                Game::setExitGame(true);
                 window.close();
             }
             else if (event.type == sf::Event::Resized) {
@@ -326,9 +351,9 @@ void displayGame(sf::RenderWindow& window) {
 
                 // Update all critters' positions based on new cellSize
                 for (auto& critter : activeCritters) {
-                    critter.sprite.setPosition(
-                        pathCells[critter.pathIndex].x * cellSize,
-                        pathCells[critter.pathIndex].y * cellSize
+                    critter -> sprite.setPosition(
+                        pathCells[critter->pathIndex].x * cellSize,
+                        pathCells[critter->pathIndex].y * cellSize
                     );
                 }
             }         
@@ -377,6 +402,7 @@ void displayGame(sf::RenderWindow& window) {
         updateWave(deltaTime, currentTime, critterView, window);
         updateTowers(currentTime);
         updateCritters(deltaTime, currentTime);
+        updateBullets(window, currentTime);
 
         // Draw game objects
         drawTowers(window);
