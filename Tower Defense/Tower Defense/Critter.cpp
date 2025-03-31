@@ -133,6 +133,7 @@ void Critter::move(float deltaTime) {
     sf::Vector2f currentPos(pathCells[this->pathIndex].x * cellSize, pathCells[this->pathIndex].y * cellSize);
     sf::Vector2f nextPos(pathCells[this->pathIndex + 1].x * cellSize, pathCells[this->pathIndex + 1].y * cellSize);
 
+
     sf::Vector2f direction = nextPos - currentPos;
     float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 

@@ -7,6 +7,12 @@
 #include <iostream>
 
 
+int selectedMap = 0;
+std::vector<std::vector<int>> mapGrid(20, std::vector<int>(20, 0));  // Start with 20x20
+
+bool hasSelectedPreDefinedMap = false;
+
+
 // 5 pre-determined screen resolutions
 std::vector<std::pair<int, int>> resolutions = {
     {800, 600}, {1280, 720}, {1600, 900}, {1920, 980}
@@ -33,46 +39,161 @@ int cellSize = 0;
 
 void startMapEditor(int width, int height, int numberOfRows, int numberOfColumns) {
 
-    // Initialize the map
-    initializeMap(numberOfRows, numberOfColumns); // Creates a rows x columns grid and sets all values to 0
+    // Initialize a custom rows x columns map with 0s
+    if (!hasSelectedPreDefinedMap) {
+        initializeMap(numberOfRows, numberOfColumns);
+    }
+
     displayMap(width, height, numberOfRows, numberOfColumns);  // Render the map 
 }
 
+void createMapGrid(int selectedMap) {
+    std::vector<std::vector<int>> predefinedMap0 = { // First predefined map
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0},
+        {0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0},
+        {0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    };
+
+    std::vector<std::vector<int>> predefinedMap1 = { // Second predefined map
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,1,0,0,0,1,0,0,0,1,1,1,1,1,1,1,1,1},
+        {0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0},
+        {1,1,1,1,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,1,1,0,0,0},
+        {0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0},
+        {0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0},
+        {0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0},
+        {0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0},
+        {0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0},
+        {0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    };
+
+    std::vector<std::vector<int>> predefinedMap2 = { // Second predefined map
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0},
+        {0,0,1,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0},
+        {0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0},
+        {0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0},
+        {0,0,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,1,0,0,0,0,1,0,0,1,1,1,1,1,1,0},
+        {0,0,0,0,0,1,0,0,0,0,1,1,1,1,0,0,0,0,1,1},
+        {0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    };
+
+
+
+    // copy the chosen predefined map to the game grid
+    if (selectedMap == 0) {
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 20; j++) {
+                mapGrid[i][j] = predefinedMap0[i][j];
+            }
+        }
+    }
+    else if (selectedMap == 1) {
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 20; j++) {
+                mapGrid[i][j] = predefinedMap1[i][j];
+            }
+        }
+    }
+    else if (selectedMap == 2) {
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 20; j++) {
+                mapGrid[i][j] = predefinedMap2[i][j];
+            }
+        }
+    }
+}
+
+
 
 void menuScreen() {
-    sf::RenderWindow window(sf::VideoMode(400, 350), "Menu", sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(1500, 850), "Menu", sf::Style::Titlebar | sf::Style::Close);
     sf::Font font;
     if (!font.loadFromFile("arial.ttf")) {
         std::cerr << "Failed to load font!" << std::endl;
         return;
     }
 
+    sf::Texture mapTextures[3];
+    if (!mapTextures[0].loadFromFile("map_1.png") ||
+        !mapTextures[1].loadFromFile("map_2.png") ||
+        !mapTextures[2].loadFromFile("map_3.png")) {
+        std::cerr << "Error loading map images!\n";
+    }
+
+    // Create map sprites
+    sf::Sprite mapSprites[3];
+    for (int i = 0; i < 3; i++) {
+        mapSprites[i].setTexture(mapTextures[i]);
+        mapSprites[i].setScale(0.5f, 0.5f); 
+        mapSprites[i].setPosition(350 + i * 300, 200); // Position map images side by side
+    }
+
     sf::Text title("Game Settings", font, 24);
-    title.setPosition(120, 20);
+    title.setPosition(700, 75);
     title.setFillColor(sf::Color::Black);
 
     sf::Text resolutionText("Resolution: " + std::to_string(resolutions[resolutionIndex].first) + "x" + std::to_string(resolutions[resolutionIndex].second), font, 18);
-    resolutionText.setPosition(50, 80);
+    resolutionText.setPosition(650, 150);
     resolutionText.setFillColor(sf::Color::Black);
 
     sf::Text numberOfRowsText("Number of Rows: " + std::to_string(numberOfRows), font, 18);
-    numberOfRowsText.setPosition(50, 130);
+    numberOfRowsText.setPosition(650, 500);
     numberOfRowsText.setFillColor(sf::Color::Black);
 
     sf::Text numberOfColumnsText("Number of Columns: " + std::to_string(numberOfColumns), font, 18);
-    numberOfColumnsText.setPosition(50, 180);
+    numberOfColumnsText.setPosition(650, 550);
     numberOfColumnsText.setFillColor(sf::Color::Black);
 
     sf::Text startButtonText("Customize Map", font, 20);
-    startButtonText.setPosition(120, 250);
+    startButtonText.setPosition(650, 700);
     startButtonText.setFillColor(sf::Color::White);
 
     sf::RectangleShape startButton(sf::Vector2f(160, 40));
-    startButton.setPosition(120, 250);
+    startButton.setPosition(650, 700);
     startButton.setFillColor(sf::Color(100, 100, 255));
 
     sf::Text extraInfoText("(if the number of columns exceeds the number of rows, select a larger screen resolution)", font, 10);
-    extraInfoText.setPosition(5, 300);
+    extraInfoText.setPosition(500, 750);
     extraInfoText.setFillColor(sf::Color::Black);
 
     while (window.isOpen()) {
@@ -103,20 +224,47 @@ void menuScreen() {
             }
             else if (event.type == sf::Event::MouseButtonPressed) {
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                if (mousePos.x >= startButton.getPosition().x && mousePos.x <= startButton.getPosition().x + startButton.getSize().x &&
-                    mousePos.y >= startButton.getPosition().y && mousePos.y <= startButton.getPosition().y + startButton.getSize().y) {
+                sf::Vector2f worldMousePos = window.mapPixelToCoords(mousePos);
+
+                // specify the maximum width and height that the map can have
+                    // the max width and height are calculated to leave enough room for the Info Panel and Start Game button
+                maxMapWidth = (resolutions[resolutionIndex].first * 3) / 4;
+                maxMapHeight = (resolutions[resolutionIndex].second * 9) / 10;
+
+                // the dimensions of the screen
+                windowWidth = resolutions[resolutionIndex].first;
+                windowHeight = resolutions[resolutionIndex].second;
+
+
+                // Check if a map was clicked
+                for (int i = 0; i < 3; i++) {
+                    if (mapSprites[i].getGlobalBounds().contains(worldMousePos)) {
+                        window.close();
+
+                        // Set the game grid to this map's array
+                        selectedMap = i;
+
+                        hasSelectedPreDefinedMap = true;
+
+                        cellSize = std::min(maxMapWidth / 20, maxMapHeight / 20);
+
+
+                        mapHeight = (resolutions[resolutionIndex].second * 9) / 10;
+                        mapWidth = cellSize * 20;
+
+                        // if the map takes less space than expected, the info panel will take up the remaining width
+                        infoPanelWidth = windowWidth - mapWidth;
+                        infoPanelHeight = mapHeight;
+
+                        createMapGrid(selectedMap);
+                        startMapEditor(resolutions[resolutionIndex].first, resolutions[resolutionIndex].second, 20, 20);
+                        return;
+                    }
+                }
+
+                if (startButton.getGlobalBounds().contains(worldMousePos)) {
                     window.close();
 
-                    // specify the maximum width and height that the map can have
-                    // the max width and height are calculated to leave enough room for the Info Panel and Start Game button
-                    maxMapWidth = (resolutions[resolutionIndex].first * 3) / 4;      
-                    maxMapHeight = (resolutions[resolutionIndex].second * 9) / 10;   
-
-                    // the dimensions of the screen
-                    windowWidth = resolutions[resolutionIndex].first;
-                    windowHeight = resolutions[resolutionIndex].second;
-
-                    
                     cellSize = std::min(maxMapWidth / numberOfColumns, maxMapHeight / numberOfRows);
 
 
@@ -124,7 +272,7 @@ void menuScreen() {
                     mapWidth = cellSize * numberOfColumns;
 
                     // if the map takes less space than expected, the info panel will take up the remaining width
-                    infoPanelWidth = windowWidth - mapWidth;                               
+                    infoPanelWidth = windowWidth - mapWidth;
                     infoPanelHeight = mapHeight;
 
                     startMapEditor(resolutions[resolutionIndex].first, resolutions[resolutionIndex].second, numberOfRows, numberOfColumns);
@@ -145,6 +293,10 @@ void menuScreen() {
         window.draw(startButton);
         window.draw(startButtonText);
         window.draw(extraInfoText);
+
+        for (int i = 0; i < 3; i++)
+            window.draw(mapSprites[i]);
+
         window.display();
     }
 }

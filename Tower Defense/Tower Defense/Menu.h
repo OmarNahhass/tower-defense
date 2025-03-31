@@ -3,6 +3,10 @@
 #ifndef MENU_H
 #define MENU_H
 
+#include <vector>
+
+extern std::vector<std::vector<int>> mapGrid;
+extern int selectedMap;
 
 extern int numberOfRows;
 extern int numberOfColumns;
@@ -23,6 +27,7 @@ extern int infoPanelHeight;
 
 void menuScreen();
 void startMapEditor(int width, int height, int numberOfRows, int numberOfColumns);
+void createMapGrid(int selectedMap);
 
 
 

@@ -18,7 +18,6 @@
 #include <queue>
 
 int grid[COLS][ROWS]; 
-int** mapGrid = nullptr;
 
 std::map<std::pair<int, int>, std::unique_ptr<Tower>> towerMap;
 
@@ -38,16 +37,7 @@ bool towerClicked = false;
 
 
 void initializeMap(int numberOfRows, int numberOfColumns) {
-    mapGrid = new int* [mapHeight];
-
-    for (int i = 0; i < mapHeight; ++i) {
-        mapGrid[i] = new int[mapWidth]; // Allocate each row
-
-        // Initialize all elements to 0
-        for (int j = 0; j < mapWidth; ++j) {
-            mapGrid[i][j] = 0;
-        }
-    }
+    mapGrid.resize(numberOfRows, std::vector<int>(numberOfColumns, 0));
 }
 
 
@@ -221,10 +211,11 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
             playerCoins += refundAmount;
             std::cout << "Tower sold! Refunded " << refundAmount << " coins." << std::endl;
 
-            newState = 0;                         // reset to grass
             showUpgradeMenu = false;
             towerMap.erase({ col, row });         // remove the tower from the map
         }
+
+        newState = 0;                         // reset to grass
     }
 
     mapGrid[row][col] = newState;            // apply the new state of the cell
@@ -537,11 +528,11 @@ void extractPath() {
     // Locate entry point
     std::pair<int, int> entry = { -1, -1 };
 
-    for (int i = 0; i < COLS; i++) {
-        for (int j = 0; j < ROWS; j++) {
-            if (mapGrid[i][j] == 1) {
+    for (int i = 0; i < numberOfColumns; i++) {
+        for (int j = 0; j < numberOfRows; j++) {
+            if (mapGrid[j][0] == 1) {
                 if (i == 0 || i == COLS - 1 || j == 0 || j == ROWS - 1) {
-                    entry = { i, j };
+                    entry = { j, i };
                     break;
                 }
             }
