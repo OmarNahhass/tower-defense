@@ -160,12 +160,16 @@ void menuScreen() {
         std::cerr << "Error loading map images!\n";
     }
 
+    sf::Vector2f originalScale(0.5f, 0.5f);
+    sf::Vector2f hoverScale(0.55f, 0.55f);
+
     // Create map sprites
     sf::Sprite mapSprites[3];
     for (int i = 0; i < 3; i++) {
         mapSprites[i].setTexture(mapTextures[i]);
-        mapSprites[i].setScale(0.5f, 0.5f); 
-        mapSprites[i].setPosition(125 + i * 300, 150); // Position map images side by side
+        mapSprites[i].setScale(originalScale);
+        mapSprites[i].setOrigin(mapSprites[i].getGlobalBounds().width / 2, mapSprites[i].getGlobalBounds().height / 2);
+        mapSprites[i].setPosition(180 + i * 300, 200); // Position map images side by side
     }
 
     sf::Text title("Game Settings", font, 20);
@@ -184,7 +188,7 @@ void menuScreen() {
     orText.setFillColor(sf::Color::Black);
     sf::FloatRect orTextBounds = orText.getLocalBounds();
     orText.setOrigin(orTextBounds.width / 2, orTextBounds.height / 2);
-    orText.setPosition(window.getSize().x / 2, 450);
+    orText.setPosition(window.getSize().x / 2, 475);
 
     sf::Text resolutionText("Resolution: " + std::to_string(resolutions[resolutionIndex].first) + "x" + std::to_string(resolutions[resolutionIndex].second), font, 18);
     resolutionText.setFillColor(sf::Color::Black);
@@ -213,6 +217,10 @@ void menuScreen() {
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
+            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+            sf::Vector2f worldMousePos = window.mapPixelToCoords(mousePos);
+
+
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
@@ -237,9 +245,6 @@ void menuScreen() {
                 }
             }
             else if (event.type == sf::Event::MouseButtonPressed) {
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-                sf::Vector2f worldMousePos = window.mapPixelToCoords(mousePos);
-
                 // specify the maximum width and height that the map can have
                 // the max width and height are calculated to leave enough room for the Info Panel and the Start Game button
                 maxMapWidth = (resolutions[resolutionIndex].first * 3) / 4;
@@ -293,19 +298,42 @@ void menuScreen() {
                     return;
                 }
             }
+
+
+            // little animation for when the player hovers their mouse over a map image
+            if (mapSprites[0].getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                mapSprites[0].setScale(hoverScale); 
+            }
+            else {
+                mapSprites[0].setScale(originalScale); 
+            }
+
+            if (mapSprites[1].getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                mapSprites[1].setScale(hoverScale);
+            }
+            else {
+                mapSprites[1].setScale(originalScale);
+            }
+
+            if (mapSprites[2].getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                mapSprites[2].setScale(hoverScale);
+            }
+            else {
+                mapSprites[2].setScale(originalScale);
+            }
         }
 
-        resolutionText.setString("Resolution (Up/Down): " + std::to_string(resolutions[resolutionIndex].first) + "x" + std::to_string(resolutions[resolutionIndex].second));
+        resolutionText.setString("Resolution (Up/Down Arrows): " + std::to_string(resolutions[resolutionIndex].first) + "x" + std::to_string(resolutions[resolutionIndex].second));
         sf::FloatRect resolutionBounds = resolutionText.getLocalBounds();
         resolutionText.setOrigin(resolutionBounds.width / 2, resolutionBounds.height / 2);
         resolutionText.setPosition(window.getSize().x / 2, 550);
 
-        numberOfRowsText.setString("Number of Rows (W/S): " + std::to_string(numberOfRows));
+        numberOfRowsText.setString("Number of Rows (W/S Keys): " + std::to_string(numberOfRows));
         sf::FloatRect rowsBounds = numberOfRowsText.getLocalBounds();
         numberOfRowsText.setOrigin(rowsBounds.width / 2, rowsBounds.height / 2);
         numberOfRowsText.setPosition(window.getSize().x / 2, 600);
 
-        numberOfColumnsText.setString("Number of Columns (A/D): " + std::to_string(numberOfColumns));
+        numberOfColumnsText.setString("Number of Columns (A/D Keys): " + std::to_string(numberOfColumns));
         numberOfColumnsText.setPosition(window.getSize().x / 2, 650);
         sf::FloatRect columnsBounds = numberOfColumnsText.getLocalBounds();
         numberOfColumnsText.setOrigin(columnsBounds.width / 2, columnsBounds.height / 2);
