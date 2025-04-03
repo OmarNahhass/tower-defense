@@ -16,7 +16,7 @@ public:
     }
 
     int upgrade() override {
-        wrappedTower->setRateOfFire(wrappedTower->getFireRate() * 1.1f);
+        wrappedTower->setRateOfFire(wrappedTower->getFireRate() / 1.5f);
         return wrappedTower->upgrade();
     }
 

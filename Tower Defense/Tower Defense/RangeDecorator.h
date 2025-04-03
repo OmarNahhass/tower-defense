@@ -16,7 +16,7 @@ public:
     }
 
     int upgrade() override {
-        wrappedTower->setRange(wrappedTower->getRange() + 2); 
+        wrappedTower->setRange(wrappedTower->getRange() + 1); 
         return wrappedTower->upgrade();
     }
 

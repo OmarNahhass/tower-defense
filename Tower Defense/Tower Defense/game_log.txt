@@ -1,6 +1,2 @@
-Fire rate upgraded! New fire rate: 1.000000
-Starting wave 1
-Critter took 2 damage, remaining health: 8
-Critter took 2 damage, remaining health: 6
-Critter took 2 damage, remaining health: 4
-Critter took 2 damage, remaining health: 2
+Invalid map: Missing entry or exit.
+Invalid map: Missing entry or exit.

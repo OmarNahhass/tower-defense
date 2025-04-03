@@ -19,7 +19,7 @@ protected:
     int refundValue;
     int range;
     int power;
-    int rateOfFire;
+    float rateOfFire;
     int level;
     float lastShotTime;
     std::unique_ptr<Strategies> strategy;

@@ -4,6 +4,8 @@
 #define MAP_H
 
 #include <SFML/Graphics.hpp>
+#include <string>
+
 #include "Menu.h"
 #include "Tower.h"
 #include "MapObserver.h"
@@ -19,6 +21,7 @@ extern std::map<std::pair<int, int>, std::unique_ptr<Tower>> towerMap;
 void addObserver(MapObserver* observer);
 void removeObserver(MapObserver* observer);
 void notifyObservers(int column, int row, int newState, int previousState);
+void notifyObserversInvalidMap(std::string message);
 
 void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellSize);
 void initializeMap(int numberOfRows, int numberOfColumns);

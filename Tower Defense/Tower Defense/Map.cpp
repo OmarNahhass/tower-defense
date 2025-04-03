@@ -17,12 +17,11 @@
 #include <vector>
 #include <SFML/System/Vector2.hpp>
 #include <queue>
+#include <string>
 
 int grid[COLS][ROWS]; 
 
 std::map<std::pair<int, int>, std::unique_ptr<Tower>> towerMap;
-
-
 
 sf::Texture grassTextureMap, pathTextureMap, towerTextureMap, towerSlowDownTextureMap, towerSniperTextureMap;
 
@@ -35,6 +34,8 @@ std::vector<MapObserver*> observersMap;
 std::pair<int, int> selectedTower = { -1, -1 };
 bool showUpgradeMenu = false;
 bool towerClicked = false;
+
+std::string invalidMapMessage = "";
 
 
 void initializeMap(int numberOfRows, int numberOfColumns) {
@@ -92,9 +93,8 @@ bool isValidMap() {
                         exit = { i, j };   // Second edge path cell is the exit
                     }
                     else {
-                        //std::cout << "Invalid map: More than one entry or exit.\n";
                         log("Invalid map: More than one entry or exit.");
-                        displayInvalidMapScreen("Invalid map: More than one entry or exit");
+                        notifyObserversInvalidMap("Invalid map: More than one entry or exit.");
                         return false;
                     }
                 }
@@ -104,17 +104,15 @@ bool isValidMap() {
 
     // entry and/or exit is not on the map
     if (entry.first == -1 || exit.first == -1) {
-        //std::cout << "Invalid map: Missing entry or exit.\n";
         log("Invalid map: Missing entry or exit.");
-        displayInvalidMapScreen("Invalid map: Missing entry or exit");
+        notifyObserversInvalidMap("Invalid map: Missing entry or exit.");
         return false;
     }
     
 
     if (towerCounter == 0) {
-        //std::cout << "Invalid map: There should be at least 1 tower in the game.\n";
         log("Invalid map: There should be at least 1 tower in the game.");
-        displayInvalidMapScreen("Invalid map: There should be at least 1 tower in the game");
+        notifyObserversInvalidMap("Invalid map : There should be at least 1 tower in the game.");
         return false;
     }
 
@@ -151,9 +149,8 @@ bool isValidMap() {
         }
 
         if (playerCoins < 0) {
-            //std::cout << "You went over the budget. You'll have to sell some of your towers\n";
             log("You went over the budget. You'll have to sell some of your towers");
-            displayInvalidMapScreen("You went over the budget. You'll have to sell some of your towers");
+            notifyObserversInvalidMap("You went over the budget. You'll have to sell some of your towers");
             return false;
         }
 
@@ -175,9 +172,8 @@ bool isValidMap() {
         }
     }
 
-    //std::cout << "Invalid map: Entry and exit are not connected.\n";
     log("Invalid map: Entry and exit are not connected.");
-    displayInvalidMapScreen("Invalid map: Entry and exit are not connected");
+    notifyObserversInvalidMap("Invalid map: Entry and exit are not connected.");
     return false;
 }
 
@@ -369,6 +365,8 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
 
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
+                removeObserver(&mapView);
+
                 window.close();
             }
             else if (event.type == sf::Event::Resized) {
@@ -599,5 +597,11 @@ void removeObserver(MapObserver* observer) {
 void notifyObservers(int column, int row, int newState, int previousState) {
     for (MapObserver* observer : observersMap) {
         observer->onCellChanged(column, row, newState, previousState);
+    }
+}
+
+void notifyObserversInvalidMap(std::string message) {
+    for (MapObserver* observer : observersMap) {
+        observer->displayInvalidMapMessage(message);
     }
 }
