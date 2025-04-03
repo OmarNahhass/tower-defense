@@ -10,6 +10,7 @@ int towerCounter = 0;
 int playerCoins = 100;
 
 
+
 void MapView::onCellChanged(int x, int y, int newState, int previousState) {
     if (newState == 2) {
         towerCounter++;
@@ -39,8 +40,8 @@ void MapView::onCellChanged(int x, int y, int newState, int previousState) {
 
 
 void MapView::displayInvalidMapMessage(std::string message) {
-    sf::Font font;
 
+    sf::Font font;
     if (!font.loadFromFile("arial.ttf")) {
         std::cerr << "Error loading font\n";
         return;
@@ -50,12 +51,13 @@ void MapView::displayInvalidMapMessage(std::string message) {
     invalidMapText.setFont(font);
     invalidMapText.setCharacterSize(20);
     invalidMapText.setFillColor(sf::Color::Red);
-    invalidMapText.setPosition(mapWidth + 5, 100);
+    invalidMapText.setPosition(mapWidth + 15, 100);
     invalidMapText.setString(message);
 
     window.draw(invalidMapText);
     window.display();
 }
+
 
 void MapView::drawSingleCell(sf::RenderWindow& window, int x, int y, int newState, int cellSize) {
 

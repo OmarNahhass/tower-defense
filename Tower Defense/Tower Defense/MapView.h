@@ -45,6 +45,7 @@ private:
 
 extern int towerCounter;
 extern int playerCoins;
+extern std::string invalidMapMessage;
 
 
 #endif

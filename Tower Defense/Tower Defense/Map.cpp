@@ -501,6 +501,7 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
         mapView.drawCoinsCount(window);
 
 
+
         // draw shop info
         window.draw(damageTowerCostText);
         window.draw(slowDownTowerCostText);
