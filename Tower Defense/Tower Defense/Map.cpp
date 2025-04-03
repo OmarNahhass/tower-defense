@@ -1,4 +1,5 @@
-﻿#include "Map.h"
+﻿#include "LogFile.h"
+#include "Map.h"
 #include "Menu.h"
 #include "MapView.h"
 #include "Game.h"
@@ -46,7 +47,8 @@ void displayInvalidMapScreen(std::string errorMessage) {
 
     sf::Font font;
     if (!font.loadFromFile("arial.ttf")) {
-        std::cerr << "Failed to load font!" << std::endl;
+        //std::cerr << "Failed to load font!" << std::endl;
+        log("Failed to load font!");
         return;
     }
 
@@ -90,7 +92,8 @@ bool isValidMap() {
                         exit = { i, j };   // Second edge path cell is the exit
                     }
                     else {
-                        std::cout << "Invalid map: More than one entry or exit.\n";
+                        //std::cout << "Invalid map: More than one entry or exit.\n";
+                        log("Invalid map: More than one entry or exit.");
                         displayInvalidMapScreen("Invalid map: More than one entry or exit");
                         return false;
                     }
@@ -101,14 +104,16 @@ bool isValidMap() {
 
     // entry and/or exit is not on the map
     if (entry.first == -1 || exit.first == -1) {
-        std::cout << "Invalid map: Missing entry or exit.\n";
+        //std::cout << "Invalid map: Missing entry or exit.\n";
+        log("Invalid map: Missing entry or exit.");
         displayInvalidMapScreen("Invalid map: Missing entry or exit");
         return false;
     }
     
 
     if (towerCounter == 0) {
-        std::cout << "Invalid map: There should be at least 1 tower in the game.\n";
+        //std::cout << "Invalid map: There should be at least 1 tower in the game.\n";
+        log("Invalid map: There should be at least 1 tower in the game.");
         displayInvalidMapScreen("Invalid map: There should be at least 1 tower in the game");
         return false;
     }
@@ -146,7 +151,8 @@ bool isValidMap() {
         }
 
         if (playerCoins < 0) {
-            std::cout << "You went over the budget. You'll have to sell some of your towers\n";
+            //std::cout << "You went over the budget. You'll have to sell some of your towers\n";
+            log("You went over the budget. You'll have to sell some of your towers");
             displayInvalidMapScreen("You went over the budget. You'll have to sell some of your towers");
             return false;
         }
@@ -169,7 +175,8 @@ bool isValidMap() {
         }
     }
 
-    std::cout << "Invalid map: Entry and exit are not connected.\n";
+    //std::cout << "Invalid map: Entry and exit are not connected.\n";
+    log("Invalid map: Entry and exit are not connected.");
     displayInvalidMapScreen("Invalid map: Entry and exit are not connected");
     return false;
 }
@@ -209,7 +216,8 @@ void handleMouseClick(sf::Vector2i mousePos, sf::Mouse::Button button, int cellS
 
             // Refund the player's coins
             playerCoins += refundAmount;
-            std::cout << "Tower sold! Refunded " << refundAmount << " coins." << std::endl;
+            //std::cout << "Tower sold! Refunded " << refundAmount << " coins." << std::endl;
+            log("Tower sold! Refunded " + std::to_string(refundAmount) + " coins.");
 
             showUpgradeMenu = false;
             towerMap.erase({ col, row });         // remove the tower from the map
@@ -288,7 +296,8 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
     // Load font
     sf::Font font;
     if (!font.loadFromFile("arial.ttf")) {
-        std::cerr << "Failed to load font!" << std::endl;
+        //std::cerr << "Failed to load font!" << std::endl;
+        log("Failed to load font!");
     }
 
     UpgradeButton upgradeDamageButton(mapWidth + 15, 150, infoPanelWidth - 50, 40, "Upgrade DAMAGE");
@@ -435,7 +444,8 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                             tower->second = std::make_unique<PowerDecorator>(std::move(tower->second));
                             int upgradeCost = tower->second->upgrade();
                             playerCoins -= upgradeCost;
-                            std::cout << "Power upgraded! New power: " << tower->second->getPower() << std::endl;
+                            //std::cout << "Power upgraded! New power: " << tower->second->getPower() << std::endl;
+                            log("Power upgraded! New power: " + std::to_string(tower->second->getPower()));
                         }
                     }
                     if (upgradeFireRateButton.isClicked(mousePos)) {
@@ -444,7 +454,8 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                             tower->second = std::make_unique<AtkSpeedDecorator>(std::move(tower->second));
                             int upgradeCost = tower->second->upgrade();
                             playerCoins -= upgradeCost;
-                            std::cout << "Fire rate upgraded! New fire rate: " << tower->second->getFireRate() << std::endl;
+                            //std::cout << "Fire rate upgraded! New fire rate: " << tower->second->getFireRate() << std::endl;
+                            log("Fire rate upgraded! New fire rate: " + std::to_string(tower->second->getFireRate()));
                         }
                     }
                     if (upgradeRangeButton.isClicked(mousePos)) {
@@ -453,7 +464,8 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                             tower->second = std::make_unique<RangeDecorator>(std::move(tower->second));
                             int upgradeCost = tower->second->upgrade();
                             playerCoins -= upgradeCost;
-                            std::cout << "Range upgraded! New range: " << tower->second->getRange() << std::endl;
+                            //std::cout << "Range upgraded! New range: " << tower->second->getRange() << std::endl;
+                            log("Range upgraded! New range: " + std::to_string(tower->second->getRange()));
                         }
                     }
                 }
@@ -542,6 +554,7 @@ void extractPath() {
 
     if (entry.first == -1) {
         std::cout << "No valid entry point found.\n";
+        log("No valid entry point found.");
         return;
     }
 

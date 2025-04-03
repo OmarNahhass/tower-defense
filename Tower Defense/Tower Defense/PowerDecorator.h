@@ -7,6 +7,7 @@
 // Increases a tower's power
 class PowerDecorator : public TowerDecorator {
 public:
+
     PowerDecorator(std::unique_ptr<Tower> tower)
         : TowerDecorator(std::move(tower)) {
     }
@@ -22,9 +23,11 @@ public:
 
     void shoot(std::vector<std::unique_ptr<Critter>>& target, float currentTime) override {
         wrappedTower->shoot(target, currentTime);  
+
+        if (wrappedTower->bullet) {
+            this->bullet = std::move(wrappedTower->bullet);
+        }
     }
-
-
 };
 
 #endif

@@ -1,3 +1,4 @@
+#include "LogFile.h"
 #include "Menu.h"
 #include "Map.h"
 
@@ -149,7 +150,8 @@ void menuScreen() {
     sf::RenderWindow window(sf::VideoMode(1100, 850), "Menu", sf::Style::Titlebar | sf::Style::Close);
     sf::Font font;
     if (!font.loadFromFile("arial.ttf")) {
-        std::cerr << "Failed to load font!" << std::endl;
+        //std::cerr << "Failed to load font!" << std::endl;
+        log("Failed to load font!");
         return;
     }
 
@@ -157,7 +159,8 @@ void menuScreen() {
     if (!mapTextures[0].loadFromFile("map_1.png") ||
         !mapTextures[1].loadFromFile("map_2.png") ||
         !mapTextures[2].loadFromFile("map_3.png")) {
-        std::cerr << "Error loading map images!\n";
+        //std::cerr << "Error loading map images!\n";
+        log("Error loading map images!");
     }
 
     sf::Vector2f originalScale(0.5f, 0.5f);

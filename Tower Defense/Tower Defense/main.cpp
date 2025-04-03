@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "LogFile.h"
 #include "Menu.h"
 #include "Map.h"
 
@@ -11,11 +12,15 @@
 
 
 int main() {
-    // Initialize and display the map creation screen
+    initializeLogFile("game_log.txt");
+
     menuScreen();
 
     if (isValidMap())
         startGame();
+
+
+    closeLog();
 
     return 0;
 }

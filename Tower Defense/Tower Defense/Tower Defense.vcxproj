@@ -142,6 +142,7 @@
     <ClCompile Include="CritterView.cpp" />
     <ClCompile Include="FastCritter.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="LogFile.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MapObserver.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="CritterView.h" />
     <ClInclude Include="FastCritter.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="LogFile.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapObserver.h" />
     <ClInclude Include="MapView.h" />

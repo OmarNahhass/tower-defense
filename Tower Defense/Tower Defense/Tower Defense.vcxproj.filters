@@ -75,7 +75,7 @@
     <ClCompile Include="CritterFactoryManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ChooseMaps.cpp">
+    <ClCompile Include="LogFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -140,7 +140,7 @@
     <ClInclude Include="CritterFactoryManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ChooseMaps.h">
+    <ClInclude Include="LogFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

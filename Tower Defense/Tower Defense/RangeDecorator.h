@@ -22,6 +22,10 @@ public:
 
     void shoot(std::vector<std::unique_ptr<Critter>>& target, float currentTime) override {
         wrappedTower->shoot(target, currentTime);  
+
+        if (wrappedTower->bullet) {
+            this->bullet = std::move(wrappedTower->bullet);
+        }
     }
 };
 

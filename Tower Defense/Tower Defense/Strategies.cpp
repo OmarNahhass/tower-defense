@@ -1,5 +1,6 @@
 #pragma once
 
+#include "LogFile.h";
 #include "Map.h"
 #include "Strategies.h"
 
@@ -9,7 +10,8 @@
 
 // nearest to the tower
 Critter* NearestToTower::selectTarget(std::vector<Critter*>& targets, int towerPosX, int towerPosY) {
-    std::cout << "Shooting nearest critter to the tower\n";
+    //std::cout << "Shooting nearest critter to the tower\n";
+    log("Shooting nearest critter to the tower");
     if (targets.empty()) return nullptr;
 
     Critter* nearest = nullptr;
@@ -44,7 +46,8 @@ Critter* NearestToTower::selectTarget(std::vector<Critter*>& targets, int towerP
 
 // nearest to the exit
 Critter* NearestToExit::selectTarget(std::vector<Critter*>& targets) {
-    std::cout << "Shooting nearest critter to the exit\n";
+    //std::cout << "Shooting nearest critter to the exit\n";
+    log("Shooting nearest critter to the exit");
     if (targets.empty()) return nullptr;
 
     Critter* nearest = nullptr;
@@ -67,7 +70,8 @@ Critter* NearestToExit::selectTarget(std::vector<Critter*>& targets) {
 
 // critter with the most amount of health
 Critter* StrongestCritter::selectTarget(std::vector<Critter*>& targets) {
-    std::cout << "Strongest Critter\n";
+    //std::cout << "Strongest Critter\n";
+    log("Strongest Critter");
     if (targets.empty()) return nullptr;
 
     Critter* strongest = nullptr;
@@ -87,7 +91,8 @@ Critter* StrongestCritter::selectTarget(std::vector<Critter*>& targets) {
 
 // critter with the least amount of health
 Critter* WeakestCritter::selectTarget(std::vector<Critter*>& targets) {
-    std::cout << "Weakest Critter\n";
+    //std::cout << "Weakest Critter\n";
+    log("Weakest Critter");
     if (targets.empty()) return nullptr;
 
     Critter* weakest = nullptr;
