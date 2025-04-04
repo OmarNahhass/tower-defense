@@ -11,7 +11,8 @@ protected:
 
 public:
     TowerDecorator(std::unique_ptr<Tower> tower)
-        : Tower(*tower), wrappedTower(std::move(tower)) {}
+        : Tower(*tower), wrappedTower(std::move(tower)) {
+    }
 
     virtual void shoot(std::vector<std::unique_ptr<Critter>>& target, float currentTime) override {
         wrappedTower->shoot(target, currentTime);

@@ -1,3 +1,4 @@
+#include "LogFile.h"
 #include "game.h"
 #include "Map.h"
 #include "MapView.h"
@@ -130,7 +131,8 @@ void updateCritters(float deltaTime, float currentTime) {
 
 
 void startWave(CritterView& critterView) {
-    std::cerr << "Starting wave " << currentWave << std::endl;
+    //std::cerr << "Starting wave " << currentWave << std::endl;
+    log("Starting wave " + std::to_string(currentWave));
 
     activeCritters.clear();   // Clear old critters
     spawnQueue.clear();       // Reset spawn queue
@@ -177,7 +179,8 @@ void updateWave(float deltaTime, float currentTime, CritterView& critterView, sf
     case GameState::InGame:
         // Check if the wave is completed
         if (spawnQueue.empty() && activeCritters.empty() && !waitingForNextWave) {
-            std::cerr << "Wave " << currentWave << " cleared! Starting countdown for next wave...\n";
+            //std::cerr << "Wave " << currentWave << " cleared! Starting countdown for next wave...\n";
+            log("Wave " + std::to_string(currentWave) + " cleared! Starting countdown for next wave...");
             waveDelayTimer = 0.0f; 
             currentState = GameState::WaveEnd;
         }
@@ -230,16 +233,13 @@ void updateBullets(sf::RenderWindow& window, float deltaTime) {
     for (auto& tower : towerMap) {
         auto& bullet = tower.second->bullet;  
 
-        // Create a temporary vector to hold bullets to be removed
-        std::vector<std::unique_ptr<Bullet>> bulletsToRemove;
-
         if (bullet) {  
             bullet->move(deltaTime);  // Update the bullet's position
             window.draw(bullet->shape);  // Draw the bullet
 
             // Check if the bullet has damaged its target and should be removed
             if (bullet->shouldBulletBeRemoved()) {
-                bulletsToRemove.push_back(std::move(bullet));  
+                bullet.reset();
             }
         } 
     }

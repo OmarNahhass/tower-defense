@@ -10,6 +10,7 @@ int towerCounter = 0;
 int playerCoins = 100;
 
 
+
 void MapView::onCellChanged(int x, int y, int newState, int previousState) {
     if (newState == 2) {
         towerCounter++;
@@ -36,6 +37,27 @@ void MapView::onCellChanged(int x, int y, int newState, int previousState) {
     drawTowerCount(window);
     window.display();
 }
+
+
+void MapView::displayInvalidMapMessage(std::string message) {
+
+    sf::Font font;
+    if (!font.loadFromFile("arial.ttf")) {
+        std::cerr << "Error loading font\n";
+        return;
+    }
+
+    sf::Text invalidMapText;
+    invalidMapText.setFont(font);
+    invalidMapText.setCharacterSize(20);
+    invalidMapText.setFillColor(sf::Color::Red);
+    invalidMapText.setPosition(mapWidth + 15, 100);
+    invalidMapText.setString(message);
+
+    window.draw(invalidMapText);
+    window.display();
+}
+
 
 void MapView::drawSingleCell(sf::RenderWindow& window, int x, int y, int newState, int cellSize) {
 
@@ -80,7 +102,7 @@ void MapView::drawTowerCount(sf::RenderWindow& window) {
     towerText.setFont(font);
     towerText.setCharacterSize(20);
     towerText.setFillColor(sf::Color::Black);
-    towerText.setPosition(mapWidth + 15, 20);  // Adjust position as needed
+    towerText.setPosition(mapWidth + 15, 20); 
     towerText.setString("Towers: " + std::to_string(towerCounter));
 
     window.draw(towerText);
@@ -98,7 +120,7 @@ void MapView::drawCoinsCount(sf::RenderWindow& window) {
     coinsText.setFont(font);
     coinsText.setCharacterSize(20);
     coinsText.setFillColor(sf::Color::Black);
-    coinsText.setPosition(mapWidth + 15, 70);  // Adjust position as needed
+    coinsText.setPosition(mapWidth + 15, 70);
     coinsText.setString("Coins: " + std::to_string(playerCoins));
 
     window.draw(coinsText);

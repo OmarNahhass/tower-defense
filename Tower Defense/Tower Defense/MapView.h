@@ -34,6 +34,7 @@ public:
     void drawTowerCount(sf::RenderWindow& window);
     void drawCoinsCount(sf::RenderWindow& window);
     void onCellChanged(int x, int y, int newState, int previousState);
+    void displayInvalidMapMessage(std::string message);
     void drawSingleCell(sf::RenderWindow& window, int x, int y, int newState, int cellSize);
 
 
@@ -44,6 +45,7 @@ private:
 
 extern int towerCounter;
 extern int playerCoins;
+extern std::string invalidMapMessage;
 
 
 #endif

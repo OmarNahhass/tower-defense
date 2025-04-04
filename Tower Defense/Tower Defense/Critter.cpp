@@ -1,3 +1,4 @@
+#include "LogFile.h"
 #include "Critter.h"
 #include "Map.h"  
 #include "Menu.h"  
@@ -88,11 +89,13 @@ bool Critter::takeDamage(int damage, float currentTime) {
     if (damage > 0) {  // Only update when actually hit
         hitPoints -= damage;
         hitTime = currentTime;
-        std::cout << "Critter took " << damage << " damage, remaining health: " << hitPoints << "\n";
+        //std::cout << "Critter took " << damage << " damage, remaining health: " << hitPoints << "\n";
+        log("Critter took " + std::to_string(damage) + " damage, remaining health: " + std::to_string(hitPoints));
     }
 
     if (hitPoints <= 0) {
-        std::cout << "Critter killed! Player earns " << reward << " coins.\n";
+        //std::cout << "Critter killed! Player earns " << reward << " coins.\n";
+        log("Critter killed! Player earns " + std::to_string(reward) + " coins.");
         numberOfCrittersRemaining--;
         playerCoins += reward;
         return true;
@@ -106,7 +109,8 @@ void Critter::slowDown(float currentTime) {
         speed /= 2;
         isSlowed = true;
         slowEndTime = currentTime + 2; // Slowdown lasts for 5 seconds
-        std::cout << "Slowed down\n";
+        //std::cout << "Slowed down\n";
+        log("Slowed down");
     }
 }
 
@@ -132,6 +136,7 @@ void Critter::move(float deltaTime) {
 
     sf::Vector2f currentPos(pathCells[this->pathIndex].x * cellSize, pathCells[this->pathIndex].y * cellSize);
     sf::Vector2f nextPos(pathCells[this->pathIndex + 1].x * cellSize, pathCells[this->pathIndex + 1].y * cellSize);
+
 
     sf::Vector2f direction = nextPos - currentPos;
     float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);

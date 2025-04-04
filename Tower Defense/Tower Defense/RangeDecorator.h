@@ -16,12 +16,16 @@ public:
     }
 
     int upgrade() override {
-        wrappedTower->setRange(wrappedTower->getRange() + 2); 
+        wrappedTower->setRange(wrappedTower->getRange() + 1); 
         return wrappedTower->upgrade();
     }
 
     void shoot(std::vector<std::unique_ptr<Critter>>& target, float currentTime) override {
         wrappedTower->shoot(target, currentTime);  
+
+        if (wrappedTower->bullet) {
+            this->bullet = std::move(wrappedTower->bullet);
+        }
     }
 };
 

@@ -1,0 +1,50 @@
+Starting wave 1
+Critter took 2 damage, remaining health: 8
+Critter took 2 damage, remaining health: 6
+Critter took 2 damage, remaining health: 4
+Critter took 2 damage, remaining health: 2
+Critter took 2 damage, remaining health: 0
+Critter killed! Player earns 50 coins.
+Critter took 2 damage, remaining health: 8
+Critter took 2 damage, remaining health: 6
+Critter took 2 damage, remaining health: 4
+Critter took 2 damage, remaining health: 2
+Critter took 2 damage, remaining health: 0
+Critter killed! Player earns 50 coins.
+Critter took 2 damage, remaining health: 8
+Critter took 2 damage, remaining health: 6
+Critter took 2 damage, remaining health: 4
+Critter took 2 damage, remaining health: 2
+Critter took 2 damage, remaining health: 0
+Critter killed! Player earns 50 coins.
+Critter took 2 damage, remaining health: 8
+Critter took 2 damage, remaining health: 6
+Critter took 2 damage, remaining health: 4
+Critter took 2 damage, remaining health: 2
+Critter took 2 damage, remaining health: 0
+Critter killed! Player earns 50 coins.
+Critter took 2 damage, remaining health: 8
+Critter took 2 damage, remaining health: 6
+Critter took 2 damage, remaining health: 4
+Critter took 2 damage, remaining health: 2
+Critter took 2 damage, remaining health: 0
+Critter killed! Player earns 50 coins.
+Wave 1 cleared! Starting countdown for next wave...
+Fire rate upgraded! New fire rate: 0.666667
+Starting wave 2
+Critter took 2 damage, remaining health: 18
+Critter took 2 damage, remaining health: 16
+Critter took 2 damage, remaining health: 14
+Critter took 2 damage, remaining health: 12
+Critter took 2 damage, remaining health: 10
+Critter took 2 damage, remaining health: 8
+Critter took 2 damage, remaining health: 6
+Critter took 2 damage, remaining health: 4
+Shooting nearest critter to the tower
+Critter took 2 damage, remaining health: 2
+Shooting nearest critter to the tower
+Critter took 2 damage, remaining health: 0
+Critter killed! Player earns 100 coins.
+Critter took 2 damage, remaining health: 18
+Critter took 2 damage, remaining health: 16
+Critter took 2 damage, remaining health: 14
