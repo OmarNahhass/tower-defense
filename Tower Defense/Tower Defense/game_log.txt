@@ -1,2 +1,2 @@
-Invalid map: Missing entry or exit.
+Power upgraded! New power: 4
 Invalid map: Missing entry or exit.

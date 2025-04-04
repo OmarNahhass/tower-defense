@@ -37,6 +37,8 @@ bool towerClicked = false;
 
 std::string invalidMapMessage = "";
 
+std::string upgradedTowerMessage = "";
+
 
 void initializeMap(int numberOfRows, int numberOfColumns) {
     mapGrid.resize(numberOfRows, std::vector<int>(numberOfColumns, 0));
@@ -94,7 +96,7 @@ bool isValidMap() {
                     }
                     else {
                         log("Invalid map: More than one entry or exit.");
-                        notifyObserversInvalidMap("Invalid map: More than one entry or exit.");
+                        invalidMapMessage = "Invalid map: More than one entry or exit.";
                         return false;
                     }
                 }
@@ -105,14 +107,14 @@ bool isValidMap() {
     // entry and/or exit is not on the map
     if (entry.first == -1 || exit.first == -1) {
         log("Invalid map: Missing entry or exit.");
-        notifyObserversInvalidMap("Invalid map: Missing entry or exit.");
+        invalidMapMessage = "Invalid map: Missing entry or exit.";
         return false;
     }
     
 
     if (towerCounter == 0) {
         log("Invalid map: There should be at least 1 tower in the game.");
-        notifyObserversInvalidMap("Invalid map : There should be at least 1 tower in the game.");
+        invalidMapMessage = "Invalid map : There should be at least 1 tower in the game.";
         return false;
     }
 
@@ -150,7 +152,7 @@ bool isValidMap() {
 
         if (playerCoins < 0) {
             log("You went over the budget. You'll have to sell some of your towers");
-            notifyObserversInvalidMap("You went over the budget. You'll have to sell some of your towers");
+            invalidMapMessage = "You went over the budget. You'll have to sell some of your towers";
             return false;
         }
 
@@ -173,7 +175,7 @@ bool isValidMap() {
     }
 
     log("Invalid map: Entry and exit are not connected.");
-    notifyObserversInvalidMap("Invalid map: Entry and exit are not connected.");
+    invalidMapMessage = "Invalid map: Entry and exit are not connected.";
     return false;
 }
 
@@ -323,7 +325,7 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
     playerCoinsText.setPosition(mapWidth + 15, 70);
 
 
-    // display the shop
+    // Tower shop
     sf::Text damageTowerCostText("Regular Tower (Green): " + std::to_string(Tower::cost_DirectDamageTower), font, 15);
     damageTowerCostText.setFillColor(sf::Color::Black);
     damageTowerCostText.setPosition(mapWidth + 15, infoPanelHeight - 140);
@@ -337,9 +339,17 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
     sniperTowerCostText.setPosition(mapWidth + 15, infoPanelHeight - 60);
 
 
+    // Error and Upgrade messages
+    sf::Text invalidMessageText(invalidMapMessage, font, 15);
+    invalidMessageText.setFillColor(sf::Color::Red);
+    invalidMessageText.setPosition(mapWidth + 15, 150);
+
+    sf::Text upgradedTowerText(upgradedTowerMessage, font, 15);
+    upgradedTowerText.setFillColor(sf::Color(16, 156, 44));
+    upgradedTowerText.setPosition(mapWidth + 15, 325);
 
 
-    // display the "Start Game" button
+    // "Start Game" button
     int buttonHeight = windowHeight - mapHeight;
 
     sf::RectangleShape button(sf::Vector2f(windowWidth, buttonHeight));
@@ -355,9 +365,9 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
 
 
 
-
+    // used for map validation
     bool showError = false;
-    sf::Clock errorTimer;
+    sf::Clock errorTimer, upgradeTimer;
 
 
     while (window.isOpen()) {
@@ -405,6 +415,8 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                 damageTowerCostText.setPosition(mapWidth + 20, windowHeight-200);
                 slowDownTowerCostText.setPosition(mapWidth + 20, windowHeight - 160);
                 sniperTowerCostText.setPosition(mapWidth + 20, windowHeight - 120);
+
+                invalidMessageText.setCharacterSize(newFontSize);
             }
             // handle mouse clicks
             else if (event.type == sf::Event::MouseButtonPressed) {
@@ -417,20 +429,19 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                 }
                 // clicks handled when the "Start Game" button is pressed
                 else if (mousePos.x >= button.getPosition().x &&
-                    mousePos.x <= button.getPosition().x + button.getSize().x &&
-                    mousePos.y >= button.getPosition().y &&
-                    mousePos.y <= button.getPosition().y + button.getSize().y) {
-                    if (isValidMap()) {
+                     mousePos.x <= button.getPosition().x + button.getSize().x &&
+                     mousePos.y >= button.getPosition().y &&
+                     mousePos.y <= button.getPosition().y + button.getSize().y) {
+                     if (isValidMap()) {
                         window.close();
                         extractPath();
                         currentState = GameState::WaveStart;
                         startGame();
                         return;
-                    }
-                    else {
-                        showError = true;
+                     }
+                     else {
                         errorTimer.restart();
-                    }
+                     }
                 }
                 // clicks handled when the user presses any "Upgrade" button
                 if (showUpgradeMenu && event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
@@ -442,8 +453,9 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                             tower->second = std::make_unique<PowerDecorator>(std::move(tower->second));
                             int upgradeCost = tower->second->upgrade();
                             playerCoins -= upgradeCost;
-                            //std::cout << "Power upgraded! New power: " << tower->second->getPower() << std::endl;
                             log("Power upgraded! New power: " + std::to_string(tower->second->getPower()));
+                            upgradedTowerMessage = "Power upgraded! New power: " + std::to_string(tower->second->getPower());
+                            upgradeTimer.restart();
                         }
                     }
                     if (upgradeFireRateButton.isClicked(mousePos)) {
@@ -452,8 +464,9 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                             tower->second = std::make_unique<AtkSpeedDecorator>(std::move(tower->second));
                             int upgradeCost = tower->second->upgrade();
                             playerCoins -= upgradeCost;
-                            //std::cout << "Fire rate upgraded! New fire rate: " << tower->second->getFireRate() << std::endl;
                             log("Fire rate upgraded! New fire rate: " + std::to_string(tower->second->getFireRate()));
+                            upgradedTowerMessage = "Fire rate upgraded! New fire rate: " + std::to_string(tower->second->getFireRate());
+                            upgradeTimer.restart();
                         }
                     }
                     if (upgradeRangeButton.isClicked(mousePos)) {
@@ -462,8 +475,9 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                             tower->second = std::make_unique<RangeDecorator>(std::move(tower->second));
                             int upgradeCost = tower->second->upgrade();
                             playerCoins -= upgradeCost;
-                            //std::cout << "Range upgraded! New range: " << tower->second->getRange() << std::endl;
                             log("Range upgraded! New range: " + std::to_string(tower->second->getRange()));
+                            upgradedTowerMessage = "Range upgraded! New range: " + std::to_string(tower->second->getRange());
+                            upgradeTimer.restart();
                         }
                     }
                 }
@@ -476,11 +490,7 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
                     handleUpgradeButton(mousePos, cellSize);
                 }
             }
-        }
-
-        if (showError && errorTimer.getElapsedTime().asSeconds() > 3.0f) {
-            showError = false;
-        }
+        }        
 
         window.clear();
 
@@ -507,13 +517,34 @@ void displayMap(int windowWidth, int windowHeight, int numberOfRows, int numberO
         window.draw(slowDownTowerCostText);
         window.draw(sniperTowerCostText);
 
-        
-     
+
 
         if (showUpgradeMenu) {
             upgradeDamageButton.draw(window);
             upgradeFireRateButton.draw(window);
             upgradeRangeButton.draw(window);
+        }
+
+
+
+        // display an error message if the map is invalid
+        if (!invalidMapMessage.empty() && errorTimer.getElapsedTime().asSeconds() < 3) {
+            invalidMessageText.setString(invalidMapMessage);
+            window.draw(invalidMessageText);
+        }
+        else {
+            invalidMapMessage = "";
+        }
+
+
+
+        // display a message after upgrading a tower
+        if (!upgradedTowerMessage.empty() && upgradeTimer.getElapsedTime().asSeconds() < 3) {
+            upgradedTowerText.setString(upgradedTowerMessage);
+            window.draw(upgradedTowerText);
+        }
+        else {
+            upgradedTowerMessage = "";
         }
 
 
